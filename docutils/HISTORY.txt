@@ -63,6 +63,7 @@ Changes Since 0.18.1
 
   - Don't use mutable default values for function arguments. Fixes bug #430.
   - Added new BCP role for *Best Current Practice* documents. Patch by Adam Turner.
+  - Changed default RFC base url to https://datatracker.ietf.org/doc/html/
 
 * docutils/transforms/universal.py
 
