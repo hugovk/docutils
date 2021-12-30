@@ -208,7 +208,7 @@ This is equivalent to::
 
     See `RFC 2822`__ for information about email headers.
 
-    __ https://tools.ietf.org/html/rfc2822.html
+    __ https://datatracker.ietf.org/doc/html/rfc2822.html
 
 .. [#] You can link to a specific section by saying
    ``:rfc:`number#anchor```. (New in Docutils 0.15.)

@@ -323,7 +323,7 @@ totest['references'] = [
 """\
 <document source="test data">
     <paragraph>
-        <reference refuri="https://tools.ietf.org/html/rfc2822.html">
+        <reference refuri="https://datatracker.ietf.org/doc/html/rfc2822.html">
             RFC 2822
 """],
 ["""\
@@ -344,7 +344,7 @@ totest['references'] = [
 """\
 <document source="test data">
     <paragraph>
-        <reference refuri="https://tools.ietf.org/html/rfc2822.html#section1">
+        <reference refuri="https://datatracker.ietf.org/doc/html/rfc2822.html#section1">
             RFC 2822
 """],
 ["""\
@@ -353,7 +353,7 @@ totest['references'] = [
 """\
 <document source="test data">
     <paragraph>
-        <reference refuri="http://tools.ietf.org/html/bcp14">
+        <reference refuri="https://datatracker.ietf.org/doc/html/bcp14">
             BCP 14
 """],
 ["""\
@@ -374,7 +374,7 @@ totest['references'] = [
 """\
 <document source="test data">
     <paragraph>
-        <reference refuri="http://tools.ietf.org/html/bcp14#section1">
+        <reference refuri="https://datatracker.ietf.org/doc/html/bcp14#section1">
             BCP 14
 """],
 ]
