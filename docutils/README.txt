@@ -354,17 +354,9 @@ If any of the tests fail, please `open a bug report`_ or `send an email`_
 (see `Bugs <BUGS.html>`_).
 Please include all relevant output, information about your operating
 system, Python version, and Docutils version.  To see the Docutils
-version, use one of the ``rst2*`` front ends or ``tools/quicktest.py``
-with the ``--version`` option, e.g.::
+version, use ``docutils-cli``::
 
-    cd ../tools
-    ./quicktest.py --version
-
-Windows users type these commands::
-
-    cd ..\tools
-    python quicktest.py --version
-
+    docutils-cli --version
 
 .. _Docutils Testing: https://docutils.sourceforge.io/docs/dev/testing.html
 .. _open a bug report:

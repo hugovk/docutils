@@ -81,6 +81,11 @@ Changes Since 0.18.1
   - Allow 3rd-party drop-in components for reader and parser, too.
   - Fix help output.
 
+* tools/quicktest.py
+
+  - Removed in favour of ``docutils-cli``. ``quicktest.py`` had not been
+    substantively changed since 2006.
+
 
 Release 0.18.1
 ==============
