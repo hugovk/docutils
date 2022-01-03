@@ -30,41 +30,16 @@ def join_path(*args):
     return '/'.join(args) or '.'
 
 
-class FunctionalTestSuite(DocutilsTestSupport.CustomTestSuite):
-
-    """Test suite containing test cases for all config files."""
-
-    def __init__(self):
-        """Process all config files in functional/tests/."""
-        super().__init__(suite_id=__file__)
-        self.clear_output_directory()
-        self.added = 0
-        for root, dirs, files in os.walk(join_path(datadir, 'tests')):
-            # Process all config files among `names` in `dirname`. A config
-            # file is a Python file (*.py) which sets several variables.
-            for name in files:
-                if name.endswith('.py') and not name.startswith('_'):
-                    config_file_full_path = join_path(root, name)
-                    self.addTest(
-                        FunctionalTestCase("test",
-                                           input=None, expected=None,
-                                           id=config_file_full_path,
-                                           suite_settings=self.suite_settings,
-                                           configfile=config_file_full_path)
-                    )
-                    self.added += 1
-        assert self.added, 'No functional tests found.'
-
-    def clear_output_directory(self):
-        files = os.listdir(os.path.join('functional', 'output'))
-        for f in files:
-            if f in ('README.txt', '.svn', 'CVS'):
-                continue                # don't touch the infrastructure
-            path = os.path.join('functional', 'output', f)
-            if os.path.isdir(path):
-                shutil.rmtree(path)
-            else:
-                os.remove(path)
+def clear_output_directory():
+    files = os.listdir(os.path.join('functional', 'output'))
+    for f in files:
+        if f in ('README.txt', '.svn', 'CVS'):
+            continue                # don't touch the infrastructure
+        path = os.path.join('functional', 'output', f)
+        if os.path.isdir(path):
+            shutil.rmtree(path)
+        else:
+            os.remove(path)
 
 
 class FunctionalTestCase(DocutilsTestSupport.CustomTestCase):
@@ -185,7 +160,23 @@ expected output and check it in:
 
 
 def suite():
-    return FunctionalTestSuite()
+    s = unittest.TestSuite()
+    clear_output_directory()
+    for root, dirs, files in os.walk(join_path(datadir, 'tests')):
+        # Process all config files among `names` in `dirname`. A config
+        # file is a Python file (*.py) which sets several variables.
+        for name in files:
+            if name.endswith('.py') and not name.startswith('_'):
+                config_file_full_path = join_path(root, name)
+                s.addTest(
+                    FunctionalTestCase("test",
+                                       input=None, expected=None,
+                                       id=config_file_full_path,
+                                       suite_settings={},
+                                       configfile=config_file_full_path)
+                )
+    assert list(s) != [], 'No functional tests found.'
+    return s
 
 
 if __name__ == '__main__':
