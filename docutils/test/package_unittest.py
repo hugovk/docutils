@@ -14,6 +14,7 @@ import sys
 import os
 import glob
 import importlib
+import traceback
 import unittest
 
 
@@ -43,7 +44,7 @@ def loadTestModules(path, name=''):
             module = importlib.import_module(mod)
         except ImportError:
             print("ERROR: Can't import %s, skipping its tests:" % mod, file=sys.stderr)
-            sys.excepthook(*sys.exc_info())
+            traceback.print_exc()
         else:
             # if there's a suite defined, incorporate its contents
             try:
