@@ -22,7 +22,8 @@ import os
 import platform
 import unittest
 
-import DocutilsTestSupport              # must be imported before docutils
+sys.path.insert(0, os.path.join(__file__, "..", ".."))
+from test import DocutilsTestSupport              # must be imported before docutils
 import docutils
 
 

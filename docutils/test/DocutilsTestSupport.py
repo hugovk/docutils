@@ -40,8 +40,7 @@ from pprint import pformat
 
 testroot = os.path.abspath(os.path.dirname(__file__) or os.curdir)
 os.chdir(testroot)
-sys.path.insert(0, os.path.normpath(os.path.join(testroot, '..')))
-sys.path.append(os.path.normpath(os.path.join(testroot, '..', 'extras')))
+sys.path.insert(0, os.path.dirname(testroot))
 sys.path.insert(0, testroot)
 
 try:
