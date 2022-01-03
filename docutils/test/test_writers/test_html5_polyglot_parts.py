@@ -15,8 +15,7 @@ standard values, and any entries with empty values.
 if __name__ == '__main__':
     import __init__
 from test_transforms import DocutilsTestSupport  # before importing docutils!
-from DocutilsTestSupport import (HtmlWriterPublishPartsTestCase,
-                                 HtmlPublishPartsTestSuite)
+from DocutilsTestSupport import (HtmlWriterPublishPartsTestCase)
 from docutils import core, __version__
 
 
@@ -39,14 +38,16 @@ class Html5WriterPublishPartsTestCase(HtmlWriterPublishPartsTestCase):
     standard_meta_value = standard_html_meta_value % 'utf-8'
     standard_html_prolog = '<!DOCTYPE html>\n'
 
-class Html5PublishPartsTestSuite(HtmlPublishPartsTestSuite):
-
-    testcase_class = Html5WriterPublishPartsTestCase
-
-
 def suite():
-    s = Html5PublishPartsTestSuite(suite_id=__file__)
-    s.generateTests(totest)
+    s = DocutilsTestSupport.CustomTestSuite(suite_id=__file__)
+    for name, (settings_overrides, cases) in totest.items():
+        for casenum, (case_input, case_expected) in enumerate(cases):
+            s.addTest(
+                Html5WriterPublishPartsTestCase("test_publish",
+                                                input=case_input, expected=case_expected,
+                                                id='%s: totest[%r][%s]' % (s.id, name, casenum),
+                                                suite_settings=settings_overrides)
+            )
     return s
 
 
