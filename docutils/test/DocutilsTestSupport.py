@@ -332,13 +332,6 @@ class PEPParserTestCase(ParserTestCase):
     settings.debug = False
 
 
-class PEPParserTestSuite(ParserTestSuite):
-
-    """A collection of PEPParserTestCases."""
-
-    test_case_class = PEPParserTestCase
-
-
 # Optional tests with 3rd party CommonMark parser
 # ===============================================
 
