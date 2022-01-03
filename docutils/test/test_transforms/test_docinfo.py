@@ -16,14 +16,34 @@ from docutils.parsers.rst import Parser
 
 def suite():
     parser = Parser()
-    settings = {'language_code': 'en'}
-    s = DocutilsTestSupport.TransformTestSuite(
-        parser, suite_id=__file__, suite_settings=settings)
-    s.generateTests(totest)
-    settings['language_code'] = 'de'
-    s.generateTests(totest_de)
-    settings['language_code'] = 'ru'
-    s.generateTests(totest_ru)
+    s = DocutilsTestSupport.CustomTestSuite(suite_id=__file__)
+    for name, (transforms, cases) in totest.items():
+        for casenum, (case_input, case_expected) in enumerate(cases):
+            s.addTest(
+                DocutilsTestSupport.TransformTestCase("test_transforms",
+                                                      input=case_input, expected=case_expected,
+                                                      id='%s: totest[%r][%s]' % (s.id, name, casenum),
+                                                      suite_settings={'language_code': 'en'},
+                                                      transforms=transforms, parser=parser)
+            )
+    for name, (transforms, cases) in totest_de.items():
+        for casenum, (case_input, case_expected) in enumerate(cases):
+            s.addTest(
+                DocutilsTestSupport.TransformTestCase("test_transforms",
+                                                      input=case_input, expected=case_expected,
+                                                      id='%s: totest[%r][%s]' % (s.id, name, casenum),
+                                                      suite_settings={'language_code': 'de'},
+                                                      transforms=transforms, parser=parser)
+            )
+    for name, (transforms, cases) in totest_ru.items():
+        for casenum, (case_input, case_expected) in enumerate(cases):
+            s.addTest(
+                DocutilsTestSupport.TransformTestCase("test_transforms",
+                                                      input=case_input, expected=case_expected,
+                                                      id='%s: totest[%r][%s]' % (s.id, name, casenum),
+                                                      suite_settings={'language_code': 'ru'},
+                                                      transforms=transforms, parser=parser)
+            )
     return s
 
 totest = {}

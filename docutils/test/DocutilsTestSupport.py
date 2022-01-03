@@ -261,43 +261,6 @@ class TransformTestCase(CustomTestCase):
         self.compare_output(self.input, output, self.expected)
 
 
-class TransformTestSuite(CustomTestSuite):
-
-    """
-    A collection of TransformTestCases.
-
-    A TransformTestSuite instance manufactures TransformTestCases,
-    keeps track of them, and provides a shared test fixture (a-la
-    setUp and tearDown).
-    """
-
-    def __init__(self, parser, suite_id="", suite_settings=None):
-        self.parser = parser
-        """Parser shared by all test cases."""
-
-        super(TransformTestSuite, self).__init__(suite_id=suite_id, suite_settings=suite_settings)
-
-    def generateTests(self, totest):
-        """
-        Stock the suite with test cases generated from a test data dictionary.
-
-        Each dictionary key (test type's name) maps to a tuple, whose
-        first item is a list of transform classes and whose second
-        item is a list of tests. Each test is a list: input, expected
-        output. Tests should be self-documenting and not require external
-        comments.
-        """
-        for name, (transforms, cases) in totest.items():
-            for casenum, (case_input, case_expected) in enumerate(cases):
-                self.addTest(
-                    TransformTestCase("test_transforms",
-                                      input=case_input, expected=case_expected,
-                                      id='%s: totest[%r][%s]' % (self.id, name, casenum),
-                                      suite_settings=self.suite_settings,
-                                      transforms=transforms, parser=self.parser)
-                )
-
-
 class ParserTestCase(CustomTestCase):
 
     """

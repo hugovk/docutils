@@ -16,10 +16,17 @@ from docutils.transforms.universal import StripClassesAndElements
 
 def suite():
     parser = Parser()
-    s = DocutilsTestSupport.TransformTestSuite(parser, suite_id=__file__,
-            suite_settings={'strip_elements_with_classes': ['spam', 'no-ham'],
-                            'strip_classes': ['spam', 'noise']})
-    s.generateTests(totest)
+    s = DocutilsTestSupport.CustomTestSuite(suite_id=__file__)
+    for name, (transforms, cases) in totest.items():
+        for casenum, (case_input, case_expected) in enumerate(cases):
+            s.addTest(
+                DocutilsTestSupport.TransformTestCase("test_transforms",
+                                                      input=case_input, expected=case_expected,
+                                                      id='%s: totest[%r][%s]' % (s.id, name, casenum),
+                                                      suite_settings={'strip_elements_with_classes': ['spam', 'no-ham'],
+                                                                      'strip_classes': ['spam', 'noise']},
+                                                      transforms=transforms, parser=parser)
+            )
     return s
 
 totest = {}
