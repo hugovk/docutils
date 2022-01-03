@@ -32,5 +32,4 @@ class GetReaderClassTestCase(unittest.TestCase):
         wr = get_reader_class('local-reader')
 
 if __name__ == '__main__':
-    import unittest
     unittest.main()

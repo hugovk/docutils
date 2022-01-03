@@ -13,6 +13,7 @@ import unittest
 
 if __name__ == '__main__':
     import __init__
+import unittest
 from test_parsers import DocutilsTestSupport
 from docutils.parsers import get_parser_class
 
@@ -31,5 +32,4 @@ class GetParserClassTestCase(unittest.TestCase):
         wr = get_parser_class('local-parser')
 
 if __name__ == '__main__':
-    import unittest
     unittest.main()

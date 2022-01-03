@@ -13,19 +13,21 @@ import platform
 
 if __name__ == '__main__':
     import __init__
+import unittest
 from test_writers import DocutilsTestSupport
 
 
 def suite():
     settings = {'stylesheet_path': '/test.css',
                 'embed_stylesheet': 0,}
-    s = DocutilsTestSupport.CustomTestSuite(suite_id=__file__)
+    suite_id = DocutilsTestSupport.make_id(__file__)
+    s = unittest.TestSuite()
     for name, cases in totest_1.items():
         for casenum, (case_input, case_expected) in enumerate(cases):
             s.addTest(
                 DocutilsTestSupport.WriterPublishTestCase("test_publish",
                                                           input=case_input, expected=case_expected,
-                                                          id='%s: totest[%r][%s]' % (s.id, name, casenum),
+                                                          id='%s: totest[%r][%s]' % (suite_id, name, casenum),
                                                           suite_settings=settings,
                                                           writer_name="s5")
             )
@@ -36,7 +38,7 @@ def suite():
             s.addTest(
                 DocutilsTestSupport.WriterPublishTestCase("test_publish",
                                                           input=case_input, expected=case_expected,
-                                                          id='%s: totest[%r][%s]' % (s.id, name, casenum),
+                                                          id='%s: totest[%r][%s]' % (suite_id, name, casenum),
                                                           suite_settings=settings,
                                                           writer_name="s5")
             )
@@ -183,5 +185,4 @@ We're just checking the settings
 ]
 
 if __name__ == '__main__':
-    import unittest
     unittest.main(defaultTest='suite')

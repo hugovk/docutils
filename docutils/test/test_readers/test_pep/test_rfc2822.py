@@ -10,17 +10,19 @@ Tests for RFC-2822 headers in PEPs (readers/pep.py).
 
 if __name__ == '__main__':
     import __init__
+import unittest
 from test_readers import DocutilsTestSupport
 
 
 def suite():
-    s = DocutilsTestSupport.CustomTestSuite(suite_id=__file__)
+    suite_id = DocutilsTestSupport.make_id(__file__)
+    s = unittest.TestSuite()
     for name, cases in totest.items():
         for casenum, (case_input, case_expected) in enumerate(cases):
             s.addTest(
                 DocutilsTestSupport.PEPParserTestCase("test_parser",
                                                       input=case_input, expected=case_expected,
-                                                      id='%s: totest[%r][%s]' % (s.id, name, casenum),
+                                                      id='%s: totest[%r][%s]' % (suite_id, name, casenum),
                                                       suite_settings={})
             )
     return s
@@ -295,5 +297,4 @@ Version:
 ]
 
 if __name__ == '__main__':
-    import unittest
     unittest.main(defaultTest='suite')

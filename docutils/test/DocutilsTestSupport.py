@@ -17,24 +17,16 @@ Exports the following:
 
 :Classes:
     - `CustomTestCase`
-    - `CustomTestSuite`
     - `TransformTestCase`
-    - `TransformTestSuite`
     - `ParserTestCase`
-    - `ParserTestSuite`
     - `ParserTransformTestCase`
     - `PEPParserTestCase`
-    - `PEPParserTestSuite`
     - `GridTableParserTestCase`
-    - `GridTableParserTestSuite`
     - `SimpleTableParserTestCase`
-    - `SimpleTableParserTestSuite`
     - `WriterPublishTestCase`
     - `LatexWriterPublishTestCase`
     - `PseudoXMLWriterPublishTestCase`
     - `HtmlWriterPublishTestCase`
-    - `PublishTestSuite`
-    - `HtmlFragmentTestSuite`
     - `DevNull` (output sink)
 """
 __docformat__ = 'reStructuredText'
@@ -171,30 +163,8 @@ class CustomTestCase(unittest.TestCase):
             raise error
 
 
-class CustomTestSuite(unittest.TestSuite):
-
-    """
-    A collection of CustomTestCases.
-
-    Provides test suite ID generation and a method for adding test cases.
-    """
-
-    id = ''
-    """Identifier for the TestSuite. Prepended to the
-    TestCase identifiers to make identification easier."""
-
-    def __init__(self, tests=(), suite_id="", suite_settings=None):
-        """
-        Initialize the CustomTestSuite.
-
-        Arguments:
-
-        id -- identifier for the suite, prepended to test cases.
-        suite_settings -- settings overrides for this test suite.
-        """
-        super(CustomTestSuite, self).__init__(tests)
-        self.suite_settings = suite_settings or {}
-        self.id = os.path.relpath(suite_id, os.path.dirname(__file__))
+def make_id(path):
+    return os.path.relpath(path, testroot)
 
 
 class TransformTestCase(CustomTestCase):

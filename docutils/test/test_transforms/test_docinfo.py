@@ -9,6 +9,7 @@ Tests for docutils.transforms.frontmatter.DocInfo.
 
 if __name__ == '__main__':
     import __init__
+import unittest
 from test_transforms import DocutilsTestSupport
 from docutils.transforms.frontmatter import DocInfo
 from docutils.parsers.rst import Parser
@@ -16,13 +17,14 @@ from docutils.parsers.rst import Parser
 
 def suite():
     parser = Parser()
-    s = DocutilsTestSupport.CustomTestSuite(suite_id=__file__)
+    suite_id = DocutilsTestSupport.make_id(__file__)
+    s = unittest.TestSuite()
     for name, (transforms, cases) in totest.items():
         for casenum, (case_input, case_expected) in enumerate(cases):
             s.addTest(
                 DocutilsTestSupport.TransformTestCase("test_transforms",
                                                       input=case_input, expected=case_expected,
-                                                      id='%s: totest[%r][%s]' % (s.id, name, casenum),
+                                                      id='%s: totest[%r][%s]' % (suite_id, name, casenum),
                                                       suite_settings={'language_code': 'en'},
                                                       transforms=transforms, parser=parser)
             )
@@ -31,7 +33,7 @@ def suite():
             s.addTest(
                 DocutilsTestSupport.TransformTestCase("test_transforms",
                                                       input=case_input, expected=case_expected,
-                                                      id='%s: totest[%r][%s]' % (s.id, name, casenum),
+                                                      id='%s: totest[%r][%s]' % (suite_id, name, casenum),
                                                       suite_settings={'language_code': 'de'},
                                                       transforms=transforms, parser=parser)
             )
@@ -40,7 +42,7 @@ def suite():
             s.addTest(
                 DocutilsTestSupport.TransformTestCase("test_transforms",
                                                       input=case_input, expected=case_expected,
-                                                      id='%s: totest[%r][%s]' % (s.id, name, casenum),
+                                                      id='%s: totest[%r][%s]' % (suite_id, name, casenum),
                                                       suite_settings={'language_code': 'ru'},
                                                       transforms=transforms, parser=parser)
             )
@@ -486,5 +488,4 @@ totest_ru['bibliographic_field_lists'] = ((DocInfo,), [
 
 
 if __name__ == '__main__':
-    import unittest
     unittest.main(defaultTest='suite')

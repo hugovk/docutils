@@ -10,19 +10,21 @@ Test the 'code' directive in parsers/rst/directives/body.py.
 
 if __name__ == '__main__':
     import __init__
+import unittest
 from test_parsers import DocutilsTestSupport
 from docutils.utils.code_analyzer import with_pygments
 
 def suite():
     if not with_pygments:
         del(totest['code-parsing'])
-    s = DocutilsTestSupport.CustomTestSuite(suite_id=__file__)
+    suite_id = DocutilsTestSupport.make_id(__file__)
+    s = unittest.TestSuite()
     for name, cases in totest.items():
         for casenum, (case_input, case_expected) in enumerate(cases):
             s.addTest(
                 DocutilsTestSupport.ParserTestCase("test_parser",
                                                    input=case_input, expected=case_expected,
-                                                   id='%s: totest[%r][%s]' % (s.id, name, casenum),
+                                                   id='%s: totest[%r][%s]' % (suite_id, name, casenum),
                                                    suite_settings={})
             )
     return s
@@ -256,5 +258,4 @@ Place the language name in a class argument to avoid the no-lexer warning:
 
 
 if __name__ == '__main__':
-    import unittest
     unittest.main(defaultTest='suite')

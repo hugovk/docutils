@@ -33,5 +33,4 @@ class GetWriterClassTestCase(unittest.TestCase):
         wr = get_writer_class('local-writer')
 
 if __name__ == '__main__':
-    import unittest
     unittest.main()
