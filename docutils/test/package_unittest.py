@@ -12,6 +12,7 @@ recursively.
 
 import sys
 import os
+import importlib
 import types
 import unittest
 
@@ -46,7 +47,7 @@ def loadTestModules(path, name='', packages=None):
     sys.path.insert(0, path)
     for mod in testModules:
         try:
-            module = import_module(mod)
+            module = importlib.import_module(mod)
         except ImportError:
             print("ERROR: Can't import %s, skipping its tests:" % mod, file=sys.stderr)
             sys.excepthook(*sys.exc_info())
@@ -74,14 +75,6 @@ def loadTestModules(path, name='', packages=None):
 def path2mod(path):
     """Convert a file path to a dotted module name."""
     return path[:-3].replace(os.sep, '.')
-
-def import_module(name):
-    """Import a dotted-path module name, and return the final component."""
-    mod = __import__(name)
-    components = name.split('.')
-    for comp in components[1:]:
-        mod = getattr(mod, comp)
-    return mod
 
 def main(suite=None):
     """
