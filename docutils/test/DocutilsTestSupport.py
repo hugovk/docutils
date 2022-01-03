@@ -434,28 +434,6 @@ class WriterPublishTestCase(CustomTestCase, docutils.SettingsSpec):
         self.compare_output(self.input, output, self.expected)
 
 
-class PublishTestSuite(CustomTestSuite):
-
-    def __init__(self, writer_name, suite_id="", suite_settings=None):
-        """
-        `writer_name` is the name of the writer to use.
-        """
-        super(PublishTestSuite, self).__init__(suite_id=suite_id, suite_settings=suite_settings)
-        self.test_class = WriterPublishTestCase
-        self.writer_name = writer_name
-
-    def generateTests(self, totest):
-        for name, cases in totest.items():
-            for casenum, (case_input, case_expected) in enumerate(cases):
-                self.addTest(
-                    self.test_class("test_publish",
-                                    input=case_input, expected=case_expected,
-                                    id='%s: totest[%r][%s]' % (self.id, name, casenum),
-                                    suite_settings=self.suite_settings,
-                                    writer_name=self.writer_name)
-                )
-
-
 class HtmlWriterPublishPartsTestCase(WriterPublishTestCase):
 
     """
