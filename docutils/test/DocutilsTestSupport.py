@@ -289,35 +289,6 @@ class ParserTestCase(CustomTestCase):
         self.compare_output(self.input, output, self.expected)
 
 
-class ParserTestSuite(CustomTestSuite):
-
-    """
-    A collection of ParserTestCases.
-
-    A ParserTestSuite instance manufactures ParserTestCases,
-    keeps track of them, and provides a shared test fixture (a-la
-    setUp and tearDown).
-    """
-
-    test_case_class = ParserTestCase
-
-    def generateTests(self, totest):
-        """
-        Stock the suite with test cases generated from a test data dictionary.
-
-        Each dictionary key (test type name) maps to a list of tests. Each
-        test is a list: input, expected output. Tests should be
-        self-documenting and not require external comments.
-        """
-        for name, cases in totest.items():
-            for casenum, (case_input, case_expected) in enumerate(cases):
-                self.addTest(
-                    self.test_case_class("test_parser",
-                                         input=case_input, expected=case_expected,
-                                         id='%s: totest[%r][%s]' % (self.id, name, casenum),
-                                         suite_settings=self.suite_settings)
-                )
-
 class PEPParserTestCase(ParserTestCase):
 
     """PEP-specific parser test case."""
