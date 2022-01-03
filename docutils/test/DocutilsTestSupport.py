@@ -408,32 +408,6 @@ class SimpleTableParserTestCase(GridTableParserTestCase):
     parser = tableparser.SimpleTableParser()
 
 
-class SimpleTableParserTestSuite(CustomTestSuite):
-
-    """
-    A collection of SimpleTableParserTestCases.
-    """
-
-    test_case_class = SimpleTableParserTestCase
-
-    def generateTests(self, totest):
-        """
-        Stock the suite with test cases generated from a test data dictionary.
-
-        Each dictionary key (test type name) maps to a list of tests. Each
-        test is a list: an input table, expected output from parse(). Tests
-        should be self-documenting and not require external comments.
-        """
-        for name, cases in totest.items():
-            for casenum, (case_input, case_expected) in enumerate(cases):
-                self.addTest(
-                    self.test_case_class("test_parse",
-                                         input=case_input, expected=case_expected,
-                                         id='%s: totest[%r][%s]' % (self.id, name, casenum),
-                                         suite_settings=self.suite_settings)
-                )
-
-
 class WriterPublishTestCase(CustomTestCase, docutils.SettingsSpec):
 
     """
