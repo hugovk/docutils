@@ -44,7 +44,6 @@ import os
 import difflib
 import unittest
 import inspect
-import pdb
 import traceback
 from pprint import pformat
 
@@ -103,7 +102,7 @@ class CustomTestCase(unittest.TestCase):
     """Comparison method shared by all subclasses."""
 
     def __init__(self, method_name, input, expected, id,
-                 run_in_debugger=True, suite_settings=None):
+                 suite_settings=None):
         """
         Initialise the CustomTestCase.
 
@@ -113,13 +112,11 @@ class CustomTestCase(unittest.TestCase):
         input -- input to the parser.
         expected -- expected output from the parser.
         id -- unique test identifier, used by the test framework.
-        run_in_debugger -- if true, run this test under the pdb debugger.
         suite_settings -- settings overrides for this test suite.
         """
         self.id = id
         self.input = input
         self.expected = expected
-        self.run_in_debugger = run_in_debugger
         self.suite_settings = suite_settings.copy() if suite_settings else {}
 
         super().__init__(method_name)
@@ -224,7 +221,7 @@ class CustomTestSuite(unittest.TestSuite):
             self.id = id
 
     def addTestCase(self, test_case_class, method_name, input, expected,
-                    id=None, run_in_debugger=False, **kwargs):
+                    id=None, **kwargs):
         """
         Create a CustomTestCase in the CustomTestSuite.
         Also return it, just in case.
@@ -236,7 +233,6 @@ class CustomTestSuite(unittest.TestSuite):
         input -- input to the parser.
         expected -- expected output from the parser.
         id -- unique test identifier, used by the test framework.
-        run_in_debugger -- if true, run this test under the pdb debugger.
         """
         if id is None:                  # generate id if required
             id = self.next_test_case_id
@@ -245,7 +241,6 @@ class CustomTestSuite(unittest.TestSuite):
         tcid = '%s: %s' % (self.id, id)
         # generate and add test case
         tc = test_case_class(method_name, input, expected, tcid,
-                             run_in_debugger=run_in_debugger,
                              suite_settings=self.suite_settings.copy(),
                              **kwargs)
         self.addTest(tc)
@@ -285,8 +280,6 @@ class TransformTestCase(CustomTestCase):
         return True
 
     def test_transforms(self):
-        if self.run_in_debugger:
-            pdb.set_trace()
         settings = self.settings.copy()
         settings.__dict__.update(self.suite_settings)
         document = utils.new_document('test data', settings)
@@ -301,8 +294,6 @@ class TransformTestCase(CustomTestCase):
         self.compare_output(self.input, output, self.expected)
 
     def test_transforms_verbosely(self):
-        if self.run_in_debugger:
-            pdb.set_trace()
         print('\n', self.id)
         print('-' * 70)
         print(self.input)
@@ -344,31 +335,17 @@ class TransformTestSuite(CustomTestSuite):
         Each dictionary key (test type's name) maps to a tuple, whose
         first item is a list of transform classes and whose second
         item is a list of tests. Each test is a list: input, expected
-        output, optional modifier. The optional third entry, a
-        behavior modifier, can be 0 (temporarily disable this test) or
-        1 (run this test under the pdb debugger). Tests should be
-        self-documenting and not require external comments.
+        output. Tests should be self-documenting and not require external
+        comments.
         """
         for name, (transforms, cases) in dict.items():
             for casenum in range(len(cases)):
                 case = cases[casenum]
-                run_in_debugger = False
-                if len(case)==3:
-                    # TODO: (maybe) change the 3rd argument to a dict, so it
-                    # can handle more cases by keyword ('disable', 'debug',
-                    # 'settings'), here and in other generateTests methods.
-                    # But there's also the method that
-                    # HtmlPublishPartsTestSuite uses <DJG>
-                    if case[2]:
-                        run_in_debugger = True
-                    else:
-                        continue
                 self.addTestCase(
                       TransformTestCase, testmethod,
                       transforms=transforms, parser=self.parser,
                       input=case[0], expected=case[1],
-                      id='totest[%r][%s]' % (name, casenum),
-                      run_in_debugger=run_in_debugger)
+                      id='totest[%r][%s]' % (name, casenum))
 
 
 class ParserTestCase(CustomTestCase):
@@ -391,8 +368,6 @@ class ParserTestCase(CustomTestCase):
     settings.debug = False
 
     def test_parser(self):
-        if self.run_in_debugger:
-            pdb.set_trace()
         settings = self.settings.copy()
         settings.__dict__.update(self.suite_settings)
         document = utils.new_document('test data', settings)
@@ -418,8 +393,8 @@ class ParserTestSuite(CustomTestSuite):
         Stock the suite with test cases generated from a test data dictionary.
 
         Each dictionary key (test type name) maps to a list of tests. Each
-        test is a list: input, expected output, optional modifier. Tests
-        should be self-documenting and not require external comments.
+        test is a list: input, expected output. Tests should be
+        self-documenting and not require external comments.
         """
         for name, cases in dict.items():
             for casenum, (case_input, case_expected) in enumerate(cases):
@@ -532,28 +507,18 @@ class GridTableParserTestSuite(CustomTestSuite):
 
         Each dictionary key (test type name) maps to a list of tests. Each
         test is a list: an input table, expected output from parse_table(),
-        expected output from parse(), optional modifier. The optional fourth
-        entry, a behavior modifier, can be 0 (temporarily disable this test)
-        or 1 (run this test under the pdb debugger). Tests should be
-        self-documenting and not require external comments.
+        expected output from parse(). Tests should be self-documenting and not
+        require external comments.
         """
         for name, cases in dict.items():
             for casenum in range(len(cases)):
                 case = cases[casenum]
-                run_in_debugger = False
-                if len(case) == 4:
-                    if case[-1]:
-                        run_in_debugger = True
-                    else:
-                        continue
                 self.addTestCase(self.test_case_class, 'test_parse_table',
                                  input=case[0], expected=case[1],
-                                 id='totest[%r][%s]' % (name, casenum),
-                                 run_in_debugger=run_in_debugger)
+                                 id='totest[%r][%s]' % (name, casenum))
                 self.addTestCase(self.test_case_class, 'test_parse',
                                  input=case[0], expected=case[2],
-                                 id='totest[%r][%s]' % (name, casenum),
-                                 run_in_debugger=run_in_debugger)
+                                 id='totest[%r][%s]' % (name, casenum))
 
 
 class SimpleTableParserTestCase(GridTableParserTestCase):
@@ -574,25 +539,15 @@ class SimpleTableParserTestSuite(CustomTestSuite):
         Stock the suite with test cases generated from a test data dictionary.
 
         Each dictionary key (test type name) maps to a list of tests. Each
-        test is a list: an input table, expected output from parse(), optional
-        modifier. The optional third entry, a behavior modifier, can be 0
-        (temporarily disable this test) or 1 (run this test under the pdb
-        debugger). Tests should be self-documenting and not require external
-        comments.
+        test is a list: an input table, expected output from parse(). Tests
+        should be self-documenting and not require external comments.
         """
         for name, cases in dict.items():
             for casenum in range(len(cases)):
                 case = cases[casenum]
-                run_in_debugger = False
-                if len(case) == 3:
-                    if case[-1]:
-                        run_in_debugger = True
-                    else:
-                        continue
                 self.addTestCase(self.test_case_class, 'test_parse',
                                  input=case[0], expected=case[1],
-                                 id='totest[%r][%s]' % (name, casenum),
-                                 run_in_debugger=run_in_debugger)
+                                 id='totest[%r][%s]' % (name, casenum))
 
 
 class WriterPublishTestCase(CustomTestCase, docutils.SettingsSpec):
@@ -611,8 +566,6 @@ class WriterPublishTestCase(CustomTestCase, docutils.SettingsSpec):
         super().__init__(*args, **kwargs)
 
     def test_publish(self):
-        if self.run_in_debugger:
-            pdb.set_trace()
         output = docutils.core.publish_string(
               source=self.input,
               reader_name='standalone',
@@ -637,17 +590,10 @@ class PublishTestSuite(CustomTestSuite):
         for name, cases in dict.items():
             for casenum in range(len(cases)):
                 case = cases[casenum]
-                run_in_debugger = False
-                if len(case)==3:
-                    if case[2]:
-                        run_in_debugger = True
-                    else:
-                        continue
                 self.addTestCase(
                       self.test_class, 'test_publish',
                       input=case[0], expected=case[1],
                       id='totest[%r][%s]' % (name, casenum),
-                      run_in_debugger=run_in_debugger,
                       # Passed to constructor of self.test_class:
                       writer_name=self.writer_name)
 
@@ -665,8 +611,6 @@ class HtmlWriterPublishPartsTestCase(WriterPublishTestCase):
     settings_default_overrides['stylesheet'] = ''
 
     def test_publish(self):
-        if self.run_in_debugger:
-            pdb.set_trace()
         parts = docutils.core.publish_parts(
             source=self.input,
             reader_name='standalone',
@@ -733,16 +677,9 @@ class HtmlPublishPartsTestSuite(CustomTestSuite):
             self.suite_settings.update(settings_overrides)
             for casenum in range(len(cases)):
                 case = cases[casenum]
-                run_in_debugger = False
-                if len(case)==3:
-                    if case[2]:
-                        run_in_debugger = True
-                    else:
-                        continue
                 self.addTestCase(self.testcase_class, 'test_publish',
                                  input=case[0], expected=case[1],
-                                 id='totest[%r][%s]' % (name, casenum),
-                                 run_in_debugger=run_in_debugger)
+                                 id='totest[%r][%s]' % (name, casenum))
             self.suite_settings = original_settings
 
 
