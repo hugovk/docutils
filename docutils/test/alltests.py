@@ -20,6 +20,7 @@ import sys
 import atexit
 import os
 import platform
+import unittest
 
 import DocutilsTestSupport              # must be imported before docutils
 import docutils
@@ -72,7 +73,6 @@ def pformat(suite):
 
 
 def suite():
-    path, script = os.path.split(sys.argv[0])
     suite = package_unittest.loadTestModules(DocutilsTestSupport.testroot,
                                              'test_', packages=1)
     sys.stdout.flush()
@@ -96,7 +96,7 @@ if __name__ == '__main__':
     print('Working directory: %s' % os.getcwd())
     print('Docutils package: %s' % os.path.dirname(docutils.__file__))
     sys.stdout.flush()
-    result = package_unittest.main(suite)
+    result = unittest.TextTestRunner().run(suite)
     finish = time.time()
     print('Elapsed time: %.3f seconds' % (finish - start))
     sys.exit(not result.wasSuccessful())

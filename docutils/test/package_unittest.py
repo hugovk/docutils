@@ -75,22 +75,3 @@ def loadTestModules(path, name='', packages=None):
 def path2mod(path):
     """Convert a file path to a dotted module name."""
     return path[:-3].replace(os.sep, '.')
-
-def main(suite=None):
-    """
-    Shared `main` for any individual test_* file.
-
-    suite -- TestSuite to run. If not specified, look for any globally defined
-    tests and run them.
-    """
-    if suite is None:
-        # Load any globally defined tests.
-        suite = unittest.defaultTestLoader.loadTestsFromModule(
-              __import__('__main__'))
-    testRunner = unittest.TextTestRunner()
-    # run suites (if we were called from test_all) or suite...
-    if isinstance(suite, type([])):
-        for s in suite:
-            testRunner.run(s)
-    else:
-        return testRunner.run(suite)
