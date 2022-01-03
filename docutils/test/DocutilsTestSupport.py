@@ -163,10 +163,6 @@ class CustomTestCase(unittest.TestCase):
             raise error
 
 
-def make_id(path):
-    return os.path.relpath(path, testroot)
-
-
 class TransformTestCase(CustomTestCase):
 
     """
@@ -306,7 +302,7 @@ class RecommonmarkParserTestCase(ParserTestCase):
         settings.debug = False
 
 
-class RecommonmarkParserTestSuite(ParserTestSuite):
+class RecommonmarkParserTestSuite(CustomTestCase):
 
     """A collection of RecommonmarkParserTestCases."""
 
@@ -445,6 +441,20 @@ class HtmlWriterPublishPartsTestCase(WriterPublishTestCase):
             if output[-1].endswith("\n'''"):
                 output[-1] = output[-1][:-4] + "\\n'''"
         return '{' + ',\n '.join(output) + '}\n'
+
+
+def make_id(path):
+    return os.path.relpath(path, testroot)
+
+
+def recommonmark_ready_for_tests():
+    if not RecommonmarkParserTestCase.parser_class:
+        return False
+    # TODO: currently the tests are too version-specific
+    import recommonmark
+    if recommonmark.__version__ != '0.4.0':
+        return False
+    return True
 
 
 def exception_data(func, *args, **kwds):
