@@ -18,7 +18,7 @@ from docutils.parsers.rst import Parser
 def suite():
     parser = Parser()
     s = DocutilsTestSupport.TransformTestSuite(
-        parser, suite_settings={'strip_comments': 1})
+        parser, suite_id=__file__, suite_settings={'strip_comments': 1})
     s.generateTests(totest)
     return s
 

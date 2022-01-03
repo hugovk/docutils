@@ -19,7 +19,7 @@ from docutils.parsers.rst.directives import tables
 
 
 def suite():
-    s = DocutilsTestSupport.ParserTestSuite()
+    s = DocutilsTestSupport.ParserTestSuite(suite_id=__file__)
     s.generateTests(totest)
     return s
 

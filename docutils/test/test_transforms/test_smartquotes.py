@@ -28,7 +28,7 @@ def suite():
                 'trim_footnote_ref_space': True,
                 'report': 2} # TODO: why is this ignored when running as main?
     s = DocutilsTestSupport.TransformTestSuite(
-        parser, suite_settings=settings)
+        parser, suite_id=__file__, suite_settings=settings)
     s.generateTests(totest)
     settings['language_code'] = 'de'
     s.generateTests(totest_de)

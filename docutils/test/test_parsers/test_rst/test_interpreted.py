@@ -15,7 +15,7 @@ from docutils.utils.code_analyzer import with_pygments
 
 
 def suite():
-    s = DocutilsTestSupport.ParserTestSuite()
+    s = DocutilsTestSupport.ParserTestSuite(suite_id=__file__)
     if not with_pygments:
         del(totest['code-parsing'])
     s.generateTests(totest)

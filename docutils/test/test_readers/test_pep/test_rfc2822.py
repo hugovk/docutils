@@ -14,7 +14,7 @@ from test_readers import DocutilsTestSupport
 
 
 def suite():
-    s = DocutilsTestSupport.PEPParserTestSuite()
+    s = DocutilsTestSupport.PEPParserTestSuite(suite_id=__file__)
     s.generateTests(totest)
     return s
 

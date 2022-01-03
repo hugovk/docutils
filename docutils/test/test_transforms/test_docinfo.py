@@ -18,7 +18,7 @@ def suite():
     parser = Parser()
     settings = {'language_code': 'en'}
     s = DocutilsTestSupport.TransformTestSuite(
-        parser, suite_settings=settings)
+        parser, suite_id=__file__, suite_settings=settings)
     s.generateTests(totest)
     settings['language_code'] = 'de'
     s.generateTests(totest_de)

@@ -12,7 +12,7 @@ if __name__ == '__main__':
 from test_parsers import DocutilsTestSupport
 
 def suite():
-    s = DocutilsTestSupport.SimpleTableParserTestSuite()
+    s = DocutilsTestSupport.SimpleTableParserTestSuite(suite_id=__file__)
     s.generateTests(totest)
     return s
 

@@ -16,7 +16,7 @@ import time
 from docutils.io import locale_encoding
 
 def suite():
-    s = DocutilsTestSupport.ParserTestSuite()
+    s = DocutilsTestSupport.ParserTestSuite(suite_id=__file__)
     s.generateTests(totest)
     return s
 

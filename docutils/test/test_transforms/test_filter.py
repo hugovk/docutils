@@ -16,7 +16,7 @@ from docutils.parsers.rst import Parser
 
 def suite():
     parser = Parser()
-    s = DocutilsTestSupport.TransformTestSuite(parser)
+    s = DocutilsTestSupport.TransformTestSuite(parser, suite_id=__file__)
     s.generateTests(totest)
     return s
 

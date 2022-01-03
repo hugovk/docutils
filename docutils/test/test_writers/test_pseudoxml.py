@@ -16,7 +16,7 @@ from test_writers import DocutilsTestSupport
 def suite():
     # Settings dictionary must not be empty for later changes to work.
     settings = {'expose_internals': []} # default
-    s = DocutilsTestSupport.PublishTestSuite('pseudoxml',
+    s = DocutilsTestSupport.PublishTestSuite('pseudoxml', suite_id=__file__,
                                              suite_settings=settings)
     s.generateTests(totest)
     settings['detailed'] = True

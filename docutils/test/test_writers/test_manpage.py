@@ -15,7 +15,7 @@ from test_writers import DocutilsTestSupport
 
 def suite():
     settings = {}
-    s = DocutilsTestSupport.PublishTestSuite('manpage', suite_settings=settings)
+    s = DocutilsTestSupport.PublishTestSuite('manpage', suite_id=__file__, suite_settings=settings)
     s.generateTests(totest)
     return s
 

@@ -14,7 +14,7 @@ from test_parsers import DocutilsTestSupport
 
 def suite():
     settings = {'language_code': 'de'}
-    s = DocutilsTestSupport.ParserTestSuite(suite_settings=settings)
+    s = DocutilsTestSupport.ParserTestSuite(suite_id=__file__, suite_settings=settings)
     s.generateTests(totest)
     return s
 

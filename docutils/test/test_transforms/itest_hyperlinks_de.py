@@ -32,7 +32,7 @@ def suite():
     settings = {}
     settings['language_code'] = 'de'
     s = DocutilsTestSupport.TransformTestSuite(
-        parser, suite_settings=settings)
+        parser, suite_id=__file__, suite_settings=settings)
     s.generateTests(totest)
     return s
 

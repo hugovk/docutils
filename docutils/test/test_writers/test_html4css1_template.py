@@ -21,7 +21,7 @@ def suite():
                                          'data', 'full-template.txt'),
                 'stylesheet_path': '/test.css',
                 'embed_stylesheet': 0,}
-    s = DocutilsTestSupport.PublishTestSuite('html', suite_settings=settings)
+    s = DocutilsTestSupport.PublishTestSuite('html', suite_id=__file__, suite_settings=settings)
     s.generateTests(totest)
     return s
 

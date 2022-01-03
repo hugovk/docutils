@@ -18,7 +18,7 @@ from docutils.parsers.rst import Parser
 def suite():
     parser = Parser()
     s = DocutilsTestSupport.TransformTestSuite(
-        parser, suite_settings={'expose_internals': ['rawsource', 'source']})
+        parser, suite_id=__file__, suite_settings={'expose_internals': ['rawsource', 'source']})
     s.generateTests(totest)
     return s
 

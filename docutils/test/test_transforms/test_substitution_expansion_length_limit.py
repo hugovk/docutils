@@ -17,7 +17,7 @@ from docutils.parsers.rst import Parser
 
 def suite():
     parser = Parser()
-    s = DocutilsTestSupport.TransformTestSuite(parser,
+    s = DocutilsTestSupport.TransformTestSuite(parser, suite_id=__file__,
                 suite_settings={'line_length_limit': 80})
     s.generateTests(totest)
     return s

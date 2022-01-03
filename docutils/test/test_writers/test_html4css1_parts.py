@@ -19,7 +19,7 @@ from docutils import core
 
 
 def suite():
-    s = DocutilsTestSupport.HtmlPublishPartsTestSuite()
+    s = DocutilsTestSupport.HtmlPublishPartsTestSuite(suite_id=__file__)
     s.generateTests(totest)
     return s
 

@@ -19,7 +19,7 @@ if __name__ == '__main__':
 from test_parsers import DocutilsTestSupport
 
 def suite():
-    s = DocutilsTestSupport.RecommonmarkParserTestSuite()
+    s = DocutilsTestSupport.RecommonmarkParserTestSuite(suite_id=__file__)
     s.generateTests(totest)
     return s
 

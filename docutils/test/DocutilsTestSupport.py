@@ -43,7 +43,6 @@ import sys
 import os
 import difflib
 import unittest
-import inspect
 import traceback
 from pprint import pformat
 
@@ -184,7 +183,7 @@ class CustomTestSuite(unittest.TestSuite):
     """Identifier for the TestSuite. Prepended to the
     TestCase identifiers to make identification easier."""
 
-    def __init__(self, tests=(), suite_settings=None):
+    def __init__(self, tests=(), suite_id="", suite_settings=None):
         """
         Initialize the CustomTestSuite.
 
@@ -195,20 +194,7 @@ class CustomTestSuite(unittest.TestSuite):
         """
         super(CustomTestSuite, self).__init__(tests)
         self.suite_settings = suite_settings or {}
-        outerframes = inspect.getouterframes(inspect.currentframe())
-        for outerframe in outerframes[1:]:
-            if outerframe[3] != '__init__':
-                callerpath = outerframe[1]
-                if callerpath is None:
-                    # It happens sometimes.  Why is a mystery.
-                    callerpath = os.getcwd()
-                callerpath = os.path.abspath(callerpath)
-                break
-        dir = os.path.dirname(__file__) or os.curdir
-        if callerpath.startswith(dir):
-            self.id = callerpath[len(dir) + 1:] # caller's module
-        else:
-            self.id = callerpath
+        self.id = os.path.relpath(suite_id, os.path.dirname(__file__))
 
 
 class TransformTestCase(CustomTestCase):
@@ -285,11 +271,11 @@ class TransformTestSuite(CustomTestSuite):
     setUp and tearDown).
     """
 
-    def __init__(self, parser, suite_settings=None):
+    def __init__(self, parser, suite_id="", suite_settings=None):
         self.parser = parser
         """Parser shared by all test cases."""
 
-        super(TransformTestSuite, self).__init__(suite_settings=suite_settings)
+        super(TransformTestSuite, self).__init__(suite_id=suite_id, suite_settings=suite_settings)
 
     def generateTests(self, dict,
                       testmethod='test_transforms'):
@@ -551,11 +537,11 @@ class WriterPublishTestCase(CustomTestCase, docutils.SettingsSpec):
 
 class PublishTestSuite(CustomTestSuite):
 
-    def __init__(self, writer_name, suite_settings=None):
+    def __init__(self, writer_name, suite_id="", suite_settings=None):
         """
         `writer_name` is the name of the writer to use.
         """
-        super(PublishTestSuite, self).__init__(suite_settings=suite_settings)
+        super(PublishTestSuite, self).__init__(suite_id=suite_id, suite_settings=suite_settings)
         self.test_class = WriterPublishTestCase
         self.writer_name = writer_name
 

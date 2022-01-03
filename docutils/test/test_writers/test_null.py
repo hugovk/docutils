@@ -14,7 +14,7 @@ from test_writers import DocutilsTestSupport
 
 
 def suite():
-    s = DocutilsTestSupport.PublishTestSuite('null')
+    s = DocutilsTestSupport.PublishTestSuite('null', suite_id=__file__)
     s.generateTests(totest)
     return s
 

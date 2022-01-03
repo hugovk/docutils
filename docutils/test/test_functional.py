@@ -36,7 +36,7 @@ class FunctionalTestSuite(DocutilsTestSupport.CustomTestSuite):
 
     def __init__(self):
         """Process all config files in functional/tests/."""
-        super().__init__()
+        super().__init__(suite_id=__file__)
         self.clear_output_directory()
         self.added = 0
         for root, dirs, files in os.walk(join_path(datadir, 'tests')):

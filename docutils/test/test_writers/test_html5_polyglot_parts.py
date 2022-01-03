@@ -45,7 +45,7 @@ class Html5PublishPartsTestSuite(HtmlPublishPartsTestSuite):
 
 
 def suite():
-    s = Html5PublishPartsTestSuite()
+    s = Html5PublishPartsTestSuite(suite_id=__file__)
     s.generateTests(totest)
     return s
 

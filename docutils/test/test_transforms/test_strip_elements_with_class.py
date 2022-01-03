@@ -16,7 +16,7 @@ from docutils.transforms.universal import StripClassesAndElements
 
 def suite():
     parser = Parser()
-    s = DocutilsTestSupport.TransformTestSuite(parser,
+    s = DocutilsTestSupport.TransformTestSuite(parser, suite_id=__file__,
             suite_settings={'strip_elements_with_classes': ['spam', 'no-ham'],
                             'strip_classes': ['spam', 'noise']})
     s.generateTests(totest)

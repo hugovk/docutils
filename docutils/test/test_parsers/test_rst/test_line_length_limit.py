@@ -21,7 +21,7 @@ from test_parsers import DocutilsTestSupport
 
 def suite():
     s = DocutilsTestSupport.ParserTestSuite(
-            suite_settings={'line_length_limit': 80})
+        suite_id=__file__, suite_settings={'line_length_limit': 80})
     s.generateTests(totest)
     return s
 

@@ -19,7 +19,7 @@ from test_writers import DocutilsTestSupport
 def suite():
     settings = {'stylesheet_path': '/test.css',
                 'embed_stylesheet': 0,}
-    s = DocutilsTestSupport.PublishTestSuite('s5', suite_settings=settings)
+    s = DocutilsTestSupport.PublishTestSuite('s5', suite_id=__file__, suite_settings=settings)
     s.generateTests(totest_1)
     settings['hidden_controls'] = 0
     settings['view_mode'] = 'outline'

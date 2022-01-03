@@ -22,7 +22,7 @@ except ImportError:
 
 
 def suite():
-    s = DocutilsTestSupport.ParserTestSuite()
+    s = DocutilsTestSupport.ParserTestSuite(suite_id=__file__)
     # eventually skip optional parts:
     if not with_pygments:
         del(totest['include-code'])

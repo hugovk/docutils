@@ -20,7 +20,7 @@ def suite():
                 'use_latex_citations': False,
                 'legacy_column_widths': True,
                 }
-    s = DocutilsTestSupport.PublishTestSuite('latex', suite_settings=settings)
+    s = DocutilsTestSupport.PublishTestSuite('latex', suite_id=__file__, suite_settings=settings)
     s.generateTests(totest)
     settings['use_latex_toc'] = True
     s.generateTests(totest_latex_toc)
