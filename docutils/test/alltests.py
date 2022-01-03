@@ -74,7 +74,7 @@ def pformat(suite):
 
 def suite():
     suite = package_unittest.loadTestModules(DocutilsTestSupport.testroot,
-                                             'test_', packages=1)
+                                             'test_')
     sys.stdout.flush()
     return suite
 
