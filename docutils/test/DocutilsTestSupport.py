@@ -277,8 +277,7 @@ class TransformTestSuite(CustomTestSuite):
 
         super(TransformTestSuite, self).__init__(suite_id=suite_id, suite_settings=suite_settings)
 
-    def generateTests(self, dict,
-                      testmethod='test_transforms'):
+    def generateTests(self, totest):
         """
         Stock the suite with test cases generated from a test data dictionary.
 
@@ -288,10 +287,10 @@ class TransformTestSuite(CustomTestSuite):
         output. Tests should be self-documenting and not require external
         comments.
         """
-        for name, (transforms, cases) in dict.items():
+        for name, (transforms, cases) in totest.items():
             for casenum, (case_input, case_expected) in enumerate(cases):
                 self.addTest(
-                    TransformTestCase(testmethod,
+                    TransformTestCase("test_transforms",
                                       input=case_input, expected=case_expected,
                                       id='%s: totest[%r][%s]' % (self.id, name, casenum),
                                       suite_settings=self.suite_settings,
@@ -339,7 +338,7 @@ class ParserTestSuite(CustomTestSuite):
 
     test_case_class = ParserTestCase
 
-    def generateTests(self, dict):
+    def generateTests(self, totest):
         """
         Stock the suite with test cases generated from a test data dictionary.
 
@@ -347,7 +346,7 @@ class ParserTestSuite(CustomTestSuite):
         test is a list: input, expected output. Tests should be
         self-documenting and not require external comments.
         """
-        for name, cases in dict.items():
+        for name, cases in totest.items():
             for casenum, (case_input, case_expected) in enumerate(cases):
                 self.addTest(
                     self.test_case_class("test_parser",
@@ -453,7 +452,7 @@ class GridTableParserTestSuite(CustomTestSuite):
 
     test_case_class = GridTableParserTestCase
 
-    def generateTests(self, dict):
+    def generateTests(self, totest):
         """
         Stock the suite with test cases generated from a test data dictionary.
 
@@ -462,7 +461,7 @@ class GridTableParserTestSuite(CustomTestSuite):
         expected output from parse(). Tests should be self-documenting and not
         require external comments.
         """
-        for name, cases in dict.items():
+        for name, cases in totest.items():
             for casenum, (case_input, case_expected_table, case_expected) in enumerate(cases):
                 self.addTest(
                     self.test_case_class("test_parse_table",
@@ -491,7 +490,7 @@ class SimpleTableParserTestSuite(CustomTestSuite):
 
     test_case_class = SimpleTableParserTestCase
 
-    def generateTests(self, dict):
+    def generateTests(self, totest):
         """
         Stock the suite with test cases generated from a test data dictionary.
 
@@ -499,7 +498,7 @@ class SimpleTableParserTestSuite(CustomTestSuite):
         test is a list: an input table, expected output from parse(). Tests
         should be self-documenting and not require external comments.
         """
-        for name, cases in dict.items():
+        for name, cases in totest.items():
             for casenum, (case_input, case_expected) in enumerate(cases):
                 self.addTest(
                     self.test_case_class("test_parse",
@@ -545,8 +544,8 @@ class PublishTestSuite(CustomTestSuite):
         self.test_class = WriterPublishTestCase
         self.writer_name = writer_name
 
-    def generateTests(self, dict):
-        for name, cases in dict.items():
+    def generateTests(self, totest):
+        for name, cases in totest.items():
             for casenum, (case_input, case_expected) in enumerate(cases):
                 self.addTest(
                     self.test_class("test_publish",
@@ -630,8 +629,8 @@ class HtmlPublishPartsTestSuite(CustomTestSuite):
 
     testcase_class = HtmlWriterPublishPartsTestCase
 
-    def generateTests(self, dict):
-        for name, (settings_overrides, cases) in dict.items():
+    def generateTests(self, totest):
+        for name, (settings_overrides, cases) in totest.items():
             settings = self.suite_settings.copy()
             settings.update(settings_overrides)
             for casenum, (case_input, case_expected) in enumerate(cases):
