@@ -45,6 +45,7 @@ import os
 import unittest
 import re
 import inspect
+import pdb
 import traceback
 from pprint import pformat
 
@@ -75,13 +76,6 @@ except ImportError:
     traceback.print_exc()
     sys.exit(1)
 
-
-try:
-    import mypdb as pdb
-except:
-    import pdb
-
-
 # Hack to make repr(StringList) look like repr(list):
 StringList.__repr__ = StringList.__str__
 
@@ -109,28 +103,6 @@ class StandardTestCase(unittest.TestCase):
 
     def setUp(self):
         os.chdir(testroot)
-
-    def assertEqual(self, first, second, msg=None):
-        """Fail if the two objects are unequal as determined by the '=='
-           operator.
-        """
-        if not first == second:
-            raise self.failureException(
-                msg or '%s != %s' % _format_str(first, second))
-
-    def assertNotEqual(self, first, second, msg=None):
-        """Fail if the two objects are equal as determined by the '=='
-           operator.
-        """
-        if first == second:
-            raise self.failureException(
-                msg or '%s == %s' % _format_str(first, second))
-
-    # aliases for assertion methods, deprecated since Python 2.7
-
-    failUnlessEqual = assertEquals = assertEqual
-
-    assertNotEquals = failIfEqual = assertNotEqual
 
 
 class CustomTestCase(StandardTestCase):
