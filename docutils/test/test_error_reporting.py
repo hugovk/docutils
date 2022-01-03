@@ -202,6 +202,8 @@ class SafeStringTests_locale(unittest.TestCase):
     wbose = SafeString(bose)
     wuose = SafeString(uose)
 
+    assert os.getcwd() == DocutilsTestSupport.testroot
+
     def test_ustr(self):
         """Test conversion to a unicode-string."""
         # unicode(bioe) fails with e.g. 'ru_RU.utf8' locale

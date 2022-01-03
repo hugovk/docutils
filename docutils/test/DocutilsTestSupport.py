@@ -42,8 +42,8 @@ __docformat__ = 'reStructuredText'
 
 import sys
 import os
+import difflib
 import unittest
-import re
 import inspect
 import pdb
 import traceback
@@ -56,7 +56,6 @@ sys.path.append(os.path.normpath(os.path.join(testroot, '..', 'extras')))
 sys.path.insert(0, testroot)
 
 try:
-    import difflib
     import package_unittest
     import docutils
     import docutils.core
@@ -74,7 +73,7 @@ except ImportError:
     # resulting from problems with importing Docutils modules must
     # caught here.
     traceback.print_exc()
-    sys.exit(1)
+    raise SystemExit(1)
 
 # Hack to make repr(StringList) look like repr(list):
 StringList.__repr__ = StringList.__str__
@@ -92,17 +91,7 @@ class DevNull:
 
 
 class StandardTestCase(unittest.TestCase):
-
-    """
-    Helper class, providing the same interface as unittest.TestCase,
-    but with useful setUp and comparison methods.
-
-    The methods assertEqual and assertNotEqual have been overwritten
-    to provide better support for multi-line strings.
-    """
-
-    def setUp(self):
-        os.chdir(testroot)
+    pass
 
 
 class CustomTestCase(StandardTestCase):
@@ -159,7 +148,7 @@ class CustomTestCase(StandardTestCase):
         roles._roles = {}
 
     def setUp(self):
-        StandardTestCase.setUp(self)
+        super(CustomTestCase, self).setUp()
         self.clear_roles()
 
     def compare_output(self, input, output, expected):
@@ -788,43 +777,3 @@ def exception_data(func, *args, **kwds):
         return (detail, detail.args,
                 '%s: %s' % (detail.__class__.__name__, detail))
     return None, [], "No exception"
-
-
-def _format_str(*args):
-    r"""
-    Return a tuple containing representations of all args.
-
-    Same as map(repr, args) except that it returns multi-line
-    representations for strings containing newlines, e.g.::
-
-        '''\
-        foo  \n\
-        bar
-
-        baz'''
-
-    instead of::
-
-        'foo  \nbar\n\nbaz'
-
-    This is a helper function for CustomTestCase.
-    """
-    return_tuple = []
-    for i in args:
-        r = repr(i)
-        if isinstance(i, (str, bytes)) and '\n' in i:
-            stripped = ''
-            if isinstance(i, bytes) and r.startswith('b'):
-                stripped = r[0]
-                r = r[1:]
-            # quote_char = "'" or '"'
-            quote_char = r[0]
-            assert quote_char in ("'", '"'), quote_char
-            assert r[0] == r[-1]
-            r = r[1:-1]
-            r = (stripped + 3 * quote_char + '\\\n' +
-                 re.sub(r'(?<!\\)((\\\\)*)\\n', r'\1\n', r) +
-                 3 * quote_char)
-            r = re.sub(r' \n', r' \\n\\\n', r)
-        return_tuple.append(r)
-    return tuple(return_tuple)
