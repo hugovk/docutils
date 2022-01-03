@@ -12,58 +12,9 @@ recursively.
 
 import sys
 import os
-import getopt
 import types
 import unittest
 
-
-# So that individual test modules can share a bit of state,
-# `package_unittest` acts as an intermediary for the following
-# variables:
-debug = False
-verbosity = 1
-
-USAGE = """\
-Usage: test_whatever [options]
-
-Options:
-  -h, --help       Show this message
-  -v, --verbose    Verbose output
-  -q, --quiet      Minimal output
-  -d, --debug      Debug mode
-"""
-
-def usageExit(msg=None):
-    """Print usage and exit."""
-    if msg:
-        print(msg)
-    print(USAGE)
-    sys.exit(2)
-
-def parseArgs(argv=sys.argv):
-    """Parse command line arguments and set TestFramework state.
-
-    State is to be acquired by test_* modules by a grotty hack:
-    ``from TestFramework import *``. For this stylistic
-    transgression, I expect to be first up against the wall
-    when the revolution comes. --Garth"""
-    global verbosity, debug
-    try:
-        options, args = getopt.getopt(argv[1:], 'hHvqd',
-                                      ['help', 'verbose', 'quiet', 'debug'])
-        for opt, value in options:
-            if opt in ('-h', '-H', '--help'):
-                usageExit()
-            if opt in ('-q', '--quiet'):
-                verbosity = 0
-            if opt in ('-v', '--verbose'):
-                verbosity = 2
-            if opt in ('-d', '--debug'):
-                debug =1
-        if len(args) != 0:
-            usageExit("No command-line arguments supported yet.")
-    except getopt.error as msg:
-        usageExit(msg)
 
 def loadTestModules(path, name='', packages=None):
     """
@@ -94,8 +45,6 @@ def loadTestModules(path, name='', packages=None):
     # Import modules and add their tests to the suite.
     sys.path.insert(0, path)
     for mod in testModules:
-        if debug:
-            print("importing %s" % mod, file=sys.stderr)
         try:
             module = import_module(mod)
         except ImportError:
@@ -141,14 +90,11 @@ def main(suite=None):
     suite -- TestSuite to run. If not specified, look for any globally defined
     tests and run them.
     """
-    parseArgs()
     if suite is None:
         # Load any globally defined tests.
         suite = unittest.defaultTestLoader.loadTestsFromModule(
               __import__('__main__'))
-    if debug:
-        print("Debug: Suite=%s" % suite, file=sys.stderr)
-    testRunner = unittest.TextTestRunner(verbosity=verbosity)
+    testRunner = unittest.TextTestRunner()
     # run suites (if we were called from test_all) or suite...
     if isinstance(suite, type([])):
         for s in suite:

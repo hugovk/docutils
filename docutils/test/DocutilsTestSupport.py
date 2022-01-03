@@ -271,7 +271,7 @@ class TransformTestCase(CustomTestCase):
     settings = option_parser.get_default_values()
     settings.report_level = 1
     settings.halt_level = 5
-    settings.debug = package_unittest.debug
+    settings.debug = False
     settings.warning_stream = DevNull()
     unknown_reference_resolvers = ()
 
@@ -393,7 +393,7 @@ class ParserTestCase(CustomTestCase):
     settings = option_parser.get_default_values()
     settings.report_level = 5
     settings.halt_level = 5
-    settings.debug = package_unittest.debug
+    settings.debug = False
 
     def test_parser(self):
         if self.run_in_debugger:
@@ -455,7 +455,7 @@ class PEPParserTestCase(ParserTestCase):
     settings = option_parser.get_default_values()
     settings.report_level = 5
     settings.halt_level = 5
-    settings.debug = package_unittest.debug
+    settings.debug = False
 
 
 class PEPParserTestSuite(ParserTestSuite):
@@ -495,7 +495,7 @@ class RecommonmarkParserTestCase(ParserTestCase):
         settings = option_parser.get_default_values()
         settings.report_level = 5
         settings.halt_level = 5
-        settings.debug = package_unittest.debug
+        settings.debug = False
 
 
 class RecommonmarkParserTestSuite(ParserTestSuite):
