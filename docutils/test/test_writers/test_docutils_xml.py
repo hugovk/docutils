@@ -130,7 +130,7 @@ def publish_xml(settings, source):
 # XML Test Case
 # -------------
 
-class DocutilsXMLTestCase(DocutilsTestSupport.StandardTestCase):
+class DocutilsXMLTestCase(unittest.TestCase):
 
     settings = {'input_encoding': 'utf8',
                 'output_encoding': 'iso-8859-1',

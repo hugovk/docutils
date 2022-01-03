@@ -9,13 +9,15 @@
 test get_writer_class
 """
 
+import unittest
+
 if __name__ == '__main__':
     import __init__
 from test_writers import DocutilsTestSupport
 from docutils.writers import get_writer_class
 
 
-class GetWriterClassTestCase(DocutilsTestSupport.StandardTestCase):
+class GetWriterClassTestCase(unittest.TestCase):
     #tests = ( ('manpage', 1), ('nope', 0), ('dummy-writer', 1))
 
     def test_registered_writer(self):

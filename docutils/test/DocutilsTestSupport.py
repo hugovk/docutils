@@ -16,7 +16,6 @@ Exports the following:
     - `tableparser` is 'docutils.parsers.rst.tableparser'
 
 :Classes:
-    - `StandardTestCase`
     - `CustomTestCase`
     - `CustomTestSuite`
     - `TransformTestCase`
@@ -90,11 +89,7 @@ class DevNull:
         pass
 
 
-class StandardTestCase(unittest.TestCase):
-    pass
-
-
-class CustomTestCase(StandardTestCase):
+class CustomTestCase(unittest.TestCase):
 
     """
     Helper class, providing extended functionality over unittest.TestCase.

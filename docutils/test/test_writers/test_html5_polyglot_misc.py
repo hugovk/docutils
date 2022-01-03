@@ -9,6 +9,7 @@ Miscellaneous HTML writer tests.
 """
 
 import os
+import unittest
 import warnings
 
 if __name__ == '__main__':
@@ -17,7 +18,7 @@ from test_writers import DocutilsTestSupport
 from docutils import core
 
 
-class EncodingTestCase(DocutilsTestSupport.StandardTestCase):
+class EncodingTestCase(unittest.TestCase):
 
     def test_xmlcharrefreplace(self):
         # Test that xmlcharrefreplace is the default output encoding
@@ -33,7 +34,7 @@ class EncodingTestCase(DocutilsTestSupport.StandardTestCase):
         # xmlcharrefreplace handler is used.
         self.assertIn(b'EUR = &#8364;', result)
 
-class MovingArgsTestCase(DocutilsTestSupport.StandardTestCase):
+class MovingArgsTestCase(unittest.TestCase):
 
     mys = {'stylesheet_path': '',
            # 'embed_stylesheet': False,
@@ -75,7 +76,7 @@ second term:
                       result)
 
 
-class SettingsTestCase(DocutilsTestSupport.StandardTestCase):
+class SettingsTestCase(unittest.TestCase):
     data = 'test'
 
     def test_default_stylesheet(self):
@@ -150,7 +151,7 @@ class SettingsTestCase(DocutilsTestSupport.StandardTestCase):
             assert issubclass(wng[0].category, FutureWarning)
 
 
-class MathTestCase(DocutilsTestSupport.StandardTestCase):
+class MathTestCase(unittest.TestCase):
 
     """Attention: This class tests the current implementation of maths support
     which is open to change in future Docutils releases. """

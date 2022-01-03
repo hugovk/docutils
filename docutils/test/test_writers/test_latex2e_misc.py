@@ -15,6 +15,7 @@
 """
 Miscellaneous LaTeX writer tests.
 """
+import unittest
 import warnings
 
 if __name__ == '__main__':
@@ -33,7 +34,7 @@ bar
 
 """
 
-class TocTestCase(DocutilsTestSupport.StandardTestCase):
+class TocTestCase(unittest.TestCase):
 
     def test_publish_from_doctree(self):
         """Ignore the Docutils-generated ToC, when ``use_latex_toc``
@@ -54,7 +55,7 @@ class TocTestCase(DocutilsTestSupport.StandardTestCase):
         # self.assertIn(r'\tableofcontents', result)
 
 
-class WarningsTestCase(DocutilsTestSupport.StandardTestCase):
+class WarningsTestCase(unittest.TestCase):
 
     def test_future_warnings(self):
         """Warn about changing defaults."""

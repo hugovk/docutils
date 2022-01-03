@@ -9,12 +9,14 @@
 test get_parser_class
 """
 
+import unittest
+
 if __name__ == '__main__':
     import __init__
 from test_parsers import DocutilsTestSupport
 from docutils.parsers import get_parser_class
 
-class GetParserClassTestCase(DocutilsTestSupport.StandardTestCase):
+class GetParserClassTestCase(unittest.TestCase):
 
     def test_registered_parser(self):
         rdr = get_parser_class('rst')

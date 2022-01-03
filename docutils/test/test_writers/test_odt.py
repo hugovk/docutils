@@ -31,6 +31,7 @@ Instructions for adding a new test:
 """
 
 import os
+import unittest
 import zipfile
 import xml.etree.ElementTree as etree
 from io import BytesIO
@@ -48,7 +49,7 @@ INPUT_PATH = 'functional/input/'
 EXPECTED_PATH = 'functional/expected/'
 
 
-class DocutilsOdtTestCase(DocutilsTestSupport.StandardTestCase):
+class DocutilsOdtTestCase(unittest.TestCase):
 
     def process_test(self, input_filename, expected_filename,
                      save_output_name=None, settings_overrides=None):

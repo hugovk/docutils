@@ -58,7 +58,7 @@ exposed_pseudoxml_output = (
 """) # % u_prefix # %-expansion not supported in bytes in 3.3 and 3.4
 
 
-class PublisherTests(DocutilsTestSupport.StandardTestCase):
+class PublisherTests(unittest.TestCase):
 
     def test_input_error_handling(self):
         # core.publish_cmdline(argv=['nonexisting/path'])
@@ -81,7 +81,7 @@ class PublisherTests(DocutilsTestSupport.StandardTestCase):
             self.assertTrue(isinstance(e, io.OutputError))
 
 
-class PublishDoctreeTestCase(DocutilsTestSupport.StandardTestCase, docutils.SettingsSpec):
+class PublishDoctreeTestCase(unittest.TestCase, docutils.SettingsSpec):
 
     settings_default_overrides = {
         '_disable_config': True,
