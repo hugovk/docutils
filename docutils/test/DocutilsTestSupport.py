@@ -525,23 +525,6 @@ class HtmlWriterPublishPartsTestCase(WriterPublishTestCase):
         return '{' + ',\n '.join(output) + '}\n'
 
 
-class HtmlPublishPartsTestSuite(CustomTestSuite):
-
-    testcase_class = HtmlWriterPublishPartsTestCase
-
-    def generateTests(self, totest):
-        for name, (settings_overrides, cases) in totest.items():
-            settings = self.suite_settings.copy()
-            settings.update(settings_overrides)
-            for casenum, (case_input, case_expected) in enumerate(cases):
-                self.addTest(
-                    self.testcase_class("test_publish",
-                                        input=case_input, expected=case_expected,
-                                        id='%s: totest[%r][%s]' % (self.id, name, casenum),
-                                        suite_settings=settings)
-                )
-
-
 def exception_data(func, *args, **kwds):
     """
     Execute `func(*args, **kwds)` and return the resulting exception, the
