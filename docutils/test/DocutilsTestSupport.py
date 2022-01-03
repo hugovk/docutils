@@ -371,6 +371,16 @@ class RecommonmarkParserTestSuite(ParserTestSuite):
 
     test_case_class = RecommonmarkParserTestCase
 
+def recommonmark_ready_for_tests():
+    if not RecommonmarkParserTestCase.parser_class:
+        return False
+    # TODO: currently the tests are too version-specific
+    import recommonmark
+    if recommonmark.__version__ != '0.4.0':
+        return False
+    return True
+
+
 class GridTableParserTestCase(CustomTestCase):
 
     parser = tableparser.GridTableParser()

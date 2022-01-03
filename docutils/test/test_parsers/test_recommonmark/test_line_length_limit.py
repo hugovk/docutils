@@ -20,9 +20,16 @@ from test_parsers import DocutilsTestSupport
 
 
 def suite():
-    s = DocutilsTestSupport.RecommonmarkParserTestSuite(
-           suite_id=__file__, suite_settings={'line_length_limit': 80})
-    s.generateTests(totest)
+    s = DocutilsTestSupport.CustomTestSuite(suite_id=__file__)
+    if DocutilsTestSupport.recommonmark_ready_for_tests():
+        for name, cases in totest.items():
+            for casenum, (case_input, case_expected) in enumerate(cases):
+                s.addTest(
+                    DocutilsTestSupport.RecommonmarkParserTestCase("test_parser",
+                                                                   input=case_input, expected=case_expected,
+                                                                   id='%s: totest[%r][%s]' % (s.id, name, casenum),
+                                                                   suite_settings={'line_length_limit': 80})
+                )
     return s
 
 totest = {}
