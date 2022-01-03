@@ -184,10 +184,7 @@ class CustomTestSuite(unittest.TestSuite):
     """Identifier for the TestSuite. Prepended to the
     TestCase identifiers to make identification easier."""
 
-    next_test_case_id = 0
-    """The next identifier to use for non-identified test cases."""
-
-    def __init__(self, tests=(), id=None, suite_settings=None):
+    def __init__(self, tests=(), suite_settings=None):
         """
         Initialize the CustomTestSuite.
 
@@ -198,53 +195,20 @@ class CustomTestSuite(unittest.TestSuite):
         """
         super(CustomTestSuite, self).__init__(tests)
         self.suite_settings = suite_settings or {}
-        if id is None:
-            mypath = os.path.abspath(
-                sys.modules[CustomTestSuite.__module__].__file__)
-            outerframes = inspect.getouterframes(inspect.currentframe())
-            for outerframe in outerframes[1:]:
-                if outerframe[3] != '__init__':
-                    callerpath = outerframe[1]
-                    if callerpath is None:
-                        # It happens sometimes.  Why is a mystery.
-                        callerpath = os.getcwd()
-                    callerpath = os.path.abspath(callerpath)
-                    break
-            mydir, myname = os.path.split(mypath)
-            if not mydir:
-                mydir = os.curdir
-            if callerpath.startswith(mydir):
-                self.id = callerpath[len(mydir) + 1:] # caller's module
-            else:
-                self.id = callerpath
+        outerframes = inspect.getouterframes(inspect.currentframe())
+        for outerframe in outerframes[1:]:
+            if outerframe[3] != '__init__':
+                callerpath = outerframe[1]
+                if callerpath is None:
+                    # It happens sometimes.  Why is a mystery.
+                    callerpath = os.getcwd()
+                callerpath = os.path.abspath(callerpath)
+                break
+        dir = os.path.dirname(__file__) or os.curdir
+        if callerpath.startswith(dir):
+            self.id = callerpath[len(dir) + 1:] # caller's module
         else:
-            self.id = id
-
-    def addTestCase(self, test_case_class, method_name, input, expected,
-                    id=None, **kwargs):
-        """
-        Create a CustomTestCase in the CustomTestSuite.
-        Also return it, just in case.
-
-        Arguments:
-
-        test_case_class -- the CustomTestCase to add
-        method_name -- a string; CustomTestCase.method_name is the test
-        input -- input to the parser.
-        expected -- expected output from the parser.
-        id -- unique test identifier, used by the test framework.
-        """
-        if id is None:                  # generate id if required
-            id = self.next_test_case_id
-            self.next_test_case_id += 1
-        # test identifier will become suiteid.testid
-        tcid = '%s: %s' % (self.id, id)
-        # generate and add test case
-        tc = test_case_class(method_name, input, expected, tcid,
-                             suite_settings=self.suite_settings.copy(),
-                             **kwargs)
-        self.addTest(tc)
-        return tc
+            self.id = callerpath
 
 
 class TransformTestCase(CustomTestCase):
@@ -340,11 +304,13 @@ class TransformTestSuite(CustomTestSuite):
         """
         for name, (transforms, cases) in dict.items():
             for casenum, (case_input, case_expected) in enumerate(cases):
-                self.addTestCase(
-                      TransformTestCase, testmethod,
-                      transforms=transforms, parser=self.parser,
-                      input=case_input, expected=case_expected,
-                      id='totest[%r][%s]' % (name, casenum))
+                self.addTest(
+                    TransformTestCase(testmethod,
+                                      input=case_input, expected=case_expected,
+                                      id='%s: totest[%r][%s]' % (self.id, name, casenum),
+                                      suite_settings=self.suite_settings,
+                                      transforms=transforms, parser=self.parser)
+                )
 
 
 class ParserTestCase(CustomTestCase):
@@ -397,11 +363,12 @@ class ParserTestSuite(CustomTestSuite):
         """
         for name, cases in dict.items():
             for casenum, (case_input, case_expected) in enumerate(cases):
-                self.addTestCase(
-                      self.test_case_class, 'test_parser',
-                      input=case_input, expected=case_expected,
-                      id='totest[%r][%s]' % (name, casenum))
-
+                self.addTest(
+                    self.test_case_class("test_parser",
+                                         input=case_input, expected=case_expected,
+                                         id='%s: totest[%r][%s]' % (self.id, name, casenum),
+                                         suite_settings=self.suite_settings)
+                )
 
 class PEPParserTestCase(ParserTestCase):
 
@@ -511,12 +478,18 @@ class GridTableParserTestSuite(CustomTestSuite):
         """
         for name, cases in dict.items():
             for casenum, (case_input, case_expected_table, case_expected) in enumerate(cases):
-                self.addTestCase(self.test_case_class, 'test_parse_table',
-                                 input=case_input, expected=case_expected_table,
-                                 id='totest[%r][%s]' % (name, casenum))
-                self.addTestCase(self.test_case_class, 'test_parse',
-                                 input=case_input, expected=case_expected,
-                                 id='totest[%r][%s]' % (name, casenum))
+                self.addTest(
+                    self.test_case_class("test_parse_table",
+                                         input=case_input, expected=case_expected_table,
+                                         id='%s: totest[%r][%s]' % (self.id, name, casenum),
+                                         suite_settings=self.suite_settings)
+                )
+                self.addTest(
+                    self.test_case_class("test_parse",
+                                         input=case_input, expected=case_expected,
+                                         id='%s: totest[%r][%s]' % (self.id, name, casenum),
+                                         suite_settings=self.suite_settings)
+                )
 
 
 class SimpleTableParserTestCase(GridTableParserTestCase):
@@ -542,9 +515,12 @@ class SimpleTableParserTestSuite(CustomTestSuite):
         """
         for name, cases in dict.items():
             for casenum, (case_input, case_expected) in enumerate(cases):
-                self.addTestCase(self.test_case_class, 'test_parse',
-                                 input=case_input, expected=case_expected,
-                                 id='totest[%r][%s]' % (name, casenum))
+                self.addTest(
+                    self.test_case_class("test_parse",
+                                         input=case_input, expected=case_expected,
+                                         id='%s: totest[%r][%s]' % (self.id, name, casenum),
+                                         suite_settings=self.suite_settings)
+                )
 
 
 class WriterPublishTestCase(CustomTestCase, docutils.SettingsSpec):
@@ -586,12 +562,13 @@ class PublishTestSuite(CustomTestSuite):
     def generateTests(self, dict):
         for name, cases in dict.items():
             for casenum, (case_input, case_expected) in enumerate(cases):
-                self.addTestCase(
-                      self.test_class, 'test_publish',
-                      input=case_input, expected=case_expected,
-                      id='totest[%r][%s]' % (name, casenum),
-                      # Passed to constructor of self.test_class:
-                      writer_name=self.writer_name)
+                self.addTest(
+                    self.test_class("test_publish",
+                                    input=case_input, expected=case_expected,
+                                    id='%s: totest[%r][%s]' % (self.id, name, casenum),
+                                    suite_settings=self.suite_settings,
+                                    writer_name=self.writer_name)
+                )
 
 
 class HtmlWriterPublishPartsTestCase(WriterPublishTestCase):
@@ -669,13 +646,15 @@ class HtmlPublishPartsTestSuite(CustomTestSuite):
 
     def generateTests(self, dict):
         for name, (settings_overrides, cases) in dict.items():
-            original_settings = self.suite_settings.copy()
-            self.suite_settings.update(settings_overrides)
+            settings = self.suite_settings.copy()
+            settings.update(settings_overrides)
             for casenum, (case_input, case_expected) in enumerate(cases):
-                self.addTestCase(self.testcase_class, 'test_publish',
-                                 input=case_input, expected=case_expected,
-                                 id='totest[%r][%s]' % (name, casenum))
-            self.suite_settings = original_settings
+                self.addTest(
+                    self.testcase_class("test_publish",
+                                        input=case_input, expected=case_expected,
+                                        id='%s: totest[%r][%s]' % (self.id, name, casenum),
+                                        suite_settings=settings)
+                )
 
 
 def exception_data(func, *args, **kwds):

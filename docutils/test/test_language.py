@@ -62,8 +62,13 @@ class LanguageTestSuite(DocutilsTestSupport.CustomTestSuite):
     def generateTests(self):
         for language in self.languages:
             for method in LanguageTestCase.test_methods:
-                self.addTestCase(LanguageTestCase, method, None, None,
-                                 id=language+'.py', language=language)
+                self.addTest(
+                    LanguageTestCase(method,
+                                     input=None, expected=None,
+                                     id=language + ".py",
+                                     suite_settings=self.suite_settings.copy(),
+                                     language=language)
+                )
 
 
 class LanguageTestCase(DocutilsTestSupport.CustomTestCase):

@@ -45,9 +45,13 @@ class FunctionalTestSuite(DocutilsTestSupport.CustomTestSuite):
             for name in files:
                 if name.endswith('.py') and not name.startswith('_'):
                     config_file_full_path = join_path(root, name)
-                    self.addTestCase(FunctionalTestCase, 'test', None, None,
-                                     id=config_file_full_path,
-                                     configfile=config_file_full_path)
+                    self.addTest(
+                        FunctionalTestCase("test",
+                                           input=None, expected=None,
+                                           id=config_file_full_path,
+                                           suite_settings=self.suite_settings,
+                                           configfile=config_file_full_path)
+                    )
                     self.added += 1
         assert self.added, 'No functional tests found.'
 
