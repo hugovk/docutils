@@ -9,7 +9,7 @@ Test module for the docutils' __init__.py.
 """
 
 import unittest
-import DocutilsTestSupport              # must be imported before docutils
+from test import DocutilsTestSupport              # must be imported before docutils
 import docutils
 import docutils.utils
 from docutils import VersionInfo

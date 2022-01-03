@@ -12,7 +12,7 @@ Test not default/fallback language french.
 if __name__ == '__main__':
     import __init__
 import unittest
-from test_parsers import DocutilsTestSupport
+from test import DocutilsTestSupport
 
 
 def suite():

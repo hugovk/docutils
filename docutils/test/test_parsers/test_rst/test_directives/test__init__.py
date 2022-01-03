@@ -19,7 +19,7 @@ import unittest
 if __name__ == '__main__':
     import __init__
 import unittest
-from test_parsers import DocutilsTestSupport
+from test import DocutilsTestSupport
 
 import docutils
 import docutils.parsers.null

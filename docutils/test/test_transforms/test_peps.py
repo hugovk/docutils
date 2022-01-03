@@ -11,7 +11,7 @@ Tests for docutils.transforms.peps.
 if __name__ == '__main__':
     import __init__
 import unittest
-from test_transforms import DocutilsTestSupport
+from test import DocutilsTestSupport
 from docutils.transforms.peps import TargetNotes
 from docutils.parsers.rst import Parser
 

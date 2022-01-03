@@ -13,7 +13,7 @@ import sys
 import unittest
 import warnings
 
-import DocutilsTestSupport              # must be imported before docutils
+from test import DocutilsTestSupport              # must be imported before docutils
 from docutils import io
 
 

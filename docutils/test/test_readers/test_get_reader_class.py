@@ -13,7 +13,7 @@ import unittest
 
 if __name__ == '__main__':
     import __init__
-from test_readers import DocutilsTestSupport
+from test import DocutilsTestSupport
 from docutils.readers import get_reader_class
 
 

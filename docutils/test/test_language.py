@@ -16,7 +16,7 @@ import sys
 import os
 import re
 import unittest
-import DocutilsTestSupport              # must be imported before docutils
+from test import DocutilsTestSupport              # must be imported before docutils
 import docutils.languages
 import docutils.parsers.rst.languages
 from docutils.parsers.rst import states, directives, roles

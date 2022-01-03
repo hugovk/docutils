@@ -9,7 +9,7 @@ Test module for traversals.
 """
 
 import unittest
-import DocutilsTestSupport              # must be imported before docutils
+from test import DocutilsTestSupport              # must be imported before docutils
 from docutils import nodes, core, io, utils, writers
 from docutils.writers.null import Writer as NullWriter
 import docutils

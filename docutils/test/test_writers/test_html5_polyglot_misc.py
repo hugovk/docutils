@@ -14,7 +14,7 @@ import warnings
 
 if __name__ == '__main__':
     import __init__
-from test_writers import DocutilsTestSupport
+from test import DocutilsTestSupport
 from docutils import core
 
 

@@ -12,7 +12,7 @@ import string
 if __name__ == '__main__':
     import __init__
 import unittest
-from test_transforms import DocutilsTestSupport  # before importing docutils!
+from test import DocutilsTestSupport  # before importing docutils!
 
 
 def suite():

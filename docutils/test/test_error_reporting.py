@@ -32,7 +32,7 @@ import warnings
 warnings.filterwarnings('ignore', category=DeprecationWarning,
                         message=r'.*utils\.error_reporting')
 
-import DocutilsTestSupport              # must be imported before docutils
+from test import DocutilsTestSupport              # must be imported before docutils
 from docutils import core, parsers, frontend, utils
 from docutils.utils.error_reporting import SafeString, ErrorString, ErrorOutput
 

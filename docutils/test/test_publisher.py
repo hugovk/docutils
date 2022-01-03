@@ -10,7 +10,7 @@ Test the `Publisher` facade and the ``publish_*`` convenience functions.
 
 import pickle
 
-import DocutilsTestSupport              # must be imported before docutils
+from test import DocutilsTestSupport              # must be imported before docutils
 import docutils
 from docutils import core, nodes, io
 

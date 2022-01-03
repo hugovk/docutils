@@ -11,7 +11,7 @@ Tests for the misc.py "date" directive.
 if __name__ == '__main__':
     import __init__
 import unittest
-from test_parsers import DocutilsTestSupport
+from test import DocutilsTestSupport
 import time
 
 from docutils.io import locale_encoding

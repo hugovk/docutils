@@ -10,7 +10,7 @@ Test module for nodes.py.
 import unittest
 import warnings
 
-import DocutilsTestSupport              # must be imported before docutils
+from test import DocutilsTestSupport              # must be imported before docutils
 from DocutilsTestSupport import nodes, utils
 
 debug = False

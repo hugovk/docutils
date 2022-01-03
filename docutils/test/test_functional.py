@@ -17,7 +17,7 @@ import os.path
 import shutil
 import unittest
 import difflib
-import DocutilsTestSupport              # must be imported before docutils
+from test import DocutilsTestSupport              # must be imported before docutils
 import docutils
 import docutils.core
 

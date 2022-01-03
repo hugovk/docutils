@@ -10,7 +10,7 @@ Test module for the --record-dependencies option.
 
 import os.path
 import unittest
-import DocutilsTestSupport              # must be imported before docutils
+from test import DocutilsTestSupport              # must be imported before docutils
 import docutils.core
 import docutils.utils
 import docutils.io

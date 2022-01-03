@@ -11,7 +11,7 @@ Tests for docutils.transforms.references.Hyperlinks.
 if __name__ == '__main__':
     import __init__
 import unittest
-from test_transforms import DocutilsTestSupport
+from test import DocutilsTestSupport
 from docutils.transforms.references import PropagateTargets, \
      AnonymousHyperlinks, IndirectHyperlinks, ExternalTargets, \
      InternalTargets, DanglingReferences

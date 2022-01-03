@@ -11,7 +11,7 @@ Tests for inline markup in PEPs (readers/pep.py).
 if __name__ == '__main__':
     import __init__
 import unittest
-from test_readers import DocutilsTestSupport
+from test import DocutilsTestSupport
 
 
 def suite():

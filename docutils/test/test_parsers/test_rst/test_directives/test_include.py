@@ -11,7 +11,7 @@ import os.path
 if __name__ == '__main__':
     import __init__
 import unittest
-from test_parsers import DocutilsTestSupport
+from test import DocutilsTestSupport
 from docutils import parsers
 from docutils.utils.code_analyzer import with_pygments
 

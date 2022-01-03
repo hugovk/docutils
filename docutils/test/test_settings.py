@@ -13,7 +13,7 @@ import difflib
 import pprint
 import warnings
 import unittest
-import DocutilsTestSupport              # must be imported before docutils
+from test import DocutilsTestSupport              # must be imported before docutils
 from docutils import frontend, utils
 from docutils.writers import html4css1, pep_html, html5_polyglot
 from docutils.parsers import rst

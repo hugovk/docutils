@@ -16,7 +16,7 @@ Cf. the `CommonMark Specification <https://spec.commonmark.org/>`__
 if __name__ == '__main__':
     import __init__
 import unittest
-from test_parsers import DocutilsTestSupport
+from test import DocutilsTestSupport
 
 def suite():
     suite_id = DocutilsTestSupport.make_id(__file__)
