@@ -9,8 +9,6 @@ Tests for interpreted text in docutils/parsers/rst/states.py.
 Test not default/fallback language french.
 """
 
-if __name__ == '__main__':
-    import __init__
 import unittest
 from test import DocutilsTestSupport
 

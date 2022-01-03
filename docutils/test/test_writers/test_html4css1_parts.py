@@ -12,8 +12,6 @@ dictionaries (redundant), along with 'meta' and 'stylesheet' entries with
 standard values, and any entries with empty values.
 """
 
-if __name__ == '__main__':
-    import __init__
 import unittest
 from test import DocutilsTestSupport
 from docutils import core

@@ -9,8 +9,6 @@ Tests for latex2e writer.
 
 import string
 
-if __name__ == '__main__':
-    import __init__
 import unittest
 from test import DocutilsTestSupport  # before importing docutils!
 

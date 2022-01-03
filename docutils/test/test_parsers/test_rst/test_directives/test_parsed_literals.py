@@ -8,8 +8,6 @@
 Tests for the body.py 'parsed-literal' directive.
 """
 
-if __name__ == '__main__':
-    import __init__
 import unittest
 from test import DocutilsTestSupport
 

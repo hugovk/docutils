@@ -8,8 +8,6 @@
 Tests for admonition directives with local language module.
 """
 
-if __name__ == '__main__':
-    import __init__
 import unittest
 from test import DocutilsTestSupport
 

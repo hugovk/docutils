@@ -14,8 +14,6 @@ Tests for HTML blocks in CommonMark parsers
 Cf. the `CommonMark Specification <https://spec.commonmark.org/>`__
 """
 
-if __name__ == '__main__':
-    import __init__
 import unittest
 from test import DocutilsTestSupport
 

@@ -8,8 +8,6 @@
 Tests for the body.py 'line-block' directive.
 """
 
-if __name__ == '__main__':
-    import __init__
 import unittest
 from test import DocutilsTestSupport
 

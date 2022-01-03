@@ -15,8 +15,6 @@ Various tests for the `pygments` code highlighter.
 
 import unittest
 
-if __name__ == '__main__':
-    import __init__
 import unittest
 from test import DocutilsTestSupport # must be imported before docutils
 from docutils import core, utils

@@ -11,8 +11,6 @@ test get_writer_class
 
 import unittest
 
-if __name__ == '__main__':
-    import __init__
 from test import DocutilsTestSupport
 from docutils.writers import get_writer_class
 

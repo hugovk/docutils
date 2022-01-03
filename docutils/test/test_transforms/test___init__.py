@@ -10,8 +10,6 @@ Test module for transforms/__init__.py.
 
 import unittest
 
-if __name__ == '__main__':
-    import __init__
 from test import DocutilsTestSupport # before importing docutils!
 from docutils import transforms, utils
 

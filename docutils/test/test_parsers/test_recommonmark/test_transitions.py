@@ -8,8 +8,6 @@
 Tests for transitions (`thematic breaks`).
 """
 
-if __name__ == '__main__':
-    import __init__
 import unittest
 from test import DocutilsTestSupport
 

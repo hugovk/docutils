@@ -8,8 +8,6 @@
 Tests for docutils.transforms.references.Substitutions.
 """
 
-if __name__ == '__main__':
-    import __init__
 import unittest
 from test import DocutilsTestSupport
 from docutils.transforms.references import Substitutions

@@ -9,8 +9,6 @@ Tests for misc.py "replace" directive.
 Test in french (not default/fallback language).
 """
 
-if __name__ == '__main__':
-    import __init__
 import unittest
 from test import DocutilsTestSupport
 

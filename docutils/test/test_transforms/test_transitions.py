@@ -8,8 +8,6 @@
 Test module for misc.Transitions transform.
 """
 
-if __name__ == '__main__':
-    import __init__
 import unittest
 from test import DocutilsTestSupport # before importing docutils!
 from docutils.transforms.misc import Transitions

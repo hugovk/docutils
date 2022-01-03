@@ -7,8 +7,6 @@
 Tests for docutils.transforms.frontmatter.DocInfo.
 """
 
-if __name__ == '__main__':
-    import __init__
 import unittest
 from test import DocutilsTestSupport
 from docutils.transforms.frontmatter import DocInfo

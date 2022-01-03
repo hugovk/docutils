@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf8 -*-
 # :Copyright: © 2020 Günter Milde.
 # :License: Released under the terms of the `2-Clause BSD license`_, in short:
 #
@@ -14,8 +15,6 @@ Test for bullet lists in CommonMark parsers.
 Cf. the `CommonMark Specification <https://spec.commonmark.org/>`__
 """
 
-if __name__ == '__main__':
-    import __init__
 import unittest
 from test import DocutilsTestSupport
 

@@ -8,8 +8,6 @@ Tests for misc.py "include" directive.
 """
 
 import os.path
-if __name__ == '__main__':
-    import __init__
 import unittest
 from test import DocutilsTestSupport
 from docutils import parsers
