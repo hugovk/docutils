@@ -15,6 +15,7 @@ that language.
 import sys
 import os
 import re
+import unittest
 import DocutilsTestSupport              # must be imported before docutils
 import docutils.languages
 import docutils.parsers.rst.languages
@@ -26,49 +27,30 @@ _reporter = docutils.utils.new_reporter('', _settings)
 
 reference_language = 'en'
 
+LANGUAGE_MODULE_PATTERN = re.compile(r'^([a-z]{2,3}(_[a-z]{2,8})*)\.py$')
 
-class LanguageTestSuite(DocutilsTestSupport.CustomTestSuite):
 
-    language_module_pattern = re.compile(r'^([a-z]{2,3}(_[a-z]{2,8})*)\.py$')
-
-    def __init__(self, languages=None):
-        super().__init__(suite_id=__file__)
-        if languages:
-            self.languages = languages
-        else:
-            self.get_languages()
-
-    def get_languages(self):
-        """
-        Get installed language translations from docutils.languages and from
-        docutils.parsers.rst.languages.
-        """
-        languages = {}
-        for mod in (os.listdir(docutils.languages.__path__[0])
-                    + os.listdir(docutils.parsers.rst.languages.__path__[0])):
-            match = self.language_module_pattern.match(mod)
-            if match:
-                languages[match.group(1)] = 1
-        self.languages = list(languages.keys())
-        # test language tag normalization:
-        self.languages += ['en_gb', 'en_US', 'en-CA', 'de-DE', 'de-AT-1901',
-                           'pt-BR', 'pt-foo-BR']
-        # test that locally created language files are also loaded.
-        # requires local_dummy_lang.py in test directory (testroot)
-        # The local_dummy_lang.py contains all the fields from both
-        # the docutils language tags and the parser.rst language tags
-        self.languages += ['local_dummy_lang']
-
-    def generateTests(self):
-        for language in self.languages:
-            for method in LanguageTestCase.test_methods:
-                self.addTest(
-                    LanguageTestCase(method,
-                                     input=None, expected=None,
-                                     id=language + ".py",
-                                     suite_settings=self.suite_settings.copy(),
-                                     language=language)
-                )
+def get_languages():
+    """
+    Get installed language translations from docutils.languages and from
+    docutils.parsers.rst.languages.
+    """
+    translations = set()
+    for mod in (os.listdir(docutils.languages.__path__[0])
+                + os.listdir(docutils.parsers.rst.languages.__path__[0])):
+        match = LANGUAGE_MODULE_PATTERN.match(mod)
+        if match:
+            translations.add(match.group(1))
+    languages = list(translations)
+    # test language tag normalization:
+    languages += ['en_gb', 'en_US', 'en-CA', 'de-DE', 'de-AT-1901',
+                       'pt-BR', 'pt-foo-BR']
+    # test that locally created language files are also loaded.
+    # requires local_dummy_lang.py in test directory (testroot)
+    # The local_dummy_lang.py contains all the fields from both
+    # the docutils language tags and the parser.rst language tags
+    languages += ['local_dummy_lang']
+    return languages
 
 
 class LanguageTestCase(DocutilsTestSupport.CustomTestCase):
@@ -203,26 +185,20 @@ class LanguageTestCase(DocutilsTestSupport.CustomTestCase):
                 text = text.encode('raw_unicode_escape')
             self.fail(text)
 
-languages_to_test = []
 
 def suite():
-    s = LanguageTestSuite(languages_to_test)
-    s.generateTests()
+    s = unittest.TestSuite()
+    for language in get_languages():
+        for method in LanguageTestCase.test_methods:
+            s.addTest(
+                LanguageTestCase(method,
+                                 input=None, expected=None,
+                                 id=language + ".py",
+                                 suite_settings={},
+                                 language=language)
+            )
     return s
-
-def get_language_arguments():
-    while len(sys.argv) > 1:
-        last = sys.argv[-1]
-        if last.startswith('-'):
-            break
-        languages_to_test.append(last)
-        sys.argv.pop()
-    languages_to_test.reverse()
 
 
 if __name__ == '__main__':
-    get_language_arguments()
-    import unittest
     unittest.main(defaultTest='suite')
-
-# vim: set et ts=4 ai :
