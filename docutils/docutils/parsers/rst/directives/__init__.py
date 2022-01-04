@@ -404,8 +404,7 @@ def choice(argument, values):
                          % (argument, format_values(values)))
 
 def format_values(values):
-    return '{}, or "{}"'.format(', '.join(['"%s"' % s for s in values[:-1]]),
-                            values[-1])
+    return ', '.join(['"%s"' % s for s in values[:-1]]) + f', or "{values[-1]}"'
 
 def value_or(values, other):
     """

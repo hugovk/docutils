@@ -30,10 +30,6 @@ import warnings
 import unicodedata
 # import xml.dom.minidom as dom # -> conditional import in Node.asdom()
 
-unicode = str  # noqa
-basestring = str  # noqa
-
-
 # ==============================
 #  Functional Node Base Classes
 # ==============================
@@ -394,50 +390,35 @@ class Text(Node, str):
                           DeprecationWarning, stacklevel=2)
 
     def shortrepr(self, maxlen=18):
-        data = self
-        if len(data) > maxlen:
-            data = data[:maxlen-4] + ' ...'
-        return '<%s: %r>' % (self.tagname, str(data))
-        return f'<{self.tagname}: {data}>'
+        if len(self) > maxlen:
+            return f'<{self.tagname}: {self[:maxlen-4]} ...>'
+        return f'<{self.tagname}: {self}>'
 
     def __repr__(self):
         return self.shortrepr(maxlen=68)
 
     def _dom_node(self, domroot):
-        return domroot.createTextNode(unicode(self))
+        return domroot.createTextNode(self)
 
     def astext(self):
-        return str(unescape(self))
-
-    # Note about __unicode__: The implementation of __unicode__ here,
-    # and the one raising NotImplemented in the superclass Node had
-    # to be removed when changing Text to a subclass of unicode instead
-    # of UserString, since there is no way to delegate the __unicode__
-    # call to the superclass unicode:
-    # unicode itself does not have __unicode__ method to delegate to
-    # and calling unicode(self) or unicode.__new__ directly creates
-    # an infinite loop
+        return unescape(self)
 
     def copy(self):
-        return self.__class__(str(self))
+        return self.__class__(self)
 
     def deepcopy(self):
         return self.copy()
 
     def pformat(self, indent='    ', level=0):
+        margin = indent * level
         try:
             if self.document.settings.detailed:
-                lines = ['{}{}'.format(indent*level, '<#text>')
-                        ] + [indent*(level+1) + repr(line)
-                             for line in self.splitlines(True)]
-                return '\n'.join(lines) + '\n'
+                return f'{margin}<#text>\n' + "".join(
+                    f"{margin+indent}{l!r}\n" for l in self.splitlines(True)
+                )
         except AttributeError:
             pass
-        indent = indent * level
-        lines = [indent+line for line in self.astext().splitlines()]
-        if not lines:
-            return ''
-        return '\n'.join(lines) + '\n'
+        return "".join(f"{margin}{l}\n" for l in self.astext().splitlines())
 
     # rstrip and lstrip are used by substitution definitions where
     # they are expected to return a Text instance, this was formerly
@@ -585,9 +566,7 @@ class Element(Node):
 
     def __str__(self):
         if self.children:
-            return '{}{}{}'.format(self.starttag(),
-                                ''.join([unicode(c) for c in self.children]),
-                                self.endtag())
+            return self.starttag() + ''.join(self.children) + self.endtag()
         else:
             return self.emptytag()
 
@@ -604,7 +583,7 @@ class Element(Node):
                 values = [serial_escape(f'{v}') for v in value]
                 value = ' '.join(values)
             else:
-                value = unicode(value)
+                value = str(value)
             value = quoteattr(value)
             parts.append(f'{name}={value}')
         return '<%s>' % ' '.join(parts)
@@ -622,12 +601,12 @@ class Element(Node):
 
     def __contains__(self, key):
         # Test for both, children and attributes with operator ``in``.
-        if isinstance(key, basestring):
+        if isinstance(key, str):
             return key in self.attributes
         return key in self.children
 
     def __getitem__(self, key):
-        if isinstance(key, basestring):
+        if isinstance(key, str):
             return self.attributes[key]
         elif isinstance(key, int):
             return self.children[key]
@@ -639,8 +618,8 @@ class Element(Node):
                             'an attribute name string')
 
     def __setitem__(self, key, item):
-        if isinstance(key, basestring):
-            self.attributes[str(key)] = item
+        if isinstance(key, str):
+            self.attributes[key] = item
         elif isinstance(key, int):
             self.setup_child(item)
             self.children[key] = item
@@ -654,7 +633,7 @@ class Element(Node):
                             'an attribute name string')
 
     def __delitem__(self, key):
-        if isinstance(key, basestring):
+        if isinstance(key, str):
             del self.attributes[key]
         elif isinstance(key, int):
             del self.children[key]
@@ -2244,7 +2223,7 @@ def make_id(string):
     .. _CSS1 spec: http://www.w3.org/TR/REC-CSS1
     """
     id = string.lower()
-    if not isinstance(id, unicode):
+    if not isinstance(id, str):
         id = id.decode()
     id = id.translate(_non_id_translate_digraphs)
     id = id.translate(_non_id_translate)
@@ -2255,7 +2234,7 @@ def make_id(string):
     # shrink runs of whitespace and replace by hyphen
     id = _non_id_chars.sub('-', ' '.join(id.split()))
     id = _non_id_at_ends.sub('', id)
-    return str(id)
+    return id
 
 _non_id_chars = re.compile('[^a-z0-9]+')
 _non_id_at_ends = re.compile('^[-0-9]+|-+$')
