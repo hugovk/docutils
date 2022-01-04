@@ -16,88 +16,78 @@ import time
 # and setup outside of unittest.
 start = time.time()  # noqa
 
-import sys
-import atexit
-import os
+import importlib
+from pathlib import Path
 import platform
+import sys
+import traceback
 import unittest
 
-sys.path.insert(0, os.path.join(__file__, "..", ".."))
+sys.path.insert(0, str(Path(__file__).parent.parent))
 from test import DocutilsTestSupport              # must be imported before docutils
+
 import docutils
 
 
-class Tee:
+def load_test_modules(root):
+    """
+    Return a test suite composed of all the tests from modules in a directory.
 
-    """Write to a file and a stream (default: stdout) simultaneously."""
-
-    def __init__(self, filename, stream=sys.__stdout__):
-        self.file = open(filename, 'w', errors='backslashreplace')
-        atexit.register(self.close)
-        self.stream = stream
-        self.encoding = getattr(stream, 'encoding', None)
-
-    def close(self):
-        self.file.close()
-        self.file = None
-
-    def write(self, string):
+    Search for modules in directory `path`, beginning with `name`.
+    Then search subdirectories (also beginning with `name`)
+    recursively.  Subdirectories must be Python packages; they must contain an
+    '__init__.py' module.
+    """
+    test_suite = unittest.TestSuite()
+    test_modules = []
+    root = Path(root).absolute()        # current working dir if `path` empty
+    paths = [root]
+    while paths:
+        p = paths.pop()
+        for path in p.glob("test_*.py"):
+            mod = ".".join(path.relative_to(root).parts).removesuffix(".py")
+            test_modules.append(mod)
+        for path in p.glob("test_*/__init__.py"):
+            paths.append(path.parent)
+    # Import modules and add their tests to the suite.
+    sys.path.insert(0, str(root))
+    for mod in test_modules:
         try:
-            self.stream.write(string)
-        except UnicodeEncodeError:
-            bstring = string.encode(self.encoding, errors='backslashreplace')
-            self.stream.write(bstring.decode())
-        if self.file:
-            self.file.write(string)
-
-    def flush(self):
-        self.stream.flush()
-        if self.file:
-            self.file.flush()
-
-
-def pformat(suite):
-    step = 4
-    suitestr = repr(suite).replace('=[<', '=[\n<').replace(', ', ',\n')
-    indent = 0
-    output = []
-    for line in suitestr.splitlines():
-        output.append(' ' * indent + line)
-        if line[-1:] == '[':
-            indent += step
+            module = importlib.import_module(mod)
+        except ImportError:
+            print(f"ERROR: Can't import {mod}, skipping its tests:", file=sys.stderr)
+            traceback.print_exc()
         else:
-            if line[-5:] == ']>]>,':
-                indent -= step * 2
-            elif line[-3:] == ']>,':
-                indent -= step
-    return '\n'.join(output)
-
-
-def suite():
-    suite = package_unittest.loadTestModules(DocutilsTestSupport.testroot,
-                                             'test_')
-    sys.stdout.flush()
-    return suite
-
-
-# must redirect stderr *before* first import of unittest
-sys.stdout = sys.stderr = Tee('alltests.out')
-
-import package_unittest  # noqa
+            # if there's a suite defined, incorporate its contents
+            try:
+                module_tests = module.suite
+            except AttributeError:
+                # Look for individual tests
+                module_tests = unittest.defaultTestLoader.loadTestsFromModule(module)
+                # unittest.TestSuite.addTests() doesn't work as advertised,
+                # as it can't load tests from another TestSuite, so we have
+                # to cheat:
+                test_suite.addTest(module_tests)
+            else:
+                if callable(module_tests):
+                    test_suite.addTest(module_tests())
+                else:
+                    raise AssertionError("don't understand suite (%s)" % mod)
+    sys.path.pop(0)
+    return test_suite
 
 
 if __name__ == '__main__':
-    suite = suite()
-    print('Testing Docutils %s with Python %s on %s at %s' % (
-        docutils.__version__, sys.version.split()[0],
-        time.strftime('%Y-%m-%d'), time.strftime('%H:%M:%S')))
-    print('OS: %s %s %s (%s, %s)' % (
-        platform.system(), platform.release(), platform.version(),
-        sys.platform, platform.platform()))
-    print('Working directory: %s' % os.getcwd())
-    print('Docutils package: %s' % os.path.dirname(docutils.__file__))
+    suite = load_test_modules(DocutilsTestSupport.testroot)
+    print(f'Testing Docutils {docutils.__version__} with '
+          f'Python {sys.version.split()[0]} on {time.strftime("%Y-%m-%d")} '
+          f'at {time.strftime("%H:%M:%S")}')
+    print(f'OS: {platform.system()} {platform.release()} {platform.version()} '
+          f'({sys.platform}, {platform.platform()})')
+    print(f'Working directory: {Path().cwd()}')
+    print(f'Docutils package: {Path(docutils.__file__).parent}')
     sys.stdout.flush()
     result = unittest.TextTestRunner().run(suite)
     finish = time.time()
-    print('Elapsed time: %.3f seconds' % (finish - start))
+    print(f'Elapsed time: {finish - start:.3f} seconds')
     sys.exit(not result.wasSuccessful())
