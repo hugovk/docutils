@@ -145,7 +145,7 @@ class LanguageTestCase(DocutilsTestSupport.CustomTestCase):
                 if not func:
                     failures.append('"%s": unknown directive' % d)
             except Exception as error:
-                failures.append('"%s": %s' % (d, error))
+                failures.append(f'"{d}": {error}')
         inverted = self._invert(module.directives)
         canonical = sorted(directives._directive_registry.keys())
         canonical.remove('restructuredtext-test-directive')
@@ -179,7 +179,7 @@ class LanguageTestCase(DocutilsTestSupport.CustomTestCase):
                 #if not method:
                 #    failures.append('"%s": unknown role' % d)
             except KeyError as error:
-                failures.append('"%s": %s' % (d, error))
+                failures.append(f'"{d}": {error}')
         inverted = self._invert(module.roles)
         canonical = sorted(roles._role_registry.keys())
         canonical.remove('restructuredtext-unimplemented-role')

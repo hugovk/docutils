@@ -152,7 +152,7 @@ class Writer(writers.Writer):
         self.output = self.apply_template()
 
     def apply_template(self):
-        with open(self.document.settings.template, 'r', 
+        with open(self.document.settings.template, 
                   encoding='utf-8') as template_file:
             template = template_file.read()
         subs = self.interpolation_dict()
@@ -266,11 +266,11 @@ class HTMLTranslator(nodes.NodeVisitor):
     in_word_wrap_point = re.compile(r'.+\W\W.+|[-?].+', re.U)
     lang_attribute = 'lang' # name changes to 'xml:lang' in XHTML 1.1
 
-    special_characters = {ord('&'): u'&amp;',
-                          ord('<'): u'&lt;',
-                          ord('"'): u'&quot;',
-                          ord('>'): u'&gt;',
-                          ord('@'): u'&#64;', # may thwart address harvesters
+    special_characters = {ord('&'): '&amp;',
+                          ord('<'): '&lt;',
+                          ord('"'): '&quot;',
+                          ord('>'): '&gt;',
+                          ord('@'): '&#64;', # may thwart address harvesters
                          }
     """Character references for characters with a special meaning in HTML."""
 
@@ -394,8 +394,8 @@ class HTMLTranslator(nodes.NodeVisitor):
                 content = docutils.io.FileInput(source_path=path,
                                                 encoding='utf-8').read()
                 self.settings.record_dependencies.add(path)
-            except IOError as err:
-                msg = u"Cannot embed stylesheet '%r': %s." % (
+            except OSError as err:
+                msg = "Cannot embed stylesheet '{!r}': {}.".format(
                                 path, SafeString(err.strerror))
                 self.document.reporter.error(msg)
                 return '<--- %s --->\n' % msg
@@ -463,16 +463,16 @@ class HTMLTranslator(nodes.NodeVisitor):
             assert value is not None
             if isinstance(value, list):
                 values = [str(v) for v in value]
-                parts.append('%s="%s"' % (name.lower(),
+                parts.append('{}="{}"'.format(name.lower(),
                                           self.attval(' '.join(values))))
             else:
-                parts.append('%s="%s"' % (name.lower(),
+                parts.append('{}="{}"'.format(name.lower(),
                                           self.attval(str(value))))
         if empty:
             infix = ' /'
         else:
             infix = ''
-        return ''.join(prefix) + '<%s%s>' % (' '.join(parts), infix) + suffix
+        return ''.join(prefix) + '<{}{}>'.format(' '.join(parts), infix) + suffix
 
     def emptytag(self, node, tagname, suffix='\n', **attributes):
         """Construct and return an XML-compatible empty tag."""
@@ -529,7 +529,7 @@ class HTMLTranslator(nodes.NodeVisitor):
     def depart_admonition(self, node=None):
         self.body.append('</aside>\n')
 
-    attribution_formats = {'dash': (u'\u2014', ''),
+    attribution_formats = {'dash': ('\u2014', ''),
                            'parentheses': ('(', ')'),
                            'parens': ('(', ')'),
                            'none': ('', '')}
@@ -967,7 +967,7 @@ class HTMLTranslator(nodes.NodeVisitor):
     def visit_generated(self, node):
         if 'sectnum' in node['classes']:
             # get section number (strip trailing no-break-spaces)
-            sectnum = node.astext().rstrip(u' ')
+            sectnum = node.astext().rstrip(' ')
             self.body.append('<span class="sectnum">%s </span>'
                                     % self.encode(sectnum))
             # Content already processed:
@@ -1004,7 +1004,7 @@ class HTMLTranslator(nodes.NodeVisitor):
                 try:
                     img = PIL.Image.open(
                             imagepath.encode(sys.getfilesystemencoding()))
-                except (IOError, UnicodeEncodeError):
+                except (OSError, UnicodeEncodeError):
                     pass # TODO: warn?
                 else:
                     self.settings.record_dependencies.add(
@@ -1018,7 +1018,7 @@ class HTMLTranslator(nodes.NodeVisitor):
                 if att_name in atts:
                     match = re.match(r'([0-9.]+)(\S*)$', atts[att_name])
                     assert match
-                    atts[att_name] = '%s%s' % (
+                    atts[att_name] = '{}{}'.format(
                         float(match.group(1)) * (float(node['scale']) / 100),
                         match.group(2))
         style = []
@@ -1027,7 +1027,7 @@ class HTMLTranslator(nodes.NodeVisitor):
                 if re.match(r'^[0-9.]+$', atts[att_name]):
                     # Interpret unitless values as pixels.
                     atts[att_name] += 'px'
-                style.append('%s: %s;' % (att_name, atts[att_name]))
+                style.append(f'{att_name}: {atts[att_name]};')
                 del atts[att_name]
         if style:
             atts['style'] = ' '.join(style)
@@ -1050,7 +1050,7 @@ class HTMLTranslator(nodes.NodeVisitor):
             try:
                 with open(url2pathname(uri), 'rb') as imagefile:
                     imagedata = imagefile.read()
-            except IOError as err:
+            except OSError as err:
                 err_msg = err.strerror
             if err_msg:
                 self.document.reporter.error('Cannot embed image %r: %s'
@@ -1063,7 +1063,7 @@ class HTMLTranslator(nodes.NodeVisitor):
                   # read/parse, apply arguments,
                   # insert as <svg ....> ... </svg> # (about 1/3 less data)
                 data64 = base64.b64encode(imagedata).decode()
-                uri = u'data:%s;base64,%s' % (mimetype, data64)
+                uri = f'data:{mimetype};base64,{data64}'
         elif self.image_loading == 'lazy':
             atts['loading'] = 'lazy'
         if mimetype == 'application/x-shockwave-flash':
@@ -1104,7 +1104,7 @@ class HTMLTranslator(nodes.NodeVisitor):
             self.body.append('</a>')
         self.body.append('<span class="fn-bracket">]</span></span>\n')
         if len(backrefs) > 1:
-            backlinks = ['<a role="doc-backlink" href="#%s">%s</a>' % (ref, i)
+            backlinks = [f'<a role="doc-backlink" href="#{ref}">{i}</a>'
                          for (i, ref) in enumerate(backrefs, 1)]
             self.body.append('<span class="backrefs">(%s)</span>\n'
                              % ','.join(backlinks))
@@ -1198,9 +1198,9 @@ class HTMLTranslator(nodes.NodeVisitor):
         clsarg = self.math_tags[self.math_output][2]
         # LaTeX container
         wrappers = {# math_mode: (inline, block)
-                    'mathml':  ('$%s$',   u'\\begin{%s}\n%s\n\\end{%s}'),
-                    'html':    ('$%s$',   u'\\begin{%s}\n%s\n\\end{%s}'),
-                    'mathjax': (r'\(%s\)', u'\\begin{%s}\n%s\n\\end{%s}'),
+                    'mathml':  ('$%s$',   '\\begin{%s}\n%s\n\\end{%s}'),
+                    'html':    ('$%s$',   '\\begin{%s}\n%s\n\\end{%s}'),
+                    'mathjax': (r'\(%s\)', '\\begin{%s}\n%s\n\\end{%s}'),
                     'latex':   (None,     None),
                    }
         wrapper = wrappers[self.math_output][math_env != '']
@@ -1265,7 +1265,7 @@ class HTMLTranslator(nodes.NodeVisitor):
                 err_node = self.document.reporter.error(err, base_node=node)
                 self.visit_system_message(err_node)
                 self.body.append(self.starttag(node, 'p'))
-                self.body.append(u','.join(err.args))
+                self.body.append(','.join(err.args))
                 self.body.append('</p>\n')
                 self.body.append(self.starttag(node, 'pre',
                                                CLASS='literal-block'))
@@ -1541,7 +1541,7 @@ class HTMLTranslator(nodes.NodeVisitor):
                 i = 1
                 backlinks = []
                 for backref in backrefs:
-                    backlinks.append('<a href="#%s">%s</a>' % (backref, i))
+                    backlinks.append(f'<a href="#{backref}">{i}</a>')
                     i += 1
                 backref_text = ('; <em>backlinks: %s</em>'
                                 % ', '.join(backlinks))

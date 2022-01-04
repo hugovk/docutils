@@ -159,7 +159,7 @@ class HTMLTranslator(writers._html_base.HTMLTranslator):
 
     # encode also non-breaking space
     special_characters = dict(_html_base.HTMLTranslator.special_characters)
-    special_characters[0xa0] = u'&nbsp;'
+    special_characters[0xa0] = '&nbsp;'
 
     # use character reference for dash (not valid in HTML5)
     attribution_formats = {'dash': ('&mdash;', ''),
@@ -567,7 +567,7 @@ class HTMLTranslator(writers._html_base.HTMLTranslator):
                     with PIL.Image.open(imagepath.encode(
                                         sys.getfilesystemencoding())) as img:
                         img_size = img.size
-                except (IOError, UnicodeEncodeError):
+                except (OSError, UnicodeEncodeError):
                     pass # TODO: warn?
                 else:
                     self.settings.record_dependencies.add(
@@ -580,7 +580,7 @@ class HTMLTranslator(writers._html_base.HTMLTranslator):
                 if att_name in atts:
                     match = re.match(r'([0-9.]+)(\S*)$', atts[att_name])
                     assert match
-                    atts[att_name] = '%s%s' % (
+                    atts[att_name] = '{}{}'.format(
                         float(match.group(1)) * (float(node['scale']) / 100),
                         match.group(2))
         style = []
@@ -589,7 +589,7 @@ class HTMLTranslator(writers._html_base.HTMLTranslator):
                 if re.match(r'^[0-9.]+$', atts[att_name]):
                     # Interpret unitless values as pixels.
                     atts[att_name] += 'px'
-                style.append('%s: %s;' % (att_name, atts[att_name]))
+                style.append(f'{att_name}: {atts[att_name]};')
                 del atts[att_name]
         if style:
             atts['style'] = ' '.join(style)
@@ -619,7 +619,7 @@ class HTMLTranslator(writers._html_base.HTMLTranslator):
                                        CLASS='label'))
 
     def depart_label(self, node):
-        self.body.append(']%s</td><td>%s' % (self.context.pop(), self.context.pop()))
+        self.body.append(f']{self.context.pop()}</td><td>{self.context.pop()}')
 
     # ersatz for first/last pseudo-classes
     def visit_list_item(self, node):
@@ -830,7 +830,7 @@ class HTMLTranslator(writers._html_base.HTMLTranslator):
                 i = 1
                 backlinks = []
                 for backref in backrefs:
-                    backlinks.append('<a href="#%s">%s</a>' % (backref, i))
+                    backlinks.append(f'<a href="#{backref}">{i}</a>')
                     i += 1
                 backref_text = ('; <em>backlinks: %s</em>'
                                 % ', '.join(backlinks))

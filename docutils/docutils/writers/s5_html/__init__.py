@@ -28,7 +28,7 @@ def find_theme(name):
     path = os.path.join(themes_dir_path, name)
     if not os.path.isdir(path):
         raise docutils.ApplicationError(
-            'Theme directory not found: %r (path: %r)' % (name, path))
+            f'Theme directory not found: {name!r} (path: {path!r})')
     return path
 
 
@@ -193,7 +193,7 @@ class S5HTMLTranslator(html4css1.HTMLTranslator):
         self.theme_files_copied = {}
         required_files_copied = {}
         # This is a link (URL) in HTML, so we use "/", not os.sep:
-        self.theme_file_path = '%s/%s' % ('ui', settings.theme)
+        self.theme_file_path = '{}/{}'.format('ui', settings.theme)
         if settings._destination:
             dest = os.path.join(
                 os.path.dirname(settings._destination), 'ui', settings.theme)

@@ -55,9 +55,9 @@ def usage():
     print(usage_header)
     for longopt, shortopt, description in options:
         if longopt[-1:] == '=':
-            opts = '-%s arg, --%sarg' % (shortopt, longopt)
+            opts = f'-{shortopt} arg, --{longopt}arg'
         else:
-            opts = '-%s, --%s' % (shortopt, longopt)
+            opts = f'-{shortopt}, --{longopt}'
         sys.stdout.write('%-15s' % opts)
         if len(opts) > 14:
             sys.stdout.write('%-16s' % '\n')
@@ -76,7 +76,7 @@ def _rawxml(input, document, optargs):
 
 def _styledxml(input, document, optargs):
     docnode = document.asdom().childNodes[0]
-    return '%s\n%s\n%s' % (
+    return '{}\n{}\n{}'.format(
           '<?xml version="1.0" encoding="ISO-8859-1"?>',
           '<?xml-stylesheet type="text/xsl" href="%s"?>'
           % optargs['styledxml'], docnode.toxml())
@@ -89,14 +89,14 @@ def _test(input, document, optargs):
     output = document.pformat()         # same as _pretty()
     return """\
     totest['change_this_test_name'] = [
-[%s\\
-%s
-%s,
-%s\\
-%s
-%s],
+[{}\\
+{}
+{},
+{}\\
+{}
+{}],
 ]
-""" % ( tq, escape(input.rstrip()), tq, tq, escape(output.rstrip()), tq )
+""".format( tq, escape(input.rstrip()), tq, tq, escape(output.rstrip()), tq )
 
 def escape(text):
     """

@@ -141,8 +141,8 @@ def blahtexml(math_code, inline=True, reporter=None):
 # self-test
 
 if __name__ == "__main__":
-    example = (u'\\frac{\\partial \\sin^2(\\alpha)}{\\partial \\vec r}'
-               u'\\varpi \\, \\text{Grüße}')
+    example = ('\\frac{\\partial \\sin^2(\\alpha)}{\\partial \\vec r}'
+               '\\varpi \\, \\text{Grüße}')
     # print(latexml(example).encode('utf8'))
     # print(ttm(example))
     print(blahtexml(example).encode('utf8'))

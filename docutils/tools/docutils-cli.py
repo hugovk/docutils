@@ -52,10 +52,10 @@ def config_settings_from_files():
 
 default_settings = config_settings_from_files()
 
-description = u'Generate documents from reStructuredText or Markdown sources.'
+description = 'Generate documents from reStructuredText or Markdown sources.'
 
-epilog = (u'Further optional arguments are added by the selected '
-          u'components, the list below adapts to your selection.'
+epilog = ('Further optional arguments are added by the selected '
+          'components, the list below adapts to your selection.'
          )
 
 parser = argparse.ArgumentParser(add_help=False,
@@ -64,11 +64,11 @@ parser = argparse.ArgumentParser(add_help=False,
 
 parser.add_argument('source', nargs='?')
 parser.add_argument('destination', nargs='?')
-parser.add_argument('--reader', help=u'reader name',
+parser.add_argument('--reader', help='reader name',
                     default=default_settings['reader'])
-parser.add_argument('--parser', help=u'parser name',
+parser.add_argument('--parser', help='parser name',
                     default=default_settings['parser'])
-parser.add_argument('--writer', help=u'writer name',
+parser.add_argument('--writer', help='writer name',
                     default=default_settings['writer'])
 
 (args, remainder) = parser.parse_known_args()

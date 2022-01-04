@@ -149,7 +149,7 @@ expected output and check it in:
             'exp': expected_path, 'out': params['destination_path']}
         self.assertTrue(os.access(expected_path, os.R_OK), no_expected)
         # samples are UTF8 encoded. 'rb' leads to errors with Python 3!
-        f = open(expected_path, 'r', encoding='utf-8')
+        f = open(expected_path, encoding='utf-8')
         # Normalize line endings:
         expected = '\n'.join(f.read().splitlines())
         f.close()
@@ -162,7 +162,7 @@ expected output and check it in:
             diff = ''.join(difflib.unified_diff(
                 expected.splitlines(True), output.splitlines(True),
                 expected_path, params['destination_path']))
-            print('\n%s:' % (self,), file=sys.stderr)
+            print(f'\n{self}:', file=sys.stderr)
             print(diff, file=sys.stderr)
             raise
         # Execute optional function containing extra tests:

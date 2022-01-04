@@ -55,7 +55,7 @@ def process(infile):
     grouper.write_sets()
 
 
-class CharacterEntitySetExtractor(object):
+class CharacterEntitySetExtractor:
 
     """
     Extracts character entity information from unicode.xml file, groups it by
@@ -110,7 +110,7 @@ class CharacterEntitySetExtractor(object):
 
     def EndElementHandler(self, name):
         assert self.elements[-1] == name, \
-               'unknown end-tag %r (%r)' % (name, self.element)
+               f'unknown end-tag {name!r} ({self.element!r})'
         self.elements.pop()
         handler = name + '_end'
         if hasattr(self, handler):
@@ -171,7 +171,7 @@ class CharacterEntitySetExtractor(object):
         print('writing file "%s"' % outname)
         outfile.write(self.header + '\n')
         set = self.sets[set_name]
-        entities = sorted([(e.lower(), e) for e in set.keys()])
+        entities = sorted((e.lower(), e) for e in set.keys())
         longest = 0
         for _, entity_name in entities:
             longest = max(longest, len(entity_name))

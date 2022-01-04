@@ -155,7 +155,7 @@ class HTMLTranslator(writers._html_base.HTMLTranslator):
         # <figcaption> is closed in depart_figure(), as legend may follow.
 
     # use HTML block-level tags if matching class value found
-    supported_block_tags = set(('ins', 'del'))
+    supported_block_tags = {'ins', 'del'}
     def visit_container(self, node):
         # If there is exactly one of the "supported block tags" in
         # the list of class values, use it as tag name:
@@ -273,7 +273,7 @@ class HTMLTranslator(writers._html_base.HTMLTranslator):
         uri = node['uri']
         mimetype = mimetypes.guess_type(uri)[0]
         if mimetype not in self.videotypes:
-            return super(HTMLTranslator, self).visit_image(node)
+            return super().visit_image(node)
         # image size
         if 'width' in node:
             atts['width'] = node['width'].replace('px', '')
@@ -301,9 +301,9 @@ class HTMLTranslator(writers._html_base.HTMLTranslator):
         pass
 
     # use HTML text-level tags if matching class value found
-    supported_inline_tags = set(('code', 'kbd', 'dfn', 'samp', 'var',
+    supported_inline_tags = {'code', 'kbd', 'dfn', 'samp', 'var',
                                  'bdi', 'del', 'ins', 'mark', 'small',
-                                 'b', 'i', 'q', 's', 'u'))
+                                 'b', 'i', 'q', 's', 'u'}
     def visit_inline(self, node):
         # Use `supported_inline_tags` if found in class values
         classes = node['classes']
@@ -438,8 +438,7 @@ class HTMLTranslator(writers._html_base.HTMLTranslator):
 
     # append self-link
     def section_title_tags(self, node):
-        start_tag, close_tag = super(HTMLTranslator,
-                                     self).section_title_tags(node)
+        start_tag, close_tag = super().section_title_tags(node)
         ids = node.parent['ids']
         if (ids and getattr(self.settings, 'section_self_link', None)
             and not isinstance(node.parent, nodes.document)):

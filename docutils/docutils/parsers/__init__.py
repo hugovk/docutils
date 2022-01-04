@@ -87,5 +87,5 @@ def get_parser_class(parser_name):
     try:
         module = import_module(_parser_aliases.get(parser_name, parser_name))
     except ImportError as err:
-        raise ImportError('Parser "%s" missing. %s' % (parser_name, err))
+        raise ImportError(f'Parser "{parser_name}" missing. {err}')
     return module.Parser

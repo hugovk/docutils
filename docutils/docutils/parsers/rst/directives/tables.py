@@ -321,9 +321,9 @@ class CSVTable(Table):
                                         encoding=encoding,
                                         error_handler=error_handler)
                 csv_data = csv_file.read().splitlines()
-            except IOError as error:
+            except OSError as error:
                 severe = self.state_machine.reporter.severe(
-                    u'Problems with "%s" directive path:\n%s.'
+                    'Problems with "%s" directive path:\n%s.'
                     % (self.name, SafeString(error)),
                     nodes.literal_block(self.block_text, self.block_text),
                     line=self.lineno)
@@ -339,7 +339,7 @@ class CSVTable(Table):
             source = self.options['url']
             try:
                 csv_text = urlopen(source).read()
-            except (URLError, IOError, OSError, ValueError) as error:
+            except (URLError, OSError, ValueError) as error:
                 severe = self.state_machine.reporter.severe(
                       'Problems with "%s" directive URL "%s":\n%s.'
                       % (self.name, self.options['url'], SafeString(error)),

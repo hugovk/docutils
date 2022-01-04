@@ -68,11 +68,10 @@ else:
         locale_encoding = None
 
 
-if sys.version_info >= (3, 0):
-    unicode = str  # noqa
+unicode = str  # noqa
 
 
-class SafeString(object):
+class SafeString:
     """
     A wrapper providing robust conversion to `str` and `unicode`.
     """
@@ -96,11 +95,7 @@ class SafeString(object):
                         for arg in self.data.args]
                 return ', '.join(args)
             if isinstance(self.data, unicode):
-                if sys.version_info > (3, 0):
-                    return self.data
-                else:
-                    return self.data.encode(self.encoding,
-                                            self.encoding_errors)
+                return self.data
             raise
 
     def __unicode__(self):
@@ -122,7 +117,7 @@ class SafeString(object):
             return u
         except UnicodeError as error: # catch ..Encode.. and ..Decode.. errors
             if isinstance(self.data, EnvironmentError):
-                return  u"[Errno %s] %s: '%s'" % (self.data.errno,
+                return  "[Errno {}] {}: '{}'".format(self.data.errno,
                     SafeString(self.data.strerror, self.encoding,
                                self.decoding_errors),
                     SafeString(self.data.filename, self.encoding,
@@ -131,7 +126,7 @@ class SafeString(object):
                 args = [unicode(SafeString(arg, self.encoding,
                             decoding_errors=self.decoding_errors))
                         for arg in self.data.args]
-                return u', '.join(args)
+                return ', '.join(args)
             if isinstance(error, UnicodeDecodeError):
                 return unicode(self.data, self.encoding, self.decoding_errors)
             raise
@@ -141,15 +136,15 @@ class ErrorString(SafeString):
     Safely report exception type and message.
     """
     def __str__(self):
-        return '%s: %s' % (self.data.__class__.__name__,
-                            super(ErrorString, self).__str__())
+        return '{}: {}'.format(self.data.__class__.__name__,
+                            super().__str__())
 
     def __unicode__(self):
-        return u'%s: %s' % (self.data.__class__.__name__,
-                            super(ErrorString, self).__unicode__())
+        return '{}: {}'.format(self.data.__class__.__name__,
+                            super().__unicode__())
 
 
-class ErrorOutput(object):
+class ErrorOutput:
     """
     Wrapper class for file-like error streams with
     failsafe de- and encoding of `str`, `bytes`, `unicode` and

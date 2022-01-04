@@ -1,4 +1,4 @@
- # $Id$
+# $Id$
 # Author: David Goodger <goodger@python.org>
 # Copyright: This module has been placed in the public domain.
 
@@ -114,7 +114,7 @@ from docutils import utils
 from docutils.utils.error_reporting import ErrorOutput
 
 
-class StateMachine(object):
+class StateMachine:
 
     """
     A finite state machine for text filters using regular expressions.
@@ -213,8 +213,8 @@ class StateMachine(object):
         self.line_offset = -1
         self.current_state = initial_state or self.initial_state
         if self.debug:
-            print(u'\nStateMachine.run: input_lines (line_offset=%s):\n| %s'
-                  % (self.line_offset, u'\n| '.join(self.input_lines)), file=self._stderr)
+            print('\nStateMachine.run: input_lines (line_offset=%s):\n| %s'
+                  % (self.line_offset, '\n| '.join(self.input_lines)), file=self._stderr)
         transitions = None
         results = []
         state = self.get_state()
@@ -230,8 +230,8 @@ class StateMachine(object):
                         if self.debug:
                             source, offset = self.input_lines.info(
                                 self.line_offset)
-                            print(u'\nStateMachine.run: line (source=%r, '
-                                  u'offset=%r):\n| %s'
+                            print('\nStateMachine.run: line (source=%r, '
+                                  'offset=%r):\n| %s'
                                   % (source, offset, self.line), file=self._stderr)
                         context, next_state, result = self.check_line(
                             context, state, transitions)
@@ -481,9 +481,9 @@ class StateMachine(object):
     def error(self):
         """Report error details."""
         type, value, module, line, function = _exception_data()
-        print(u'%s: %s' % (type, value), file=self._stderr)
+        print(f'{type}: {value}', file=self._stderr)
         print('input line %s' % (self.abs_line_number()), file=self._stderr)
-        print((u'module %s, line %s, function %s' %
+        print(('module %s, line %s, function %s' %
                                (module, line, function)), file=self._stderr)
 
     def attach_observer(self, observer):
@@ -505,7 +505,7 @@ class StateMachine(object):
             observer(*info)
 
 
-class State(object):
+class State:
 
     """
     State superclass. Contains a list of transitions, and transition methods.
@@ -705,12 +705,12 @@ class State(object):
                 pattern = self.patterns[name] = re.compile(pattern)
         except KeyError:
             raise TransitionPatternNotFound(
-                  '%s.patterns[%r]' % (self.__class__.__name__, name))
+                  f'{self.__class__.__name__}.patterns[{name!r}]')
         try:
             method = getattr(self, name)
         except AttributeError:
             raise TransitionMethodNotFound(
-                  '%s.%s' % (self.__class__.__name__, name))
+                  f'{self.__class__.__name__}.{name}')
         return (pattern, method, next_state)
 
     def make_transitions(self, name_list):
@@ -721,7 +721,7 @@ class State(object):
         name string, or a 1- or 2-tuple (transition name, optional next state
         name).
         """
-        stringtype = type('')
+        stringtype = str
         names = []
         transitions = {}
         for namestate in name_list:
@@ -1021,7 +1021,7 @@ class StateWS(State):
         return context, next_state, results
 
 
-class _SearchOverride(object):
+class _SearchOverride:
 
     """
     Mix-in class to override `StateMachine` regular expression behavior.
@@ -1054,7 +1054,7 @@ class SearchStateMachineWS(_SearchOverride, StateMachineWS):
     pass
 
 
-class ViewList(object):
+class ViewList:
 
     """
     List with extended functionality: slices of ViewList objects are child
@@ -1105,7 +1105,7 @@ class ViewList(object):
         return str(self.data)
 
     def __repr__(self):
-        return '%s(%s, items=%s)' % (self.__class__.__name__,
+        return '{}({}, items={})'.format(self.__class__.__name__,
                                      self.data, self.items)
 
     def __lt__(self, other): return self.data <  self.__cast(other)

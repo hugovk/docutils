@@ -90,9 +90,9 @@ class MockState(statemachine.StateWS):
 
     def literalblock(self):
         indented, indent, offset, good = self.state_machine.get_indented()
-        if self.debug: print('literalblock%s(%s)' % (self.level,
+        if self.debug: print('literalblock{}({})'.format(self.level,
                                                                    indent), file=sys.stderr)
-        return ['literalblock%s(%s)' % (self.level, indent)]
+        return [f'literalblock{self.level}({indent})']
 
     def eof(self, context):
         self.levelholder[0] -= 1
@@ -203,7 +203,7 @@ class SMWSTests(unittest.TestCase):
         self.assertEqual(self.sm.run(testtext), expected)
 
 
-class EmptyClass(object):
+class EmptyClass:
     pass
 
 

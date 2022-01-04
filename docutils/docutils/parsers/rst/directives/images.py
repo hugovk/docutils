@@ -16,7 +16,7 @@ try: # check for the Python Imaging Library
 except ImportError:
     try:  # sometimes PIL modules are put in PYTHONPATH's root
         import Image
-        class PIL(object): pass  # dummy wrapper
+        class PIL: pass  # dummy wrapper
         PIL.Image = Image
     except ImportError:
         PIL = None
@@ -132,7 +132,7 @@ class Figure(Image):
                     with PIL.Image.open(imagepath.encode(
                                         sys.getfilesystemencoding())) as img:
                         figure_node['width'] = '%dpx' % img.size[0]
-                except (IOError, UnicodeEncodeError):
+                except (OSError, UnicodeEncodeError):
                     pass # TODO: warn?
                 else:
                     self.state.document.settings.record_dependencies.add(

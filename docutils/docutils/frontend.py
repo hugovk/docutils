@@ -174,7 +174,7 @@ def validate_comma_separated_list(setting, value, option_parser,
     # this function is called for every option added to `value`
     # -> split the last item and append the result:
     last = value.pop()
-    items = [i.strip(u' \t\n') for i in last.split(u',') if i.strip(u' \t\n')]
+    items = [i.strip(' \t\n') for i in last.split(',') if i.strip(' \t\n')]
     value.extend(items)
     return value
 
@@ -191,7 +191,7 @@ def validate_dependency_file(setting, value, option_parser,
                              config_parser=None, config_section=None):
     try:
         return docutils.utils.DependencyList(value)
-    except IOError:
+    except OSError:
         return docutils.utils.DependencyList(None)
 
 def validate_strip_class(setting, value, option_parser,
@@ -227,7 +227,7 @@ def validate_smartquotes_locales(setting, value, option_parser,
             lc_quotes.append(item)
             continue
         except ValueError:
-            raise ValueError(u'Invalid value "%s".'
+            raise ValueError('Invalid value "%s".'
                              ' Format is "<language>:<quotes>".'
                              % item.encode('ascii', 'backslashreplace'))
         # parse colon separated string list:
@@ -776,7 +776,7 @@ Skipping "%s" configuration file.
             try:
                 # Config files are UTF-8-encoded:
                 fp = codecs.open(filename, 'r', 'utf-8')
-            except IOError:
+            except OSError:
                 continue
             try:
                 RawConfigParser.read_file(self, fp, filename)

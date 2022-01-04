@@ -87,7 +87,7 @@ except:
 StringList.__repr__ = StringList.__str__
 
 
-class DevNull(object):
+class DevNull:
 
     """Output sink."""
 
@@ -172,10 +172,10 @@ class CustomTestCase(StandardTestCase):
         Return string conversion. Overridden to give test id, in addition to
         method name.
         """
-        return '%s; %s' % (self.id, unittest.TestCase.__str__(self))
+        return f'{self.id}; {unittest.TestCase.__str__(self)}'
 
     def __repr__(self):
-        return "<%s %s>" % (self.id, unittest.TestCase.__repr__(self))
+        return f"<{self.id} {unittest.TestCase.__repr__(self)}>"
 
     def clear_roles(self):
         # Language-specific roles and roles added by the
@@ -204,7 +204,7 @@ class CustomTestCase(StandardTestCase):
         try:
             self.assertEqual(output, expected)
         except AssertionError as error:
-            print('\n%s\ninput:' % (self,), file=sys.stderr)
+            print(f'\n{self}\ninput:', file=sys.stderr)
             print(input, file=sys.stderr)
             try:
                 comparison = ''.join(self.compare(expected.splitlines(1),
@@ -285,7 +285,7 @@ class CustomTestSuite(unittest.TestSuite):
             id = self.next_test_case_id
             self.next_test_case_id += 1
         # test identifier will become suiteid.testid
-        tcid = '%s: %s' % (self.id, id)
+        tcid = f'{self.id}: {id}'
         # suite_settings may be passed as a parameter;
         # if not, set from attribute:
         kwargs.setdefault('suite_settings', self.suite_settings)
@@ -413,7 +413,7 @@ class TransformTestSuite(CustomTestSuite):
                       TransformTestCase, testmethod,
                       transforms=transforms, parser=self.parser,
                       input=case[0], expected=case[1],
-                      id='%s[%r][%s]' % (dictname, name, casenum),
+                      id=f'{dictname}[{name!r}][{casenum}]',
                       run_in_debugger=run_in_debugger)
 
 
@@ -481,7 +481,7 @@ class ParserTestSuite(CustomTestSuite):
                 self.addTestCase(
                       self.test_case_class, 'test_parser',
                       input=case[0], expected=case[1],
-                      id='%s[%r][%s]' % (dictname, name, casenum),
+                      id=f'{dictname}[{name!r}][{casenum}]',
                       run_in_debugger=run_in_debugger)
 
 
@@ -552,7 +552,7 @@ class GridTableParserTestCase(CustomTestCase):
             self.parser.parse_table()
             output = self.parser.cells
         except Exception as details:
-            output = '%s: %s' % (details.__class__.__name__, details)
+            output = f'{details.__class__.__name__}: {details}'
         self.compare_output(self.input, pformat(output) + '\n',
                             pformat(self.expected) + '\n')
 
@@ -561,7 +561,7 @@ class GridTableParserTestCase(CustomTestCase):
             output = self.parser.parse(StringList(string2lines(self.input),
                                                   'test data'))
         except Exception as details:
-            output = '%s: %s' % (details.__class__.__name__, details)
+            output = f'{details.__class__.__name__}: {details}'
         self.compare_output(self.input, pformat(output) + '\n',
                             pformat(self.expected) + '\n')
 
@@ -600,11 +600,11 @@ class GridTableParserTestSuite(CustomTestSuite):
                         continue
                 self.addTestCase(self.test_case_class, 'test_parse_table',
                                  input=case[0], expected=case[1],
-                                 id='%s[%r][%s]' % (dictname, name, casenum),
+                                 id=f'{dictname}[{name!r}][{casenum}]',
                                  run_in_debugger=run_in_debugger)
                 self.addTestCase(self.test_case_class, 'test_parse',
                                  input=case[0], expected=case[2],
-                                 id='%s[%r][%s]' % (dictname, name, casenum),
+                                 id=f'{dictname}[{name!r}][{casenum}]',
                                  run_in_debugger=run_in_debugger)
 
 
@@ -643,7 +643,7 @@ class SimpleTableParserTestSuite(CustomTestSuite):
                         continue
                 self.addTestCase(self.test_case_class, 'test_parse',
                                  input=case[0], expected=case[1],
-                                 id='%s[%r][%s]' % (dictname, name, casenum),
+                                 id=f'{dictname}[{name!r}][{casenum}]',
                                  run_in_debugger=run_in_debugger)
 
 
@@ -699,7 +699,7 @@ class PublishTestSuite(CustomTestSuite):
                 self.addTestCase(
                       self.test_class, 'test_publish',
                       input=case[0], expected=case[1],
-                      id='%s[%r][%s]' % (dictname, name, casenum),
+                      id=f'{dictname}[{name!r}][{casenum}]',
                       run_in_debugger=run_in_debugger,
                       # Passed to constructor of self.test_class:
                       writer_name=self.writer_name)
@@ -794,7 +794,7 @@ class HtmlPublishPartsTestSuite(CustomTestSuite):
                         continue
                 self.addTestCase(self.testcase_class, 'test_publish',
                                  input=case[0], expected=case[1],
-                                 id='%s[%r][%s]' % (dictname, name, casenum),
+                                 id=f'{dictname}[{name!r}][{casenum}]',
                                  run_in_debugger=run_in_debugger,
                                  suite_settings=settings)
 
@@ -808,7 +808,7 @@ def exception_data(func, *args, **kwds):
         func(*args, **kwds)
     except Exception as detail:
         return (detail, detail.args,
-                '%s: %s' % (detail.__class__.__name__, detail))
+                f'{detail.__class__.__name__}: {detail}')
     return None, [], "No exception"
 
 

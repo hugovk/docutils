@@ -32,7 +32,7 @@ class SystemMessage(ApplicationError):
 class SystemMessagePropagation(ApplicationError): pass
 
 
-class Reporter(object):
+class Reporter:
 
     """
     Info/warning/error reporter and ``system_message`` element generator.
@@ -599,7 +599,7 @@ def split_escaped_whitespace(text):
     return list(itertools.chain(*strings))
 
 def strip_combining_chars(text):
-    return u''.join([c for c in text if not unicodedata.combining(c)])
+    return ''.join([c for c in text if not unicodedata.combining(c)])
 
 def find_combining_chars(text):
     """Return indices of all combining chars in  Unicode string `text`.
@@ -641,8 +641,8 @@ def column_width(text):
 
     Correct ``len(text)`` for wide East Asian and combining Unicode chars.
     """
-    width = sum([east_asian_widths[unicodedata.east_asian_width(c)]
-                 for c in text])
+    width = sum(east_asian_widths[unicodedata.east_asian_width(c)]
+                 for c in text)
     # correction for combining chars:
     width -= len(find_combining_chars(text))
     return width
@@ -681,7 +681,7 @@ def normalize_language_tag(tag):
     return taglist
 
 
-class DependencyList(object):
+class DependencyList:
 
     """
     List of dependencies, with file recording support.
@@ -746,7 +746,7 @@ class DependencyList(object):
             output_file = self.file.name
         except AttributeError:
             output_file = None
-        return '%s(%r, %s)' % (self.__class__.__name__, output_file, self.list)
+        return f'{self.__class__.__name__}({output_file!r}, {self.list})'
 
 
 release_level_abbreviations = {
@@ -780,7 +780,7 @@ def version_identifier(version_info=None):
         dev = ''
     else:
         dev = '.dev'
-    version = '%s.%s%s%s%s%s' % (
+    version = '{}.{}{}{}{}{}'.format(
         version_info.major,
         version_info.minor,
         micro,

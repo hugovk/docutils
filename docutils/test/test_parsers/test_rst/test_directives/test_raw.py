@@ -120,13 +120,13 @@ Raw input file is UTF-16-encoded, and is not valid ASCII.
     <system_message level="4" line="3" source="test data" type="SEVERE">
         <paragraph>
             Problem with "raw" directive:
-            %s
+            {}
         <literal_block xml:space="preserve">
             .. raw:: html
-               :file: %s
+               :file: {}
                :encoding: ascii
-""" % (utf_16_error_str, utf_16_file_rel)],
-[u"""\
+""".format(utf_16_error_str, utf_16_file_rel)],
+["""\
 .. raw:: html
    :encoding: utf-8
 

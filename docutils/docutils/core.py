@@ -23,7 +23,7 @@ from docutils.transforms import Transformer
 from docutils.utils.error_reporting import ErrorOutput, ErrorString
 import docutils.readers.doctree
 
-class Publisher(object):
+class Publisher:
 
     """
     A facade encapsulating the high-level logic of a Docutils system.
@@ -248,7 +248,7 @@ class Publisher(object):
             print(' (priority, transform class, pending node details, '
                   'keyword args)', file=self._stderr)
             print(pprint.pformat(
-                [(priority, '%s.%s' % (xclass.__module__, xclass.__name__),
+                [(priority, f'{xclass.__module__}.{xclass.__name__}',
                   pending and pending.details, kwargs)
                  for priority, xclass, pending, kwargs
                  in self.document.transformer.applied]), file=self._stderr)
@@ -263,26 +263,26 @@ class Publisher(object):
         elif isinstance(error, UnicodeEncodeError):
             self.report_UnicodeError(error)
         elif isinstance(error, io.InputError):
-            self._stderr.write(u'Unable to open source file for reading:\n'
-                               u'  %s\n' % ErrorString(error))
+            self._stderr.write('Unable to open source file for reading:\n'
+                               '  %s\n' % ErrorString(error))
         elif isinstance(error, io.OutputError):
             self._stderr.write(
-                u'Unable to open destination file for writing:\n'
-                u'  %s\n' % ErrorString(error))
+                'Unable to open destination file for writing:\n'
+                '  %s\n' % ErrorString(error))
         else:
-            print(u'%s' % ErrorString(error), file=self._stderr)
+            print('%s' % ErrorString(error), file=self._stderr)
             print(("""\
 Exiting due to error.  Use "--traceback" to diagnose.
 Please report errors to <docutils-users@lists.sf.net>.
-Include "--traceback" output, Docutils version (%s%s),
-Python version (%s), your OS type & version, and the
-command line used.""" % (__version__,
+Include "--traceback" output, Docutils version ({}{}),
+Python version ({}), your OS type & version, and the
+command line used.""".format(__version__,
                          docutils.__version_details__ and
                          ' [%s]'%docutils.__version_details__ or '',
                          sys.version.split()[0])), file=self._stderr)
 
     def report_SystemMessage(self, error):
-        print('Exiting due to level-%s (%s) system message.' % (
+        print('Exiting due to level-{} ({}) system message.'.format(
             error.level, utils.Reporter.levels[error.level]),
               file=self._stderr)
 

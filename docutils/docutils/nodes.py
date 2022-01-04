@@ -30,16 +30,15 @@ import warnings
 import unicodedata
 # import xml.dom.minidom as dom # -> conditional import in Node.asdom()
 
-if sys.version_info >= (3, 0):
-    unicode = str  # noqa
-    basestring = str  # noqa
+unicode = str  # noqa
+basestring = str  # noqa
 
 
 # ==============================
 #  Functional Node Base Classes
 # ==============================
 
-class Node(object):
+class Node:
     """Abstract base class of nodes in a document tree."""
 
     parent = None
@@ -207,8 +206,7 @@ class Node(object):
         if isinstance(self, cls):
             yield self
         for child in self.children:
-            for subnode in child._fast_findall(cls):
-                yield subnode
+            yield from child._fast_findall(cls)
 
     def _superfast_findall(self):
         """Return iterator that doesn't check for a condition."""
@@ -217,8 +215,7 @@ class Node(object):
         # which yields only the direct children.
         yield self
         for child in self.children:
-            for subnode in child._superfast_findall():
-                yield subnode
+            yield from child._superfast_findall()
 
     def traverse(self, condition=None, include_self=True, descend=True,
                  siblings=False, ascend=False):
@@ -278,12 +275,10 @@ class Node(object):
         # optimized version of traverse()
         if include_self and descend and not siblings:
             if condition is None:
-                for subnode in self._superfast_findall():
-                    yield subnode
+                yield from self._superfast_findall()
                 return
             elif isinstance(condition, type):
-                for subnode in self._fast_findall(condition):
-                    yield subnode
+                yield from self._fast_findall(condition)
                 return
         # Check if `condition` is a class (check for TypeType for Python
         # implementations that use only new-style classes, like PyPy).
@@ -297,19 +292,17 @@ class Node(object):
             yield self
         if descend and len(self.children):
             for child in self:
-                for subnode in child.findall(condition=condition,
+                yield from child.findall(condition=condition,
                                     include_self=True, descend=True,
-                                    siblings=False, ascend=False):
-                    yield subnode
+                                    siblings=False, ascend=False)
         if siblings or ascend:
             node = self
             while node.parent:
                 index = node.parent.index(node)
                 for sibling in node.parent[index+1:]:
-                    for subnode in sibling.findall(condition=condition,
+                    yield from sibling.findall(condition=condition,
                                         include_self=True, descend=descend,
-                                        siblings=False, ascend=False):
-                        yield subnode
+                                        siblings=False, ascend=False)
                 if not ascend:
                     break
                 else:
@@ -405,6 +398,7 @@ class Text(Node, str):
         if len(data) > maxlen:
             data = data[:maxlen-4] + ' ...'
         return '<%s: %r>' % (self.tagname, str(data))
+        return f'<{self.tagname}: {data}>'
 
     def __repr__(self):
         return self.shortrepr(maxlen=68)
@@ -433,7 +427,7 @@ class Text(Node, str):
     def pformat(self, indent='    ', level=0):
         try:
             if self.document.settings.detailed:
-                lines = ['%s%s' % (indent*level, '<#text>')
+                lines = ['{}{}'.format(indent*level, '<#text>')
                         ] + [indent*(level+1) + repr(line)
                              for line in self.splitlines(True)]
                 return '\n'.join(lines) + '\n'
@@ -563,7 +557,7 @@ class Element(Node):
         element = domroot.createElement(self.tagname)
         for attribute, value in self.attlist():
             if isinstance(value, list):
-                value = ' '.join([serial_escape('%s' % (v,)) for v in value])
+                value = ' '.join([serial_escape(f'{v}') for v in value])
             element.setAttribute(attribute, '%s' % value)
         for child in self.children:
             element.appendChild(child._dom_node(domroot))
@@ -577,21 +571,21 @@ class Element(Node):
                 data = data[:56] + ' ...'
                 break
         if self['names']:
-            return '<%s "%s": %s>' % (self.__class__.__name__,
+            return '<{} "{}": {}>'.format(self.__class__.__name__,
                                       '; '.join(self['names']), data)
         else:
-            return '<%s: %s>' % (self.__class__.__name__, data)
+            return f'<{self.__class__.__name__}: {data}>'
 
     def shortrepr(self):
         if self['names']:
-            return '<%s "%s"...>' % (self.__class__.__name__,
+            return '<{} "{}"...>'.format(self.__class__.__name__,
                                      '; '.join(self['names']))
         else:
             return '<%s...>' % self.tagname
 
     def __str__(self):
         if self.children:
-            return u'%s%s%s' % (self.starttag(),
+            return '{}{}{}'.format(self.starttag(),
                                 ''.join([unicode(c) for c in self.children]),
                                 self.endtag())
         else:
@@ -607,20 +601,20 @@ class Element(Node):
                 parts.append('%s="True"' % name)
                 continue
             if isinstance(value, list):
-                values = [serial_escape('%s' % (v,)) for v in value]
+                values = [serial_escape(f'{v}') for v in value]
                 value = ' '.join(values)
             else:
                 value = unicode(value)
             value = quoteattr(value)
-            parts.append(u'%s=%s' % (name, value))
-        return u'<%s>' % u' '.join(parts)
+            parts.append(f'{name}={value}')
+        return '<%s>' % ' '.join(parts)
 
     def endtag(self):
         return '</%s>' % self.tagname
 
     def emptytag(self):
-        return u'<%s/>' % u' '.join([self.tagname] +
-                                    ['%s="%s"' % (n, v)
+        return '<%s/>' % ' '.join([self.tagname] +
+                                    [f'{n}="{v}"'
                                      for n, v in self.attlist()])
 
     def __len__(self):
@@ -1017,7 +1011,7 @@ class Element(Node):
             # Assert that we aren't losing any attributes.
             for att in self.basic_attributes:
                 assert not self[att], \
-                       'Losing "%s" attribute: %s' % (att, self[att])
+                       f'Losing "{att}" attribute: {self[att]}'
         self.parent.replace(self, new)
 
     def first_child_matching_class(self, childclass, start=0, end=sys.maxsize):
@@ -1062,7 +1056,7 @@ class Element(Node):
         return None
 
     def pformat(self, indent='    ', level=0):
-        return ''.join(['%s%s\n' % (indent * level, self.starttag())] +
+        return ''.join([f'{indent * level}{self.starttag()}\n'] +
                        [child.pformat(indent, level+1)
                         for child in self.children])
 
@@ -1160,12 +1154,12 @@ class FixedTextElement(TextElement):
 #  Mixins
 # ========
 
-class Resolvable(object):
+class Resolvable:
 
     resolved = 0
 
 
-class BackLinkable(object):
+class BackLinkable:
 
     def add_backref(self, refid):
         self['backrefs'].append(refid)
@@ -1175,19 +1169,19 @@ class BackLinkable(object):
 #  Element Categories
 # ====================
 
-class Root(object):
+class Root:
     pass
 
 
-class Titular(object):
+class Titular:
     pass
 
 
-class PreBibliographic(object):
+class PreBibliographic:
     """Category of Node which may occur before Bibliographic Nodes."""
 
 
-class Bibliographic(object):
+class Bibliographic:
     pass
 
 
@@ -1195,11 +1189,11 @@ class Decorative(PreBibliographic):
     pass
 
 
-class Structural(object):
+class Structural:
     pass
 
 
-class Body(object):
+class Body:
     pass
 
 
@@ -1222,11 +1216,11 @@ class Invisible(PreBibliographic):
     """Internal elements that don't appear in output."""
 
 
-class Part(object):
+class Part:
     pass
 
 
-class Inline(object):
+class Inline:
     pass
 
 
@@ -1243,7 +1237,7 @@ class Targetable(Resolvable):
     Required for MoinMoin/reST compatibility."""
 
 
-class Labeled(object):
+class Labeled:
     """Contains a `label` as its first element."""
 
 
@@ -1402,7 +1396,7 @@ class document(Root, Structural, Element):
             else:
                 prefix = id_prefix + auto_id_prefix
                 if  prefix.endswith('%'):
-                    prefix = '%s%s-' % (prefix[:-1], suggested_prefix
+                    prefix = '{}{}-'.format(prefix[:-1], suggested_prefix
                                                 or make_id(node.tagname))
             while True:
                 self.id_counter[prefix] += 1
@@ -1807,12 +1801,12 @@ class system_message(Special, BackLinkable, PreBibliographic, Element):
         try:
             Element.__init__(self, rawsource, *children, **attributes)
         except:
-            print('system_message: children=%r' % (children,))
+            print(f'system_message: children={children!r}')
             raise
 
     def astext(self):
         line = self.get('line', '')
-        return u'%s:%s: (%s/%s) %s' % (self['source'], line, self['type'],
+        return '{}:{}: ({}/{}) {}'.format(self['source'], line, self['type'],
                                        self['level'], Element.astext(self))
 
 
@@ -1858,7 +1852,7 @@ class pending(Special, Invisible, Element):
     def pformat(self, indent='    ', level=0):
         internals = [
               '.. internal attributes:',
-              '     .transform: %s.%s' % (self.transform.__module__,
+              '     .transform: {}.{}'.format(self.transform.__module__,
                                           self.transform.__name__),
               '     .details:']
         details = sorted(self.details.items())
@@ -1876,7 +1870,7 @@ class pending(Special, Invisible, Element):
             else:
                 internals.append('%7s%s: %r' % ('', key, value))
         return (Element.pformat(self, indent, level)
-                + ''.join([('    %s%s\n' % (indent * level, line))
+                + ''.join([(f'    {indent * level}{line}\n')
                            for line in internals]))
 
     def copy(self):
@@ -1962,7 +1956,7 @@ node_class_names = """
 """A list of names of all concrete Node subclasses."""
 
 
-class NodeVisitor(object):
+class NodeVisitor:
 
     """
     "Visitor" pattern [GoF95]_ abstract superclass implementation for
@@ -2266,46 +2260,46 @@ def make_id(string):
 _non_id_chars = re.compile('[^a-z0-9]+')
 _non_id_at_ends = re.compile('^[-0-9]+|-+$')
 _non_id_translate = {
-    0x00f8: u'o',       # o with stroke
-    0x0111: u'd',       # d with stroke
-    0x0127: u'h',       # h with stroke
-    0x0131: u'i',       # dotless i
-    0x0142: u'l',       # l with stroke
-    0x0167: u't',       # t with stroke
-    0x0180: u'b',       # b with stroke
-    0x0183: u'b',       # b with topbar
-    0x0188: u'c',       # c with hook
-    0x018c: u'd',       # d with topbar
-    0x0192: u'f',       # f with hook
-    0x0199: u'k',       # k with hook
-    0x019a: u'l',       # l with bar
-    0x019e: u'n',       # n with long right leg
-    0x01a5: u'p',       # p with hook
-    0x01ab: u't',       # t with palatal hook
-    0x01ad: u't',       # t with hook
-    0x01b4: u'y',       # y with hook
-    0x01b6: u'z',       # z with stroke
-    0x01e5: u'g',       # g with stroke
-    0x0225: u'z',       # z with hook
-    0x0234: u'l',       # l with curl
-    0x0235: u'n',       # n with curl
-    0x0236: u't',       # t with curl
-    0x0237: u'j',       # dotless j
-    0x023c: u'c',       # c with stroke
-    0x023f: u's',       # s with swash tail
-    0x0240: u'z',       # z with swash tail
-    0x0247: u'e',       # e with stroke
-    0x0249: u'j',       # j with stroke
-    0x024b: u'q',       # q with hook tail
-    0x024d: u'r',       # r with stroke
-    0x024f: u'y',       # y with stroke
+    0x00f8: 'o',       # o with stroke
+    0x0111: 'd',       # d with stroke
+    0x0127: 'h',       # h with stroke
+    0x0131: 'i',       # dotless i
+    0x0142: 'l',       # l with stroke
+    0x0167: 't',       # t with stroke
+    0x0180: 'b',       # b with stroke
+    0x0183: 'b',       # b with topbar
+    0x0188: 'c',       # c with hook
+    0x018c: 'd',       # d with topbar
+    0x0192: 'f',       # f with hook
+    0x0199: 'k',       # k with hook
+    0x019a: 'l',       # l with bar
+    0x019e: 'n',       # n with long right leg
+    0x01a5: 'p',       # p with hook
+    0x01ab: 't',       # t with palatal hook
+    0x01ad: 't',       # t with hook
+    0x01b4: 'y',       # y with hook
+    0x01b6: 'z',       # z with stroke
+    0x01e5: 'g',       # g with stroke
+    0x0225: 'z',       # z with hook
+    0x0234: 'l',       # l with curl
+    0x0235: 'n',       # n with curl
+    0x0236: 't',       # t with curl
+    0x0237: 'j',       # dotless j
+    0x023c: 'c',       # c with stroke
+    0x023f: 's',       # s with swash tail
+    0x0240: 'z',       # z with swash tail
+    0x0247: 'e',       # e with stroke
+    0x0249: 'j',       # j with stroke
+    0x024b: 'q',       # q with hook tail
+    0x024d: 'r',       # r with stroke
+    0x024f: 'y',       # y with stroke
 }
 _non_id_translate_digraphs = {
-    0x00df: u'sz',      # ligature sz
-    0x00e6: u'ae',      # ae
-    0x0153: u'oe',      # ligature oe
-    0x0238: u'db',      # db digraph
-    0x0239: u'qp',      # qp digraph
+    0x00df: 'sz',      # ligature sz
+    0x00e6: 'ae',      # ae
+    0x0153: 'oe',      # ligature oe
+    0x0238: 'db',      # db digraph
+    0x0239: 'qp',      # qp digraph
 }
 
 def dupname(node, name):

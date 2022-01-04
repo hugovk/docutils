@@ -54,13 +54,13 @@ nonexistent_rel = DocutilsTestSupport.utils.relative_path(
 
 # Different error for path with 8bit chars with locale == C or None:
 try:
-    open(u'\u043c\u0438\u0440.txt')
+    open('\u043c\u0438\u0440.txt')
 except UnicodeEncodeError:
-    errstr_8bit_path = u"""\
+    errstr_8bit_path = """\
 Cannot encode input file path "\u043c\u0438\u0440.txt" (wrong locale?).\
 """
 except:
-    errstr_8bit_path = u"""\
+    errstr_8bit_path = """\
 InputError: [Errno 2] No such file or directory: '\u043c\u0438\u0440.txt'.\
 """
 
@@ -282,12 +282,12 @@ A paragraph.
 Include Test
 ============
 
-.. include:: %s
+.. include:: {}
 
-.. include:: %s
+.. include:: {}
 
 A paragraph.
-""" % (include1, include1),
+""".format(include1, include1),
 """\
 <document source="test data">
     <section ids="include-test" names="include\\ test">
@@ -319,14 +319,14 @@ A paragraph.
 Include Test
 ============
 
-.. include:: %s
+.. include:: {}
 
 ----------
 
-.. include:: %s
+.. include:: {}
 
 A paragraph.
-""" % (include1, include1),
+""".format(include1, include1),
 """\
 <document source="test data">
     <section ids="include-test" names="include\\ test">
@@ -534,17 +534,17 @@ Include file is UTF-16-encoded, and is not valid ASCII.
     <system_message level="4" line="3" source="test data" type="SEVERE">
         <paragraph>
             Problem with "include" directive:
-            %s
+            {}
         <literal_block xml:space="preserve">
-            .. include:: %s
+            .. include:: {}
                :encoding: ascii
-""" % (utf_16_error_str, reldir(utf_16_file))],
-[u"""\
+""".format(utf_16_error_str, reldir(utf_16_file))],
+["""\
 cyrillic filename:
 
 .. include:: \u043c\u0438\u0440.txt
 """,
-u"""\
+"""\
 <document source="test data">
     <paragraph>
         cyrillic filename:
@@ -911,14 +911,14 @@ A paragraph.
 ["""\
 Include start-after/end-before Test, single option variant
 
-.. include:: %s
+.. include:: {}
    :end-before: .. start here
 
-.. include:: %s
+.. include:: {}
    :start-after: .. stop here
 
 A paragraph.
-""" % (include12, include12),
+""".format(include12, include12),
 """\
 <document source="test data">
     <paragraph>
@@ -933,13 +933,13 @@ A paragraph.
 ["""\
 Include start-after/end-before multi-line test.
 
-.. include:: %s
+.. include:: {}
    :start-after: From: me
                  To: you
    :end-before: -------
                 -- mork of ork
 
-.. include:: %s
+.. include:: {}
    :start-after: From: me
                  To: you
    :end-before:
@@ -947,7 +947,7 @@ Include start-after/end-before multi-line test.
          -- mork of ork
 
 A paragraph.
-""" % (include13, include13),
+""".format(include13, include13),
 """\
 <document source="test data">
     <paragraph>
@@ -1220,16 +1220,16 @@ Circular inclusion
         File "include15.txt": example of rekursive inclusion.
     <paragraph>
         File "include16.txt": example of rekursive inclusion.
-    <system_message level="2" line="3" source="%s" type="WARNING">
+    <system_message level="2" line="3" source="{}" type="WARNING">
         <paragraph>
-            circular inclusion in "include" directive: %s < %s < %s < test data
+            circular inclusion in "include" directive: {} < {} < {} < test data
         <literal_block xml:space="preserve">
             .. include:: include15.txt
     <paragraph>
         No loop when clipping before the "include" directive:
     <paragraph>
         File "include15.txt": example of rekursive inclusion.
-""" % (reldir(include16), reldir(include15),
+""".format(reldir(include16), reldir(include15),
        reldir(include16), reldir(include15))],
 ["""\
 Circular inclusion with clipping.
@@ -1245,9 +1245,9 @@ Circular inclusion with clipping.
         File "include15.txt": example of rekursive inclusion.
     <paragraph>
         File "include16.txt": example of rekursive inclusion.
-    <system_message level="2" line="3" source="%s" type="WARNING">
+    <system_message level="2" line="3" source="{}" type="WARNING">
         <paragraph>
-            circular inclusion in "include" directive: %s < %s < %s < %s < test data
+            circular inclusion in "include" directive: {} < {} < {} < {} < test data
         <literal_block xml:space="preserve">
             .. include:: include15.txt
     <paragraph>
@@ -1258,7 +1258,7 @@ Circular inclusion with clipping.
         No loop when clipping before the "include" directive:
     <paragraph>
         File "include15.txt": example of rekursive inclusion.
-""" % (reldir(include16), reldir(include15), reldir(include16),
+""".format(reldir(include16), reldir(include15), reldir(include16),
        reldir(include15), reldir(include16))],
 ["""\
 Circular inclusion with specified parser.
@@ -1274,16 +1274,16 @@ Circular inclusion with specified parser.
         File "include15.txt": example of rekursive inclusion.
     <paragraph>
         File "include16.txt": example of rekursive inclusion.
-    <system_message level="2" line="3" source="%s" type="WARNING">
+    <system_message level="2" line="3" source="{}" type="WARNING">
         <paragraph>
-            circular inclusion in "include" directive: %s < %s < %s < test data
+            circular inclusion in "include" directive: {} < {} < {} < test data
         <literal_block xml:space="preserve">
             .. include:: include15.txt
     <paragraph>
         No loop when clipping before the "include" directive:
     <paragraph>
         File "include15.txt": example of rekursive inclusion.
-""" % (reldir(include16), reldir(include15),
+""".format(reldir(include16), reldir(include15),
        reldir(include16), reldir(include15))],
 ["""\
 No circular inclusion.

@@ -86,7 +86,7 @@ class VersionInfo(namedtuple('VersionInfo',
             if serial != 0:
                 raise ValueError('"serial" must be 0 for final releases')
 
-        return super(VersionInfo, cls).__new__(cls, major, minor, micro,
+        return super().__new__(cls, major, minor, micro,
                                                releaselevel, serial, release)
 
     def __lt__(self, other):
@@ -132,7 +132,7 @@ class ApplicationError(Exception): pass
 class DataError(ApplicationError): pass
 
 
-class SettingsSpec(object):
+class SettingsSpec:
 
     """
     Runtime setting specification base class.

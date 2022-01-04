@@ -19,11 +19,11 @@ from docutils.parsers.rst.directives.images import PIL
 
 # docutils.utils.DependencyList records POSIX paths,
 # i.e. "/" as a path separator even on Windows (not os.path.join).
-paths = {'include': u'data/include.txt',  # included rst file
-         'raw':     u'data/raw.txt',      # included raw "HTML file"
-         'scaled-image': u'../docs/user/rst/images/biohazard.png',
-         'figure-image': u'../docs/user/rst/images/title.png',
-         'stylesheet':   u'data/stylesheet.txt',
+paths = {'include': 'data/include.txt',  # included rst file
+         'raw':     'data/raw.txt',      # included raw "HTML file"
+         'scaled-image': '../docs/user/rst/images/biohazard.png',
+         'figure-image': '../docs/user/rst/images/title.png',
+         'stylesheet':   'data/stylesheet.txt',
         }
 
 # avoid latex writer future warnings:
@@ -102,19 +102,19 @@ class RecordDependenciesTests(unittest.TestCase):
         so['embed_stylesheet'] = False
         record = self.get_record(writer_name='html', settings_overrides=so)
         self.assertTrue(stylesheet not in record,
-                     '%r should not be in %r' % (stylesheet, record))
+                     f'{stylesheet!r} should not be in {record!r}')
         record = self.get_record(writer_name='latex', settings_overrides=so)
         self.assertTrue(stylesheet not in record,
-                     '%r should not be in %r' % (stylesheet, record))
+                     f'{stylesheet!r} should not be in {record!r}')
 
         so['embed_stylesheet'] = True
         record = self.get_record(writer_name='html', settings_overrides=so)
         self.assertTrue(stylesheet in record,
-                     '%r should be in %r' % (stylesheet, record))
+                     f'{stylesheet!r} should be in {record!r}')
         so['embed_stylesheet'] = True
         record = self.get_record(writer_name='latex', settings_overrides=so)
         self.assertTrue(stylesheet in record,
-                     '%r should be in %r' % (stylesheet, record))
+                     f'{stylesheet!r} should be in {record!r}')
 
 
 if __name__ == '__main__':

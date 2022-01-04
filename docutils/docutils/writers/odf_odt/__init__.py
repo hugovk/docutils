@@ -302,7 +302,7 @@ def escape_cdata(text):
     ascii = ''
     for char in text:
         if ord(char) >= ord("\x7f"):
-            ascii += "&#x%X;" % (ord(char), )
+            ascii += f"&#x{ord(char):X};"
         else:
             ascii += char
     return ascii
@@ -313,7 +313,7 @@ def escape_cdata(text):
 #
 
 
-class TableStyle(object):
+class TableStyle:
     def __init__(self, border=None, backgroundcolor=None):
         self.border = border
         self.backgroundcolor = backgroundcolor
@@ -341,7 +341,7 @@ BUILTIN_DEFAULT_TABLE_STYLE = TableStyle(
 #
 # Information about the indentation level for lists nested inside
 #   other contexts, e.g. dictionary lists.
-class ListLevel(object):
+class ListLevel:
     def __init__(self, level, sibling_level=True, nested_level=True):
         self.level = level
         self.sibling_level = sibling_level
@@ -669,7 +669,7 @@ class Writer(writers.Writer):
                 zfile.write(source, destination)
             except OSError:
                 self.document.reporter.warning(
-                    "Can't open file %s." % (source, ))
+                    f"Can't open file {source}.")
 
     def get_settings(self):
         """
@@ -748,7 +748,7 @@ class Writer(writers.Writer):
         doc = etree.ElementTree(root)
         root = SubElement(root, 'office:meta', nsdict=METNSD)
         el1 = SubElement(root, 'meta:generator', nsdict=METNSD)
-        el1.text = 'Docutils/rst2odf.py/%s' % (VERSION, )
+        el1.text = f'Docutils/rst2odf.py/{VERSION}'
         s1 = os.environ.get('USER', '')
         el1 = SubElement(root, 'meta:initial-creator', nsdict=METNSD)
         el1.text = s1
@@ -869,8 +869,8 @@ class ODFTranslator(nodes.GenericNodeVisitor):
             for rststyle, format in parser.items("Formats"):
                 if rststyle not in self.used_styles:
                     self.document.reporter.warning(
-                        'Style "%s" is not a style used by odtwriter.' % (
-                            rststyle, ))
+                        'Style "{}" is not a style used by odtwriter.'.format(
+                            rststyle))
                 self.format_map[rststyle] = format
         self.section_level = 0
         self.section_count = 0
@@ -946,7 +946,7 @@ class ODFTranslator(nodes.GenericNodeVisitor):
         stylespath = self.settings.stylesheet
         ext = os.path.splitext(stylespath)[1]
         if ext == '.xml':
-            stylesfile = open(stylespath, 'r')
+            stylesfile = open(stylespath)
             s1 = stylesfile.read()
             stylesfile.close()
         elif ext == extension:
@@ -968,11 +968,11 @@ class ODFTranslator(nodes.GenericNodeVisitor):
         root = etree.fromstring(styles_str)
         table_styles = {}
         auto_styles = root.find(
-            '{%s}automatic-styles' % (CNSD['office'], ))
+            '{{{}}}automatic-styles'.format(CNSD['office']))
         for stylenode in auto_styles:
-            name = stylenode.get('{%s}name' % (CNSD['style'], ))
+            name = stylenode.get('{{{}}}name'.format(CNSD['style']))
             tablename = name.split('.')[0]
-            family = stylenode.get('{%s}family' % (CNSD['style'], ))
+            family = stylenode.get('{{{}}}family'.format(CNSD['style']))
             if name.startswith(TABLESTYLEPREFIX):
                 tablestyle = table_styles.get(tablename)
                 if tablestyle is None:
@@ -980,14 +980,14 @@ class ODFTranslator(nodes.GenericNodeVisitor):
                     table_styles[tablename] = tablestyle
                 if family == 'table':
                     properties = stylenode.find(
-                        '{%s}table-properties' % (CNSD['style'], ))
+                        '{{{}}}table-properties'.format(CNSD['style']))
                     property = properties.get(
-                        '{%s}%s' % (CNSD['fo'], 'background-color', ))
+                        '{{{}}}{}'.format(CNSD['fo'], 'background-color'))
                     if property is not None and property != 'none':
                         tablestyle.backgroundcolor = property
                 elif family == 'table-cell':
                     properties = stylenode.find(
-                        '{%s}table-cell-properties' % (CNSD['style'], ))
+                        '{{{}}}table-cell-properties'.format(CNSD['style']))
                     if properties is not None:
                         border = self.get_property(properties)
                         if border is not None:
@@ -997,7 +997,7 @@ class ODFTranslator(nodes.GenericNodeVisitor):
     def get_property(self, stylenode):
         border = None
         for propertyname in TABLEPROPERTYNAMES:
-            border = stylenode.get('{%s}%s' % (CNSD['fo'], propertyname, ))
+            border = stylenode.get('{{{}}}{}'.format(CNSD['fo'], propertyname))
             if border is not None and border != 'none':
                 return border
         return border
@@ -1105,14 +1105,14 @@ class ODFTranslator(nodes.GenericNodeVisitor):
     def add_header_footer(self, root_el):
         automatic_styles = root_el.find(
             '{%s}automatic-styles' % SNSD['office'])
-        path = '{%s}master-styles' % (NAME_SPACE_1, )
+        path = f'{{{NAME_SPACE_1}}}master-styles'
         master_el = root_el.find(path)
         if master_el is None:
             return
-        path = '{%s}master-page' % (SNSD['style'], )
+        path = '{{{}}}master-page'.format(SNSD['style'])
         master_el_container = master_el.findall(path)
         master_el = None
-        target_attrib = '{%s}name' % (SNSD['style'], )
+        target_attrib = '{{{}}}name'.format(SNSD['style'])
         target_name = self.rststyle('pagedefault')
         for el in master_el_container:
             if el.get(target_attrib) == target_name:
@@ -1167,13 +1167,13 @@ class ODFTranslator(nodes.GenericNodeVisitor):
                         't1', 't2', 't3', 't4',
                         'd1', 'd2', 'd3', 'd4', 'd5',
                         's', 't', 'a'):
-                    msg = 'bad field spec: %%%s%%' % (item[1], )
+                    msg = f'bad field spec: %{item[1]}%'
                     raise RuntimeError(msg)
                 el1 = self.make_field_element(
                     parent,
                     item[1], style_name, automatic_styles)
                 if el1 is None:
-                    msg = 'bad field spec: %%%s%%' % (item[1], )
+                    msg = f'bad field spec: %{item[1]}%'
                     raise RuntimeError(msg)
                 else:
                     current_element = el1
@@ -1539,7 +1539,7 @@ class ODFTranslator(nodes.GenericNodeVisitor):
         self.current_element = self.current_element.getparent()
 
     def generate_labeled_block(self, node, label):
-        label = '%s:' % (self.language.labels[label], )
+        label = f'{self.language.labels[label]}:'
         el = self.append_p('textbody')
         el1 = SubElement(
             el, 'text:span',
@@ -1549,7 +1549,7 @@ class ODFTranslator(nodes.GenericNodeVisitor):
         return el
 
     def generate_labeled_line(self, node, label):
-        label = '%s:' % (self.language.labels[label], )
+        label = f'{self.language.labels[label]}:'
         el = self.append_p('textbody')
         el1 = SubElement(
             el, 'text:span',
@@ -1579,10 +1579,10 @@ class ODFTranslator(nodes.GenericNodeVisitor):
             self.pending_ids += node['ids']
 
     def default_visit(self, node):
-        self.document.reporter.warning('missing visit_%s' % (node.tagname, ))
+        self.document.reporter.warning(f'missing visit_{node.tagname}')
 
     def default_departure(self, node):
-        self.document.reporter.warning('missing depart_%s' % (node.tagname, ))
+        self.document.reporter.warning(f'missing depart_{node.tagname}')
 
     def visit_Text(self, node):
         # Skip nodes whose text has been processed in parent nodes.
@@ -1627,7 +1627,7 @@ class ODFTranslator(nodes.GenericNodeVisitor):
         self.set_to_parent()
 
     def visit_authors(self, node):
-        label = '%s:' % (self.language.labels['authors'], )
+        label = '{}:'.format(self.language.labels['authors'])
         el = self.append_p('textbody')
         el1 = SubElement(
             el, 'text:span',
@@ -1845,7 +1845,7 @@ class ODFTranslator(nodes.GenericNodeVisitor):
             el1 = SubElement(
                 el, 'text:span',
                 attrib={'text:style-name': self.rststyle('emphasis')})
-            el1.text = ' (%s)' % (node.astext(), )
+            el1.text = f' ({node.astext()})'
 
     def depart_classifier(self, node):
         pass
@@ -1900,7 +1900,7 @@ class ODFTranslator(nodes.GenericNodeVisitor):
             })
             self.list_style_stack.append(self.rststyle('epigraph-enumitem'))
         else:
-            liststylename = 'enumlist-%s' % (node.get('enumtype', 'arabic'), )
+            liststylename = 'enumlist-{}'.format(node.get('enumtype', 'arabic'))
             el2 = SubElement(el1, 'text:list', attrib={
                 'text:style-name': self.rststyle(liststylename),
             })
@@ -2035,7 +2035,7 @@ class ODFTranslator(nodes.GenericNodeVisitor):
             else:
                 note_class = 'footnote'
             el1 = self.append_child('text:note', attrib={
-                'text:id': '%s' % (refid, ),
+                'text:id': f'{refid}',
                 'text:note-class': note_class,
             })
             note_auto = str(node.attributes.get('auto', 1))
@@ -2085,7 +2085,7 @@ class ODFTranslator(nodes.GenericNodeVisitor):
         if self.settings.create_links:
             id = node.attributes['refid']
             el = self.append_child('text:reference-ref', attrib={
-                'text:ref-name': '%s' % (id, ),
+                'text:ref-name': f'{id}',
                 'text:reference-format': 'text',
             })
             el.text = '['
@@ -2110,7 +2110,7 @@ class ODFTranslator(nodes.GenericNodeVisitor):
                 el0 = SubElement(el, 'text:span')
                 el0.text = '['
                 self.append_child('text:reference-mark-start', attrib={
-                    'text:name': '%s' % (self.citation_id, ),
+                    'text:name': f'{self.citation_id}',
                 })
             else:
                 el.text = '['
@@ -2121,7 +2121,7 @@ class ODFTranslator(nodes.GenericNodeVisitor):
         elif self.citation_id is not None:
             if self.settings.create_links:
                 self.append_child('text:reference-mark-end', attrib={
-                    'text:name': '%s' % (self.citation_id, ),
+                    'text:name': f'{self.citation_id}',
                 })
                 el0 = SubElement(self.current_element, 'text:span')
                 el0.text = ']'
@@ -2151,10 +2151,10 @@ class ODFTranslator(nodes.GenericNodeVisitor):
                     if docsource:
                         dirname = os.path.dirname(docsource)
                         if dirname:
-                            source = '%s%s%s' % (dirname, os.sep, source, )
+                            source = f'{dirname}{os.sep}{source}'
                 if not self.check_file_exists(source):
                     self.document.reporter.warning(
-                        'Cannot find image file %s.' % (source, ))
+                        f'Cannot find image file {source}.')
                     return
         else:
             return
@@ -2163,7 +2163,7 @@ class ODFTranslator(nodes.GenericNodeVisitor):
         else:
             self.image_count += 1
             filename = os.path.split(source)[1]
-            destination = 'Pictures/1%08x%s' % (self.image_count, filename, )
+            destination = f'Pictures/1{self.image_count:08x}{filename}'
             if source.startswith('http:') or source.startswith('https:'):
                 try:
                     imgfile = urlopen(source)
@@ -2176,7 +2176,7 @@ class ODFTranslator(nodes.GenericNodeVisitor):
                     source = imgfilename
                 except HTTPError:
                     self.document.reporter.warning(
-                        "Can't open image url %s." % (source, ))
+                        f"Can't open image url {source}.")
                 spec = (source, destination,)
             else:
                 spec = (os.path.abspath(source), destination,)
@@ -2262,11 +2262,11 @@ class ODFTranslator(nodes.GenericNodeVisitor):
                 scale = int(scale)
             except ValueError:
                 self.document.reporter.warning(
-                    'Invalid scale for image: "%s"' % (
-                        node.attributes['scale'], ))
+                    'Invalid scale for image: "{}"'.format(
+                        node.attributes['scale']))
             if scale < 1:       # or scale > 100:
                 self.document.reporter.warning(
-                    'scale out of range (%s), using 1.' % (scale, ))
+                    f'scale out of range ({scale}), using 1.')
                 scale = 1
             scale = scale * 0.01
         else:
@@ -2506,7 +2506,7 @@ class ODFTranslator(nodes.GenericNodeVisitor):
         attrib['svg:height'] = height
         el1 = SubElement(current_element, 'draw:frame', attrib=attrib)
         SubElement(el1, 'draw:image', attrib={
-            'xlink:href': '%s' % (destination, ),
+            'xlink:href': f'{destination}',
             'xlink:type': 'simple',
             'xlink:show': 'embed',
             'xlink:actuate': 'onLoad',
@@ -2629,11 +2629,11 @@ class ODFTranslator(nodes.GenericNodeVisitor):
 
     def visit_literal_block(self, node):
         if len(self.paragraph_style_stack) > 1:
-            wrapper1 = '<text:p text:style-name="%s">%%s</text:p>' % (
-                self.rststyle('codeblock-indented'), )
+            wrapper1 = '<text:p text:style-name="{}">%s</text:p>'.format(
+                self.rststyle('codeblock-indented'))
         else:
-            wrapper1 = '<text:p text:style-name="%s">%%s</text:p>' % (
-                self.rststyle('codeblock'), )
+            wrapper1 = '<text:p text:style-name="{}">%s</text:p>'.format(
+                self.rststyle('codeblock'))
         source = node.astext()
         if (
                 pygments and
@@ -2880,9 +2880,9 @@ class ODFTranslator(nodes.GenericNodeVisitor):
             if 'odt' in formatlist:
                 rawstr = node.astext()
                 attrstr = ' '.join([
-                    '%s="%s"' % (k, v, )
+                    f'{k}="{v}"'
                     for k, v in list(CONTENT_NAMESPACE_ATTRIB.items())])
-                contentstr = '<stuff %s>%s</stuff>' % (attrstr, rawstr, )
+                contentstr = f'<stuff {attrstr}>{rawstr}</stuff>'
                 contentstr = contentstr.encode("utf-8")
                 content = etree.fromstring(contentstr)
                 if len(content) > 0:
@@ -3006,8 +3006,8 @@ class ODFTranslator(nodes.GenericNodeVisitor):
                 # If we can't find the table style, issue warning
                 #   and use the default table style.
                 self.document.reporter.warning(
-                    'Can\'t find table style "%s".  Using default.' % (
-                        table_name, ))
+                    'Can\'t find table style "{}".  Using default.'.format(
+                        table_name))
                 table_name = TABLENAMEDEFAULT
                 table_style = self.table_styles.get(table_name)
                 if table_style is None:
@@ -3096,7 +3096,7 @@ class ODFTranslator(nodes.GenericNodeVisitor):
 
     def depart_table(self, node):
         attribkey = add_ns('style:width', nsdict=SNSD)
-        attribval = '%.4fin' % (self.table_width, )
+        attribval = f'{self.table_width:.4f}in'
         el1 = self.current_table_style
         el2 = el1[0]
         el2.attrib[attribkey] = attribval
@@ -3198,8 +3198,8 @@ class ODFTranslator(nodes.GenericNodeVisitor):
                 self.document.reporter.warning(
                     'Heading/section levels greater than 7 not supported.')
                 self.document.reporter.warning(
-                    '    Reducing to heading level 7 for heading: "%s"' % (
-                        node.astext(), ))
+                    '    Reducing to heading level 7 for heading: "{}"'.format(
+                        node.astext()))
                 section_level = 7
             el1 = self.append_child(
                 'text:h', attrib={
@@ -3445,7 +3445,7 @@ class ODFTranslator(nodes.GenericNodeVisitor):
         if title:
             el1.text = title
         else:
-            el1.text = '%s!' % (translated_label.capitalize(), )
+            el1.text = f'{translated_label.capitalize()}!'
         s1 = self.rststyle('admon-%s-body', (label, ))
         self.paragraph_style_stack.append(s1)
 

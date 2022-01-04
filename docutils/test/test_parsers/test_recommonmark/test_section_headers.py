@@ -32,7 +32,7 @@ The Title
 Paragraph.
 """,
 r"""<document source="test data">
-    <section ids="the-title" names="the\ title">
+    <section ids="the-title" names="the\\ title">
         <title>
             The Title
         <paragraph>
@@ -44,7 +44,7 @@ Another Section Title
 Paragraph (no blank line required).
 """,
 r"""<document source="test data">
-    <section ids="another-section-title" names="another\ section\ title">
+    <section ids="another-section-title" names="another\\ section\\ title">
         <title>
             Another Section Title
         <paragraph>
@@ -179,7 +179,7 @@ r"""
     <section ids="title-3" names="title\\ 3">
         <title>
             Title 3
-        <section ids="title-4" names="title\ 4">
+        <section ids="title-4" names="title\\ 4">
             <title>
                 Title 4
             <system_message level="2" source="test data" type="WARNING">
@@ -187,7 +187,7 @@ r"""
                     Title level inconsistent. Changing from 4 to 2.
                 <literal_block xml:space="preserve">
                     Title 4
-        <section ids="title-5" names="title\ 5">
+        <section ids="title-5" names="title\\ 5">
             <title>
                 Title 5
             <system_message level="2" source="test data" type="WARNING">

@@ -23,8 +23,8 @@ import filecmp as _filecmp
 def _test_more(expected_dir, output_dir, test_case, parameters):
     """Compare ``ui/<theme>`` directories."""
     theme = settings_overrides.get('theme', 'default')
-    expected = '%s/%s/%s' % (expected_dir, 'ui', theme)
-    output = '%s/%s/%s' % (output_dir, 'ui', theme)
+    expected = '{}/{}/{}'.format(expected_dir, 'ui', theme)
+    output = '{}/{}/{}'.format(output_dir, 'ui', theme)
     differences, uniques = _compare_directories(expected, output)
     parts = []
     if differences:
@@ -49,12 +49,12 @@ def _test_more(expected_dir, output_dir, test_case, parameters):
 
 def _compare_directories(expected, output):
     dircmp = _filecmp.dircmp(expected, output, ['.svn', 'CVS'])
-    differences = ['%s/%s' % (output, name) for name in dircmp.diff_files]
-    uniques = (['%s/%s' % (expected, name) for name in dircmp.left_only]
-               + ['%s/%s' % (output, name) for name in dircmp.right_only])
+    differences = [f'{output}/{name}' for name in dircmp.diff_files]
+    uniques = ([f'{expected}/{name}' for name in dircmp.left_only]
+               + [f'{output}/{name}' for name in dircmp.right_only])
     for subdir in dircmp.common_dirs:
-        diffs, uniqs = _compare_directories('%s/%s' % (expected, subdir),
-                                            '%s/%s' % (output, subdir))
+        diffs, uniqs = _compare_directories(f'{expected}/{subdir}',
+                                            f'{output}/{subdir}')
         differences.extend(diffs)
         uniques.extend(uniqs)
     return differences, uniques

@@ -41,7 +41,7 @@ import unicodedata
 #
 # Problem: ``ur`` prefix fails with Py 3.5 ::
 
-module_template = u'''#!/usr/bin/env python3
+module_template = '''#!/usr/bin/env python3
 # :Id: $Id$
 # :Copyright: © 2011, 2017 Günter Milde.
 # :License: Released under the terms of the `2-Clause BSD license`_, in short:
@@ -202,16 +202,16 @@ def character_category_patterns():
 
     # low quotation marks are also used as closers (e.g. in Greek)
     # move them to category Pi:
-    ucharlists['Ps'].remove(u'‚') # 201A  SINGLE LOW-9 QUOTATION MARK
-    ucharlists['Ps'].remove(u'„') # 201E  DOUBLE LOW-9 QUOTATION MARK
-    ucharlists['Pi'] += [u'‚', u'„']
+    ucharlists['Ps'].remove('‚') # 201A  SINGLE LOW-9 QUOTATION MARK
+    ucharlists['Ps'].remove('„') # 201E  DOUBLE LOW-9 QUOTATION MARK
+    ucharlists['Pi'] += ['‚', '„']
 
-    ucharlists['Pi'].remove(u'‛') # 201B  SINGLE HIGH-REVERSED-9 QUOTATION MARK
-    ucharlists['Pi'].remove(u'‟') # 201F  DOUBLE HIGH-REVERSED-9 QUOTATION MARK
-    ucharlists['Pf'] += [u'‛', u'‟']
+    ucharlists['Pi'].remove('‛') # 201B  SINGLE HIGH-REVERSED-9 QUOTATION MARK
+    ucharlists['Pi'].remove('‟') # 201F  DOUBLE HIGH-REVERSED-9 QUOTATION MARK
+    ucharlists['Pf'] += ['‛', '‟']
 
     # 301F  LOW DOUBLE PRIME QUOTATION MARK misses the opening pendant:
-    ucharlists['Ps'].insert(ucharlists['Pe'].index(u'\u301f'), u'\u301d')
+    ucharlists['Ps'].insert(ucharlists['Pe'].index('\u301f'), '\u301d')
 
     # print(u''.join(ucharlists['Ps']).encode('utf8')
     # print(u''.join(ucharlists['Pe']).encode('utf8')
@@ -226,24 +226,24 @@ def character_category_patterns():
     # recognition rules`_)
 
     # allowed before markup if there is a matching closer
-    openers = [u'"\'(<\\[{']
+    openers = ['"\'(<\\[{']
     for category in ('Ps', 'Pi', 'Pf'):
         openers.extend(ucharlists[category])
 
     # allowed after markup if there is a matching opener
-    closers = [u'"\')>\\]}']
+    closers = ['"\')>\\]}']
     for category in ('Pe', 'Pf', 'Pi'):
         closers.extend(ucharlists[category])
 
     # non-matching, allowed on both sides
-    delimiters = [u'\\-/:']
+    delimiters = ['\\-/:']
     for category in ('Pd', 'Po'):
         delimiters.extend(ucharlists[category])
 
     # non-matching, after markup
     closing_delimiters = [r'\\.,;!?']
 
-    return [u''.join(chars) for chars in (openers, closers, delimiters,
+    return [''.join(chars) for chars in (openers, closers, delimiters,
                                             closing_delimiters)]
 
 def separate_wide_chars(s):
@@ -259,7 +259,7 @@ def mark_intervals(s):
     Sort string and replace 'cdef' by 'c-f' and similar.
     """
     l =[]
-    s = sorted([ord(ch) for ch in s])
+    s = sorted(ord(ch) for ch in s)
     for n in s:
         try:
             if l[-1][-1]+1 == n:
@@ -273,7 +273,7 @@ def mark_intervals(s):
     for i in l:
         i = [chr(n) for n in i]
         if len(i) > 2:
-            i = i[0], u'-', i[-1]
+            i = i[0], '-', i[-1]
         l2.extend(i)
 
     return ''.join(l2)

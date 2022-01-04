@@ -108,7 +108,7 @@ class Writer(writers.Writer):
         self.output = visitor.astext()
 
 
-class Table(object):
+class Table:
     def __init__(self):
         self._rows = []
         self._options = ['center']
@@ -274,19 +274,19 @@ class Translator(nodes.NodeVisitor):
         return ''.join(self.head + self.body + self.foot)
 
     def deunicode(self, text):
-        text = text.replace(u'\xa0', '\\ ')
-        text = text.replace(u'\u2020', '\\(dg')
+        text = text.replace('\xa0', '\\ ')
+        text = text.replace('\u2020', '\\(dg')
         return text
 
     def visit_Text(self, node):
         text = node.astext()
         text = text.replace('\\', '\\e')
         replace_pairs = [
-            (u'-', u'\\-'),
-            (u'\'', u'\\(aq'),
-            (u'´', u"\\'"),
-            (u'`', u'\\(ga'),
-            (u'"', u'\\(dq'),  # double quotes are a problem on macro lines
+            ('-', '\\-'),
+            ('\'', '\\(aq'),
+            ('´', "\\'"),
+            ('`', '\\(ga'),
+            ('"', '\\(dq'),  # double quotes are a problem on macro lines
             ]
         for (in_char, out_markup) in replace_pairs:
             text = text.replace(in_char, out_markup)
@@ -303,7 +303,7 @@ class Translator(nodes.NodeVisitor):
         pass
 
     def list_start(self, node):
-        class EnumChar(object):
+        class EnumChar:
             enum_style = {
                     'bullet': '\\(bu',
                     'emdash': '\\(em',
@@ -404,7 +404,7 @@ class Translator(nodes.NodeVisitor):
         if name:
             # .. admonition:: has no name
             self.body.append('.sp\n')
-            name = '%s%s:%s\n' % (
+            name = '{}{}:{}\n'.format(
                 self.defs['strong'][0],
                 self.language.labels.get(name, name).upper(),
                 self.defs['strong'][1],
@@ -592,7 +592,7 @@ class Translator(nodes.NodeVisitor):
                 'title', 'title_upper', 'version')
         for name in self._docinfo_keys:
             if name == 'address':
-                self.body.append("\n%s:\n%s%s.nf\n%s\n.fi\n%s%s" % (
+                self.body.append("\n{}:\n{}{}.nf\n{}\n.fi\n{}{}".format(
                                     self.language.labels.get(name, name),
                                     self.defs['indent'][0] % 0,
                                     self.defs['indent'][0] % BLOCKQOUTE_INDENT,
@@ -604,7 +604,7 @@ class Translator(nodes.NodeVisitor):
                     label = self._docinfo_names[name]
                 else:
                     label = self.language.labels.get(name, name)
-                self.body.append("\n%s: %s\n" % (label, self._docinfo[name]))
+                self.body.append(f"\n{label}: {self._docinfo[name]}\n")
         if self._docinfo['copyright']:
             self.body.append('.SH COPYRIGHT\n%s\n'
                     % self._docinfo['copyright'])
@@ -905,7 +905,7 @@ class Translator(nodes.NodeVisitor):
         start_position = self.context.pop()
         text = self.body[start_position:]
         del self.body[start_position:]
-        self.body.append('%s%s\n' % (self.context.pop(), ''.join(text)))
+        self.body.append('{}{}\n'.format(self.context.pop(), ''.join(text)))
 
     def visit_option(self, node):
         # each form of the option will be presented separately

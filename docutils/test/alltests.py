@@ -25,7 +25,7 @@ import DocutilsTestSupport              # must be imported before docutils
 import docutils
 
 
-class Tee(object):
+class Tee:
 
     """Write to a file and a stream (default: stdout) simultaneously."""
 
@@ -87,10 +87,10 @@ import package_unittest  # noqa
 
 if __name__ == '__main__':
     suite = suite()
-    print('Testing Docutils %s with Python %s on %s at %s' % (
+    print('Testing Docutils {} with Python {} on {} at {}'.format(
         docutils.__version__, sys.version.split()[0],
         time.strftime('%Y-%m-%d'), time.strftime('%H:%M:%S')))
-    print('OS: %s %s %s (%s, %s)' % (
+    print('OS: {} {} {} ({}, {})'.format(
         platform.system(), platform.release(), platform.version(),
         sys.platform, platform.platform()))
     print('Working directory: %s' % os.getcwd())

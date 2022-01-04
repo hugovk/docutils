@@ -69,7 +69,7 @@ class Input(TransformSpec):
         """The encoding that successfully decoded the source data."""
 
     def __repr__(self):
-        return '%s: source=%r, source_path=%r' % (self.__class__, self.source,
+        return '{}: source={!r}, source_path={!r}'.format(self.__class__, self.source,
                                                   self.source_path)
 
     def read(self):
@@ -113,7 +113,7 @@ class Input(TransformSpec):
                 decoded = str(data, enc, self.error_handler)
                 self.successful_encoding = enc
                 # Return decoded, removing BOMs.
-                return decoded.replace(u'\ufeff', u'')
+                return decoded.replace('\ufeff', '')
             except (UnicodeError, LookupError) as err:
                 error = err # in Python 3, the <exception instance> is
                             # local to the except clause
@@ -228,7 +228,7 @@ class FileInput(Input):
                     self.source = open(source_path, mode,
                                        encoding=self.encoding,
                                        errors=self.error_handler)
-                except IOError as error:
+                except OSError as error:
                     raise InputError(error.errno, error.strerror, source_path)
             else:
                 self.source = sys.stdin
@@ -349,7 +349,7 @@ class FileOutput(Output):
             kwargs = {}
         try:
             self.destination = open(self.destination_path, self.mode, **kwargs)
-        except IOError as error:
+        except OSError as error:
             raise OutputError(error.errno, error.strerror,
                               self.destination_path)
         self.opened = True
@@ -444,7 +444,7 @@ class NullInput(Input):
 
     def read(self):
         """Return a null string."""
-        return u''
+        return ''
 
 
 class NullOutput(Output):

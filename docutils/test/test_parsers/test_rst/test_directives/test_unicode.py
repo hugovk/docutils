@@ -40,7 +40,7 @@ space (|nbsp|), a backwards-not-equals (|bne|), and a captial omega (|Omega|).
 .. |bne| unicode:: U0003D U020E5
 .. |Omega| unicode:: U+003A9
 """,
-u"""\
+"""\
 <document source="test data">
     <paragraph>
         Insert an em-dash (
@@ -120,7 +120,7 @@ Copyright |copy| 2003, |BogusMegaCorp (TM)|.
 .. |BogusMegaCorp (TM)| unicode:: BogusMegaCorp U+2122
    .. with trademark sign
 """,
-u"""\
+"""\
 <document source="test data">
     <paragraph>
         Testing comments and extra text.
@@ -147,7 +147,7 @@ u"""\
     <system_message level="3" line="2" source="test data" type="ERROR">
         <paragraph>
             Invalid character code: 0x111111111111111111
-            ValueError: %s
+            ValueError: {}
         <literal_block xml:space="preserve">
             unicode:: 0x111111111111111111
     <system_message level="2" line="2" source="test data" type="WARNING">
@@ -158,7 +158,7 @@ u"""\
     <system_message level="3" line="3" source="test data" type="ERROR">
         <paragraph>
             Invalid character code: 0x11111111
-            %s
+            {}
         <literal_block xml:space="preserve">
             unicode:: 0x11111111
     <system_message level="2" line="3" source="test data" type="WARNING">
@@ -166,7 +166,7 @@ u"""\
             Substitution definition "too big for unicode" empty or invalid.
         <literal_block xml:space="preserve">
             .. |too big for unicode| unicode:: 0x11111111
-""" % (unichr_exception_string,
+""".format(unichr_exception_string,
        DocutilsTestSupport.exception_data(chr, int("11111111", 16))[2])]
 ]
 

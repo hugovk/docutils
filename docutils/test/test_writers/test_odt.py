@@ -74,7 +74,7 @@ class DocutilsOdtTestCase(DocutilsTestSupport.StandardTestCase):
 ##             len(expected), len(result), )
 ##         self.assertEqual(str(len(result)), str(len(expected)))
         if save_output_name:
-            filename = '%s%s%s' % (TEMP_FILE_PATH, os.sep, save_output_name,)
+            filename = f'{TEMP_FILE_PATH}{os.sep}{save_output_name}'
             outfile = open(filename, 'wb')
             outfile.write(result)
             outfile.close()
@@ -114,10 +114,10 @@ class DocutilsOdtTestCase(DocutilsTestSupport.StandardTestCase):
             msg2 = msg
         else:
             sep = '+' * 60
-            msg1 = '\n%s\nresult:\n%s\n%s\nexpected:\n%s\n%s' % (
-                sep, first, sep, second, sep, )
+            msg1 = '\n{}\nresult:\n{}\n{}\nexpected:\n{}\n{}'.format(
+                sep, first, sep, second, sep)
             #msg2 = '%s\n%s' % (msg1, msg, )
-            msg2 = '%s' % (msg, )
+            msg2 = f'{msg}'
         DocutilsTestSupport.StandardTestCase.assertEqual(self,
             first, second, msg2)
 

@@ -170,7 +170,7 @@ def unchanged(argument):
     No argument implies empty string ("").
     """
     if argument is None:
-        return u''
+        return ''
     else:
         return argument  # unchanged!
 
@@ -404,7 +404,7 @@ def choice(argument, values):
                          % (argument, format_values(values)))
 
 def format_values(values):
-    return '%s, or "%s"' % (', '.join(['"%s"' % s for s in values[:-1]]),
+    return '{}, or "{}"'.format(', '.join(['"%s"' % s for s in values[:-1]]),
                             values[-1])
 
 def value_or(values, other):

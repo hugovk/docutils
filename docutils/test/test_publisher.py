@@ -68,7 +68,7 @@ class PublisherTests(DocutilsTestSupport.StandardTestCase):
         try:
             core.publish_cmdline(argv=['nonexisting/path'],
                                        settings_overrides={'traceback': True})
-        except IOError as e:
+        except OSError as e:
             self.assertTrue(isinstance(e, io.InputError))
 
 
@@ -77,7 +77,7 @@ class PublisherTests(DocutilsTestSupport.StandardTestCase):
         try:
             core.publish_cmdline(argv=['data/include.txt', 'nonexisting/path'],
                                        settings_overrides={'traceback': True})
-        except IOError as e:
+        except OSError as e:
             self.assertTrue(isinstance(e, io.OutputError))
 
 
