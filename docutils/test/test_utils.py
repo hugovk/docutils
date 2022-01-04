@@ -12,7 +12,9 @@ import os
 import sys
 import unittest
 
-from DocutilsTestSupport import docutils, utils, nodes
+from test import DocutilsTestSupport
+import docutils
+from docutils import nodes, utils
 
 from io import StringIO
 

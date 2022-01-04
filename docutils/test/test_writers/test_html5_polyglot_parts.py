@@ -15,7 +15,7 @@ standard values, and any entries with empty values.
 import unittest
 from test import DocutilsTestSupport  # before importing docutils!
 from DocutilsTestSupport import HtmlWriterPublishPartsTestCase
-from docutils import core, __version__
+from docutils import __version__
 
 
 class Html5WriterPublishPartsTestCase(HtmlWriterPublishPartsTestCase):

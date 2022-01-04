@@ -11,7 +11,7 @@ import unittest
 import warnings
 
 from test import DocutilsTestSupport              # must be imported before docutils
-from DocutilsTestSupport import nodes, utils
+from docutils import nodes, utils
 
 debug = False
 

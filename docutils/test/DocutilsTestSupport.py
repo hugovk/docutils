@@ -35,7 +35,6 @@ import sys
 import os
 import difflib
 import unittest
-import traceback
 from pprint import pformat
 
 testroot = os.path.abspath(os.path.dirname(__file__) or os.curdir)
@@ -43,24 +42,14 @@ os.chdir(testroot)
 sys.path.insert(0, os.path.dirname(testroot))
 sys.path.insert(0, testroot)
 
-try:
-    import docutils
-    import docutils.core
-    from docutils import frontend, nodes, statemachine, utils
-    from docutils.utils import urischemes
-    from docutils.transforms import universal
-    from docutils.parsers import rst
-    from docutils.parsers.rst import states, tableparser, roles, languages
-    from docutils.readers import standalone, pep
-    from docutils.statemachine import StringList, string2lines
-except ImportError:
-    # The importing module (usually __init__.py in one of the
-    # subdirectories) may catch ImportErrors in order to detect the
-    # absence of DocutilsTestSupport in sys.path.  Thus, ImportErrors
-    # resulting from problems with importing Docutils modules must
-    # caught here.
-    traceback.print_exc()
-    raise SystemExit(1)
+import docutils
+import docutils.core
+from docutils import frontend, utils
+from docutils.transforms import universal
+from docutils.parsers import rst
+from docutils.parsers.rst import tableparser, roles
+from docutils.readers import pep
+from docutils.statemachine import StringList, string2lines
 
 # Hack to make repr(StringList) look like repr(list):
 StringList.__repr__ = StringList.__str__

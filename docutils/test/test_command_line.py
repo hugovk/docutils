@@ -7,25 +7,14 @@
 Test module for the command line.
 """
 
-import codecs
-import locale
 import sys
 import unittest
 
 from test import DocutilsTestSupport # must be imported before docutils
 import docutils.core
 
-# determine/guess the encoding of the standard input:
-try:
-    locale_encoding = locale.getlocale()[1] or locale.getdefaultlocale()[1]
-except ImportError:
-    locale_encoding = None
-
-argv_encoding = locale_encoding or 'ascii'
-try:
-    codecs.lookup(argv_encoding)
-except LookupError:
-    argv_encoding = 'ascii'
+# determine the encoding of the standard input:
+argv_encoding = sys.stdin.encoding
 
 
 class CommandLineEncodingTests(unittest.TestCase):
