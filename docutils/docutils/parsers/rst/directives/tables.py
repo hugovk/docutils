@@ -328,27 +328,23 @@ class CSVTable(Table):
                 raise SystemMessagePropagation(severe)
         elif 'url' in self.options:
             # CSV data is from a URL.
+            source = self.options['url']
             # Do not import urllib at the top of the module because
             # it may fail due to broken SSL dependencies, and it takes
             # about 0.15 seconds to load. Update: < 0.03s with Py3k.
             from urllib.request import urlopen
-            from urllib.error import URLError
-
-            source = self.options['url']
             try:
-                csv_text = urlopen(source).read()
-            except (URLError, IOError, OSError, ValueError) as error:
+                with urlopen(source) as response:
+                    csv_data = response.read().decode(encoding,
+                        self.state.document.settings.input_encoding_error_handler
+                    ).read().splitlines()
+            except (OSError, ValueError) as error:
                 severe = self.state_machine.reporter.severe(
                       'Problems with "%s" directive URL "%s":\n%s.'
                       % (self.name, self.options['url'], SafeString(error)),
                       nodes.literal_block(self.block_text, self.block_text),
                       line=self.lineno)
                 raise SystemMessagePropagation(severe)
-            csv_file = io.StringInput(
-                source=csv_text, source_path=source, encoding=encoding,
-                error_handler=(self.state.document.settings.\
-                               input_encoding_error_handler))
-            csv_data = csv_file.read().splitlines()
         else:
             error = self.state_machine.reporter.warning(
                 'The "%s" directive requires content; none supplied.'

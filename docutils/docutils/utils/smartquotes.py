@@ -1002,6 +1002,6 @@ if __name__ == "__main__":
                 args.language = args.language.replace('-x-altquot', '')
             else:
                 args.language += '-x-altquot'
-        text = sys.stdin.read().decode(args.encoding)
+        text = sys.stdin.read()
         print(smartyPants(text, attr=args.action,
                           language=args.language).encode(args.encoding))

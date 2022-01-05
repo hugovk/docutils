@@ -256,17 +256,13 @@ class Raw(Directive):
             # it may fail due to broken SSL dependencies, and it takes
             # about 0.15 seconds to load. Update: < 0.03s with Py3k.
             from urllib.request import urlopen
-            from urllib.error import URLError
             try:
-                raw_text = urlopen(source).read()
-            except (URLError, IOError, OSError) as error:
-                raise self.severe(u'Problems with "%s" directive URL "%s":\n%s.'
-                    % (self.name, self.options['url'], ErrorString(error)))
-            raw_file = io.StringInput(source=raw_text, source_path=source,
-                                      encoding=encoding,
-                                      error_handler=e_handler)
-            try:
-                text = raw_file.read()
+                with urlopen(source) as response:
+                    text = response.read().decode(encoding, e_handler)
+            except OSError as error:
+                raise self.severe(f'Problems with "{self.name}" directive URL '
+                                  f'"{self.options["url"]}":\n'
+                                  f'{ErrorString(error)}.')
             except UnicodeError as error:
                 raise self.severe(u'Problem with "%s" directive:\n%s'
                                   % (self.name, ErrorString(error)))
