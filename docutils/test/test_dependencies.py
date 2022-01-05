@@ -14,7 +14,6 @@ import unittest
 import DocutilsTestSupport              # must be imported before docutils
 import docutils.core
 import docutils.utils
-import docutils.io
 from docutils.parsers.rst.directives.images import PIL
 
 # docutils.utils.DependencyList records POSIX paths,

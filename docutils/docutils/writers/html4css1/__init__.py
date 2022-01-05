@@ -18,7 +18,7 @@ import os.path
 import re
 import sys
 import docutils
-from docutils import frontend, nodes, writers, io
+from docutils import frontend, nodes, writers
 from docutils.transforms import writer_aux
 from docutils.writers import _html_base
 from docutils.writers._html_base import PIL, url2pathname

@@ -30,7 +30,7 @@ import mimetypes
 import os.path
 
 import docutils
-from docutils import frontend, nodes, writers, io
+from docutils import frontend, nodes, writers
 from docutils.transforms import writer_aux
 from docutils.writers import _html_base
 

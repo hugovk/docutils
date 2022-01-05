@@ -14,7 +14,7 @@ import os.path
 import sys
 import warnings
 
-from docutils import io, nodes, statemachine, utils
+from docutils import nodes, statemachine, utils
 from docutils.utils.error_reporting import SafeString
 from docutils.utils import SystemMessagePropagation
 from docutils.parsers.rst import Directive
