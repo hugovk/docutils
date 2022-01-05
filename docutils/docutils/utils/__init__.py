@@ -690,14 +690,19 @@ class DependencyList(object):
     to explicitly call the close() method.
     """
 
-    def __init__(self, output_file=None, dependencies=[]):
+    def __init__(self, output_file=None, dependencies=None):
         """
         Initialize the dependency list, automatically setting the
         output file to `output_file` (see `set_output()`) and adding
         all supplied dependencies.
+
+        If output_file is None, no file output is done when calling add().
         """
-        self.set_output(output_file)
-        for i in dependencies:
+        self.list = set()
+        self.file = None
+        if output_file:
+            self.set_output(output_file)
+        for i in dependencies or []:
             self.add(i)
 
     def set_output(self, output_file):
@@ -709,18 +714,11 @@ class DependencyList(object):
         immediately overwritten.
 
         If output_file is '-', the output will be written to stdout.
-        If it is None, no file output is done when calling add().
         """
-        self.list = []
-        if output_file:
-            if output_file == '-':
-                of = None
-            else:
-                of = output_file
-            self.file = docutils.io.FileOutput(destination_path=of,
-                                   encoding='utf8', autoclose=False)
+        if output_file == "-":
+            self.file = sys.stdout
         else:
-            self.file = None
+            self.file = open(output_file, "w", encoding="utf-8")
 
     def add(self, *filenames):
         """
@@ -728,17 +726,18 @@ class DependencyList(object):
         append it to self.list and print it to self.file if self.file
         is not None.
         """
-        for filename in filenames:
-            if not filename in self.list:
-                self.list.append(filename)
+        seen_add = self.list.add
+        for file in filenames:
+            if not (file in self.list or seen_add(file)):
                 if self.file is not None:
-                    self.file.write(filename+'\n')
+                    self.file.write(f"{file}\n")
 
     def close(self):
         """
         Close the output file.
         """
-        self.file.close()
+        if self.file is not sys.stdout:
+            self.file.close()
         self.file = None
 
     def __repr__(self):
@@ -746,7 +745,7 @@ class DependencyList(object):
             output_file = self.file.name
         except AttributeError:
             output_file = None
-        return '%s(%r, %s)' % (self.__class__.__name__, output_file, self.list)
+        return f"{self.__class__.__name__}({output_file!r}, {self.list})"
 
 
 release_level_abbreviations = {
