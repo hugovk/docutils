@@ -1392,8 +1392,8 @@ class LaTeXTranslator(nodes.NodeVisitor):
             if is_package:
                 path = base + '.sty' # ensure extension
             try:
-                content = docutils.io.FileInput(source_path=path,
-                                       encoding='utf-8').read()
+                with open(path, encoding="utf-8") as f:
+                    content = f.read()
                 self.settings.record_dependencies.add(path)
             except IOError as err:
                 msg = u'Cannot embed stylesheet %r:\n  %s.' % (

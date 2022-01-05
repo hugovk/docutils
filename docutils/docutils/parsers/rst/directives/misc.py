@@ -74,30 +74,20 @@ class Include(Directive):
             'tab-width', self.state.document.settings.tab_width)
         try:
             self.state.document.settings.record_dependencies.add(path)
-            include_file = io.FileInput(source_path=path,
-                                        encoding=encoding,
-                                        error_handler=e_handler)
-        except UnicodeEncodeError as error:
-            raise self.severe(u'Problems with "%s" directive path:\n'
-                              'Cannot encode input file path "%s" '
-                              '(wrong locale?).' %
-                              (self.name, SafeString(path)))
-        except IOError as error:
-            raise self.severe(u'Problems with "%s" directive path:\n%s.' %
-                      (self.name, ErrorString(error)))
-
-        # Get to-be-included content
-        startline = self.options.get('start-line', None)
-        endline = self.options.get('end-line', None)
-        try:
-            if startline or (endline is not None):
-                lines = include_file.readlines()
-                rawtext = ''.join(lines[startline:endline])
-            else:
+            with open(path, encoding=encoding, errors=e_handler) as include_file:
                 rawtext = include_file.read()
         except UnicodeError as error:
             raise self.severe(u'Problem with "%s" directive:\n%s' %
                               (self.name, ErrorString(error)))
+        except IOError as error:
+            error = io.InputError(error.errno, error.strerror, path)
+            raise self.severe(u'Problems with "%s" directive path:\n%s.' %
+                      (self.name, ErrorString(error)))
+        # Get to-be-included content
+        startline = self.options.get('start-line', None)
+        endline = self.options.get('end-line', None)
+        if startline or (endline is not None):
+            rawtext = "".join(rawtext.splitlines(True)[startline:endline])
         # start-after/end-before: no restrictions on newlines in match-text,
         # and no restrictions on matching inside lines vs. line boundaries
         after_text = self.options.get('start-after', None)
@@ -247,17 +237,15 @@ class Raw(Directive):
                                                  self.options['file']))
             path = utils.relative_path(None, path)
             try:
-                raw_file = io.FileInput(source_path=path,
-                                        encoding=encoding,
-                                        error_handler=e_handler)
+                with open(path, encoding=encoding, errors=e_handler) as raw_file:
+                    text = raw_file.read()
                 # TODO: currently, raw input files are recorded as
                 # dependencies even if not used for the chosen output format.
                 self.state.document.settings.record_dependencies.add(path)
             except IOError as error:
+                error = io.InputError(error.errno, error.strerror, path)
                 raise self.severe(u'Problems with "%s" directive path:\n%s.'
                                   % (self.name, ErrorString(error)))
-            try:
-                text = raw_file.read()
             except UnicodeError as error:
                 raise self.severe(u'Problem with "%s" directive:\n%s'
                     % (self.name, ErrorString(error)))

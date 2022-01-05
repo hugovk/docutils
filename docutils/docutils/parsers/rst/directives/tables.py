@@ -317,10 +317,8 @@ class CSVTable(Table):
             source = utils.relative_path(None, source)
             try:
                 self.state.document.settings.record_dependencies.add(source)
-                csv_file = io.FileInput(source_path=source,
-                                        encoding=encoding,
-                                        error_handler=error_handler)
-                csv_data = csv_file.read().splitlines()
+                with open(source, encoding=encoding, errors=error_handler) as csv_file:
+                    csv_data = csv_file.read().splitlines()
             except IOError as error:
                 severe = self.state_machine.reporter.severe(
                     u'Problems with "%s" directive path:\n%s.'

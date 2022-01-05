@@ -218,7 +218,7 @@ class FileInput(Input):
               `open`). The default 'rU' provides universal newline support
               for text files with Python 2.x.
         """
-        Input.__init__(self, source, source_path, encoding, error_handler)
+        super().__init__(source, source_path, encoding, error_handler)
         self.autoclose = autoclose
         self._stderr = ErrorOutput()
 
@@ -232,7 +232,7 @@ class FileInput(Input):
                     raise InputError(error.errno, error.strerror, source_path)
             else:
                 self.source = sys.stdin
-        elif (check_encoding(self.source, self.encoding) is False):
+        elif not check_encoding(self.source, self.encoding):
             # TODO: re-open, warn or raise error?
             raise UnicodeError('Encoding clash: encoding given is "%s" '
                                'but source is opened with encoding "%s".' %
@@ -255,7 +255,7 @@ class FileInput(Input):
                 data = b'\n'.join(data.splitlines()+[b''])
             else:
                 data = self.source.read()
-        except (UnicodeError, LookupError) as err:
+        except UnicodeError:
             if not self.encoding and self.source_path:
                 # re-read in binary mode and decode with heuristics
                 b_source = open(self.source_path, 'rb')
