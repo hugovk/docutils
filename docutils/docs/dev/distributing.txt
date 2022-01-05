@@ -28,7 +28,7 @@ Dependencies
 
 Docutils has the following dependencies:
 
-* Python 3.7 or later is required.  
+* Python 3.7 or later is required.
   Use ">= Python 3.7" in the dependencies.
 
 * Docutils may optionally make use of the PIL (`Python Imaging
