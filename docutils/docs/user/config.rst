@@ -460,13 +460,13 @@ Set to ``-`` in order to write dependencies to stdout.
 This option is particularly useful in conjunction with programs like
 ``make`` using ``Makefile`` rules like::
 
-  ham.html: ham.txt $(shell cat hamdeps.txt)
-    rst2html.py --record-dependencies=hamdeps.txt ham.txt ham.html
+  ham.html: ham.rst $(shell cat hamdeps.rst)
+    rst2html.py --record-dependencies=hamdeps.rst ham.rst ham.html
 
 If the filesystem encoding differs from utf8, replace the ``cat``
 command with a call to a converter, e.g.::
 
-  $(shell iconv -f utf8 -t latin1 hamdeps.txt)
+  $(shell iconv -f utf8 -t latin1 hamdeps.rst)
 
 Default: None.  Option: ``--record-dependencies``.
 

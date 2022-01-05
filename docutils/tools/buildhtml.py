@@ -5,10 +5,10 @@
 # Copyright: This module has been placed in the public domain.
 
 """
-Generates .html from all the .txt files in a directory.
+Generates .html from all the .rst files in a directory.
 
-Ordinary .txt files are understood to be standalone reStructuredText.
-Files named ``pep-*.txt`` are interpreted as reStructuredText PEPs.
+Ordinary .rst files are understood to be standalone reStructuredText.
+Files named ``pep-*.rst`` are interpreted as reStructuredText PEPs.
 """
 # Once PySource is here, build .html from .py as well.
 
@@ -38,7 +38,7 @@ from docutils.writers import html4css1, html5_polyglot, pep_html
 
 
 usage = '%prog [options] [<directory> ...]'
-description = ('Generates .html from all the reStructuredText .txt files '
+description = ('Generates .html from all the reStructuredText .rst files '
                '(including PEPs) in each <directory> '
                '(default is the current directory).')
 
@@ -248,7 +248,7 @@ class Builder(object):
                     # Modify in place!
                     del names[i]
         for name in names:
-            if name.endswith('.txt'):
+            if name.endswith('.rst'):
                 self.process_txt(directory, name)
 
     def process_txt(self, directory, name):

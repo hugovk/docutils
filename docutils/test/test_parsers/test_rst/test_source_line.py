@@ -40,7 +40,7 @@ def suite():
     return s
 
 mydir = 'test_parsers/test_rst/'
-include14 = os.path.join(mydir, 'includes/include14.txt')
+include14 = os.path.join(mydir, 'includes/include14.rst')
 
 totest = {}
 
@@ -152,28 +152,28 @@ Paragraph
 <document source="test data">
     <paragraph internal:line="1" internal:source="test data">
         Paragraph
-    <paragraph internal:line="1" internal:source="test_parsers/test_rst/includes/include14.txt">
+    <paragraph internal:line="1" internal:source="test_parsers/test_rst/includes/include14.rst">
         Paragraph starting in line 1.
         With \n\
         <emphasis>
             inline
          element in line 2.
-    <block_quote internal:line="4" internal:source="test_parsers/test_rst/includes/include14.txt">
-        <paragraph internal:line="4" internal:source="test_parsers/test_rst/includes/include14.txt">
+    <block_quote internal:line="4" internal:source="test_parsers/test_rst/includes/include14.rst">
+        <paragraph internal:line="4" internal:source="test_parsers/test_rst/includes/include14.rst">
             Block quote in line 4
-        <attribution internal:line="6" internal:source="test_parsers/test_rst/includes/include14.txt">
+        <attribution internal:line="6" internal:source="test_parsers/test_rst/includes/include14.rst">
             attribution
             in line 6
-    <bullet_list bullet="*" internal:line="9" internal:source="test_parsers/test_rst/includes/include14.txt">
-        <list_item internal:source="test_parsers/test_rst/includes/include14.txt">
-            <paragraph internal:line="9" internal:source="test_parsers/test_rst/includes/include14.txt">
+    <bullet_list bullet="*" internal:line="9" internal:source="test_parsers/test_rst/includes/include14.rst">
+        <list_item internal:source="test_parsers/test_rst/includes/include14.rst">
+            <paragraph internal:line="9" internal:source="test_parsers/test_rst/includes/include14.rst">
                 bullet list in line 9
-        <list_item internal:source="test_parsers/test_rst/includes/include14.txt">
-            <paragraph internal:line="10" internal:source="test_parsers/test_rst/includes/include14.txt">
+        <list_item internal:source="test_parsers/test_rst/includes/include14.rst">
+            <paragraph internal:line="10" internal:source="test_parsers/test_rst/includes/include14.rst">
                 second item in line 10
-    <enumerated_list enumtype="arabic" internal:line="12" internal:source="test_parsers/test_rst/includes/include14.txt" prefix="" suffix=".">
-        <list_item internal:source="test_parsers/test_rst/includes/include14.txt">
-            <paragraph internal:line="12" internal:source="test_parsers/test_rst/includes/include14.txt">
+    <enumerated_list enumtype="arabic" internal:line="12" internal:source="test_parsers/test_rst/includes/include14.rst" prefix="" suffix=".">
+        <list_item internal:source="test_parsers/test_rst/includes/include14.rst">
+            <paragraph internal:line="12" internal:source="test_parsers/test_rst/includes/include14.rst">
                 enumerated list in line 12
 """],
 ["""\

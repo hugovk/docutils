@@ -264,6 +264,7 @@ correct properties set::
     [auto-props]
     *.py = svn:eol-style=native;svn:keywords=Author Date Id Revision
     *.txt = svn:eol-style=native;svn:keywords=Author Date Id Revision
+    *.rst = svn:eol-style=native;svn:keywords=Author Date Id Revision
     *.html = svn:eol-style=native;svn:keywords=Author Date Id Revision
     *.xml = svn:eol-style=native;svn:keywords=Author Date Id Revision
     *.tex = svn:eol-style=native;svn:keywords=Author Date Id Revision

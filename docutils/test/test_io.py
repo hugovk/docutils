@@ -98,7 +98,7 @@ print("hello world")
         self.assertEqual(input.successful_encoding, 'utf-8')
 
     def test_readlines(self):
-        input = io.FileInput(source_path='data/include.txt')
+        input = io.FileInput(source_path='data/include.rst')
         data = input.readlines()
         self.assertEqual(data, [u'Some include text.\n'])
 
@@ -110,7 +110,7 @@ print("hello world")
             # skipping the heuristic unless decoding fails.
             return
         probed_encodings = (locale_encoding, 'latin-1')
-        input = io.FileInput(source_path='data/latin1.txt')
+        input = io.FileInput(source_path='data/latin1.rst')
         data = input.read()
         if input.successful_encoding not in probed_encodings:
             raise AssertionError(

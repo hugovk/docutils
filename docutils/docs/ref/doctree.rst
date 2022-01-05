@@ -1633,7 +1633,7 @@ Complete pseudo-XML_ result after parsing and applying transforms::
                     Filename
                 <field_body>
                     <paragraph>
-                        doctree.txt
+                        doctree.rst
             <copyright>
                 This document has been placed in the public domain.
 
@@ -5376,7 +5376,7 @@ The following restrictions are imposed by this model:
   section.
 
 .. The following is not the case with Docutils (since at least 2004)
-   (cf. test/functional/input/data/standard.txt)
+   (cf. test/functional/input/data/standard.rst)
 
    An additional restriction, which cannot be expressed in the language
    of DTDs, is imposed by software:

@@ -6,7 +6,7 @@
 """
 Perform tests with the data in the functional/ directory.
 
-Read README.txt for details on how this is done.
+Read README.rst for details on how this is done.
 """
 
 import sys
@@ -53,7 +53,7 @@ class FunctionalTestSuite(DocutilsTestSupport.CustomTestSuite):
     def clear_output_directory(self):
         files = os.listdir(os.path.join('functional', 'output'))
         for f in files:
-            if f in ('README.txt', '.svn', 'CVS'):
+            if f in ('README.rst', '.svn', 'CVS'):
                 continue                # don't touch the infrastructure
             path = os.path.join('functional', 'output', f)
             if os.path.isdir(path):

@@ -21,7 +21,7 @@ def suite():
     return s
 
 mydir = 'test_parsers/test_rst/'
-include2 = os.path.join(mydir, 'test_directives/include2.txt')
+include2 = os.path.join(mydir, 'test_directives/include2.rst')
 
 totest = {}
 
@@ -585,7 +585,7 @@ No blank line after table.
                             Here are some paragraphs
                             that can appear at any level.
                         <paragraph>
-                            This file (include2.txt) is used by
+                            This file (include2.rst) is used by
                             <literal>
                                 test_include.py
                             .
@@ -622,7 +622,7 @@ And more.
                             Here are some paragraphs
                             that can appear at any level.
                         <paragraph>
-                            This file (include2.txt) is used by
+                            This file (include2.rst) is used by
                             <literal>
                                 test_include.py
                             .
@@ -1292,7 +1292,7 @@ Note       The first row of this table may expand
                             Here are some paragraphs
                             that can appear at any level.
                         <paragraph>
-                            This file (include2.txt) is used by
+                            This file (include2.rst) is used by
                             <literal>
                                 test_include.py
                             .

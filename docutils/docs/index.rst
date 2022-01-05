@@ -51,26 +51,26 @@ Project Fundamentals
 These files are for all Docutils stakeholders.  They are kept at the
 top level of the Docutils project directory.
 
-:README.txt_: Project overview: quick-start, requirements,
+:README.rst_: Project overview: quick-start, requirements,
               installation, and usage.
-:COPYING.txt_: Conditions for Docutils redistribution, with links to
+:COPYING.rst_: Conditions for Docutils redistribution, with links to
                licenses.
-:FAQ.txt_: Docutils Frequently Asked Questions.  If you have a
+:FAQ.rst_: Docutils Frequently Asked Questions.  If you have a
            question or issue, there's a good chance it's already
            answered here.
-:BUGS.txt_: A list of known bugs, and how to report a bug.
-:RELEASE-NOTES.txt_: Summary of the major changes in recent releases.
-:HISTORY.txt_: Detailed change history log.
-:THANKS.txt_: Acknowledgements.
+:BUGS.rst_: A list of known bugs, and how to report a bug.
+:RELEASE-NOTES.rst_: Summary of the major changes in recent releases.
+:HISTORY.rst_: Detailed change history log.
+:THANKS.rst_: Acknowledgements.
 
-.. _README.txt: ../README.html
-.. _BUGS.txt: ../BUGS.html
-.. _COPYING.txt: ../COPYING.html
+.. _README.rst: ../README.html
+.. _BUGS.rst: ../BUGS.html
+.. _COPYING.rst: ../COPYING.html
 .. _Docutils FAQ:
-.. _FAQ.txt: ../FAQ.html
-.. _RELEASE-NOTES.txt: ../RELEASE-NOTES.html
-.. _HISTORY.txt: ../HISTORY.html
-.. _THANKS.txt: ../THANKS.html
+.. _FAQ.rst: ../FAQ.html
+.. _RELEASE-NOTES.rst: ../RELEASE-NOTES.html
+.. _HISTORY.rst: ../HISTORY.html
+.. _THANKS.rst: ../THANKS.html
 
 
 .. _user:
@@ -95,13 +95,13 @@ Writer-specific:
 `reStructuredText <http://docutils.sourceforge.net/rst.html>`_:
 
 * `A ReStructuredText Primer <user/rst/quickstart.html>`__
-  (see also the `text source <user/rst/quickstart.txt>`__)
+  (see also the `text source <user/rst/quickstart.rst>`__)
 * `Quick reStructuredText <user/rst/quickref.html>`__ (user reference)
-* `reStructuredText Cheat Sheet <user/rst/cheatsheet.txt>`__ (text
+* `reStructuredText Cheat Sheet <user/rst/cheatsheet.rst>`__ (text
   only; 1 page for syntax, 1 page directive & role reference)
 * `reStructuredText Demonstration <user/rst/demo.html>`_ (a
   demonstration of most reStructuredText features; you can also have a
-  look at the `text source <user/rst/demo.txt>`__)
+  look at the `text source <user/rst/demo.rst>`__)
 
 Editor support:
 

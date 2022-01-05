@@ -84,7 +84,7 @@ For example, to process a Markdown_ file "``test.md``" into
 Pseudo-XML_ ::
 
     docutils-cli.py --parser=markdown --writer=pseudoxml\
-      test.md test.txt
+      test.md test.rst
 
 Use the "--help" option together with the component-selection options
 to get the correct list of supported command-line options. Example::
@@ -110,7 +110,7 @@ buildhtml.py
 :Writers: html_, html5_, pep_html_
 :Config_: `[buildhtml application]`_
 
-Use ``buildhtml.py`` to generate ``*.html`` from all the ``*.txt`` files
+Use ``buildhtml.py`` to generate ``*.html`` from all the ``*.rst`` files
 (including PEPs) in each <directory> given, and their subdirectories
 too.  (Use the ``--local`` option to skip subdirectories.)
 
@@ -132,7 +132,7 @@ where "X.Y" is the release version.  Alternatively::
 
 The current directory (and all subdirectories) is chosen by default if
 no directory is named.  Some files may generate system messages
-(docs/user/rst/demo.txt contains intentional errors); use the
+(docs/user/rst/demo.rst contains intentional errors); use the
 ``--quiet`` option to suppress all warnings.  The ``--config`` option
 ensures that the correct settings are in place (a ``docutils.conf``
 `configuration file`_ in the current directory is picked up
@@ -177,16 +177,16 @@ A CSS stylesheet is required for proper rendering; a simple but
 complete stylesheet is installed and used by default (see Stylesheets_
 below).
 
-For example, to process a reStructuredText file "``test.txt``" into
+For example, to process a reStructuredText file "``test.rst``" into
 HTML::
 
-    rst2html.py test.txt test.html
+    rst2html.py test.rst test.html
 
 Now open the "``test.html``" file in your favorite browser to see the
 results.  To get a footer with a link to the source file, date & time
 of processing, and links to the Docutils project, add some options::
 
-    rst2html.py -stg test.txt test.html
+    rst2html.py -stg test.rst test.html
 
 
 Stylesheets
@@ -241,7 +241,7 @@ configuration files.
 For example, to process a PEP into HTML::
 
     cd <path-to-docutils>/docs/peps
-    rstpep2html.py pep-0287.txt pep-0287.html
+    rstpep2html.py pep-0287.rst pep-0287.html
 
 .. _pep_html: html.html#pep-html
 
@@ -258,10 +258,10 @@ Standards-based Slide Show System" by Eric Meyer.  A theme is required
 for proper rendering; several are distributed with Docutils and others
 are available; see Themes_ below.
 
-For example, to process a reStructuredText file "``slides.txt``" into
+For example, to process a reStructuredText file "``slides.rst``" into
 S5/HTML::
 
-    rst2s5.py slides.txt slides.html
+    rst2s5.py slides.rst slides.html
 
 Now open the "``slides.html``" file in your favorite browser, switch
 to full-screen mode, and enjoy the results.
@@ -279,7 +279,7 @@ using the "``--theme``" option (for themes that come with Docutils) or
 the "``--theme-url``" option (for themes anywhere).  For example, the
 "medium-black" theme can be specified as follows::
 
-    rst2s5.py --theme medium-black slides.txt slides.html
+    rst2s5.py --theme medium-black slides.rst slides.html
 
 The theme will be copied to the ``ui/medium-black`` directory.
 
@@ -370,9 +370,9 @@ rst2latex.py
 
 The ``rst2latex.py`` front end reads standalone reStructuredText
 source files and produces LaTeX_ output. For example, to process a
-reStructuredText file "``test.txt``" into LaTeX::
+reStructuredText file "``test.rst``" into LaTeX::
 
-    rst2latex.py test.txt test.tex
+    rst2latex.py test.rst test.tex
 
 The output file "``test.tex``" should then be processed with ``latex``
 or ``pdflatex`` to get a document in DVI, PostScript or PDF format for
@@ -390,9 +390,9 @@ rst2xetex.py
 The ``rst2xetex.py`` front end reads standalone reStructuredText source
 files and produces `LaTeX` output for processing with Unicode-aware
 TeX engines (`LuaTeX`_ or `XeTeX`_). For example, to process a
-reStructuredText file "``test.txt``" into LaTeX::
+reStructuredText file "``test.rst``" into LaTeX::
 
-    rst2xetex.py test.txt test.tex
+    rst2xetex.py test.rst test.tex
 
 The output file "``test.tex``" should then be processed with ``xelatex`` or
 ``lualatex`` to get a document in PDF format for printing or on-screen

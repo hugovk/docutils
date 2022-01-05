@@ -357,11 +357,11 @@ Generating a Slide Show (1)
 .. class:: incremental
 
 1. Open a console (terminal, command shell) and go to the folder
-   containing your file, ``slides.txt``.
+   containing your file, ``slides.rst``.
 
 2. Run the command::
 
-       rst2s5.py slides.txt slides.html
+       rst2s5.py slides.rst slides.html
 
 3. Specify an S5 theme with the ``--theme`` option.
 
@@ -498,7 +498,7 @@ Themes
 
      Example::
 
-         rst2s5 --theme big-black slides.txt slides.html
+         rst2s5 --theme big-black slides.rst slides.html
 
      The default theme is "default".
 
@@ -651,7 +651,7 @@ Making a Custom Theme
 
 .. class:: incremental
 
-1. Run "``rst2s5.py --theme <base-theme> <doc>.txt <doc>.html``".
+1. Run "``rst2s5.py --theme <base-theme> <doc>.rst <doc>.html``".
 
    .. class:: handout
 
@@ -666,7 +666,7 @@ Making a Custom Theme
    Start with ``pretty.css``; edit ``framing.css`` if you need to make
    layout changes.
 
-4. Run "``rst2s5.py --theme-url ui/<new-theme> <doc>.txt <doc>.html``".
+4. Run "``rst2s5.py --theme-url ui/<new-theme> <doc>.rst <doc>.html``".
 
    .. class:: handout
 

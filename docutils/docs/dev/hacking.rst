@@ -71,11 +71,11 @@ tree** representation.  In this case we are using the
 **reStructuredText parser** (``docutils/parsers/rst/__init__.py``).
 To see what that node tree looks like, we call ``quicktest.py`` (which
 can be found in the ``tools/`` directory of the Docutils distribution)
-with our example file (``test.txt``) as first parameter (Windows users
-might need to type ``python quicktest.py test.txt``)::
+with our example file (``test.rst``) as first parameter (Windows users
+might need to type ``python quicktest.py test.rst``)::
 
-    $ quicktest.py test.txt
-    <document source="test.txt">
+    $ quicktest.py test.rst
+    <document source="test.rst">
         <paragraph>
             My
             <emphasis>
@@ -89,7 +89,7 @@ might need to type ``python quicktest.py test.txt``)::
 Let us now examine the node tree:
 
 The top-level node is ``document``.  It has a ``source`` attribute
-whose value is ``text.txt``.  There are two children: A ``paragraph``
+whose value is ``text.rst``.  There are two children: A ``paragraph``
 node and a ``target`` node.  The ``paragraph`` in turn has children: A
 text node ("My "), an ``emphasis`` node, a text node (" language is "),
 a ``reference`` node, and again a ``Text`` node (".").
@@ -126,8 +126,8 @@ has changed after applying the Transforms, we use the
 
 .. parsed-literal::
 
-    $ rst2pseudoxml.py test.txt
-    <document source="test.txt">
+    $ rst2pseudoxml.py test.rst
+    <document source="test.rst">
         <paragraph>
             My
             <emphasis>
@@ -158,7 +158,7 @@ HTML writer in this case (``docutils/writers/html4css1.py``).
 The writer receives the node tree and returns the output document.
 For HTML output, we can test this using the ``rst2html.py`` tool::
 
-    $ rst2html.py --link-stylesheet test.txt
+    $ rst2html.py --link-stylesheet test.rst
     <?xml version="1.0" encoding="utf-8" ?>
     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -214,7 +214,7 @@ To retrieve the document tree, call::
 Please see the docstring of publish_doctree for a list of parameters.
 
 .. XXX Need to write a well-readable list of (commonly used) options
-   of the publish_* functions.  Probably in api/publisher.txt.
+   of the publish_* functions.  Probably in api/publisher.rst.
 
 ``document`` is the root node of the document tree.  You can now
 change the document by accessing the ``document`` node and its

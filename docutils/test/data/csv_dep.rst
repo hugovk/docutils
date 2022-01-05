@@ -1,2 +1,2 @@
 .. csv-table::
-   :file: csv_data.txt
+   :file: csv_data.rst

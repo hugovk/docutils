@@ -3129,7 +3129,7 @@ Add the following directives?
   enabled with an explicit command-line option or config file setting.
   Even then, an interactive prompt may be useful, such as:
 
-      The file.txt document you are processing contains a "system"
+      The file.rst document you are processing contains a "system"
       directive requesting that the ``sudo rm -rf /`` command be
       executed.  Allow it to execute?  (y/N)
 

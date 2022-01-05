@@ -27,7 +27,7 @@
 # a new Python or Unicode standard version is an API change (may render valid
 # rST documents invalid). It should only be done for "feature releases" and
 # requires also updating the specification of `inline markup recognition
-# rules`_ in ../../docs/ref/rst/restructuredtext.txt.
+# rules`_ in ../../docs/ref/rst/restructuredtext.rst.
 #
 # .. _inline markup recognition rules:
 #     ../../docs/ref/rst/restructuredtext.html#inline-markup

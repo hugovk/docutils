@@ -11,7 +11,7 @@
 The Docutils web site, <http://docutils.sourceforge.net/>, is
 maintained by the ``docutils-update.local`` script, run by project 
 maintainers on their local machines.  The script
-will process any .txt file which is newer than the corresponding .html
+will process any .rst file which is newer than the corresponding .html
 file in the local copy of the project's web directory and upload the changes
 to the web site at SourceForge.
 
@@ -20,7 +20,7 @@ to the web site at SourceForge.
     The Docutils web site, <http://docutils.sourceforge.net/>, is
     maintained automatically by the ``docutils-update`` script, run as an
     hourly cron job on shell.berlios.de (by user "wiemann").  The script
-    will process any .txt file which is newer than the corresponding .html
+    will process any .rst file which is newer than the corresponding .html
     file in the project's web directory on shell.berlios.de
     (``/home/groups/docutils/htdocs/aux/htdocs/``) and upload the changes
     to the web site at SourceForge.
@@ -29,7 +29,7 @@ Please **do not** add any generated .html files to the Docutils
 repository.  They will be generated automatically after a one-time
 setup (`described below`__).
 
-__ `Adding .txt Files`_
+__ `Adding .rst Files`_
 
 The docutils-update.local__ script is located at
 ``sandbox/infrastructure/docutils-update.local``.
@@ -55,16 +55,16 @@ Setting Up
   The procedure for that was on the docutils-devel list a while ago.
 
 
-Adding .txt Files
+Adding .rst Files
 =================
 
 User/Contributor
 ----------------
 
-When adding a new .txt file that should be converted to HTML:
+When adding a new .rst file that should be converted to HTML:
 
 #. Edit sandbox/infrastructure/htmlfiles.lst, and add the .html file
-   corresponding to the new .txt file (please keep the sorted order).
+   corresponding to the new .rst file (please keep the sorted order).
 
 #. Commit the edited version to the SVN repository.
 

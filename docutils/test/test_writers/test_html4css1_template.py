@@ -18,7 +18,7 @@ from test_writers import DocutilsTestSupport
 
 def suite():
     settings = {'template': os.path.join(DocutilsTestSupport.testroot,
-                                         'data', 'full-template.txt'),
+                                         'data', 'full-template.rst'),
                 'stylesheet_path': '/test.css',
                 'embed_stylesheet': 0,}
     s = DocutilsTestSupport.PublishTestSuite('html', suite_settings=settings)

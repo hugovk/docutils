@@ -170,7 +170,7 @@ and reinterpretation of the StructuredText_ and Setext_ lightweight
 markup systems.
 
 If you are reading this on the web, you can see for yourself.  `The
-source for this FAQ <FAQ.txt>`_ is written in reStructuredText; open
+source for this FAQ <FAQ.rst>`_ is written in reStructuredText; open
 it in another window and compare them side by side.
 
 `A ReStructuredText Primer`_ and the `Quick reStructuredText`_ user
@@ -216,12 +216,10 @@ __ http://en.wikipedia.org/wiki/Representational_State_Transfer
 What's the standard filename extension for a reStructuredText file?
 -------------------------------------------------------------------
 
-It's ".txt".  Some people would like to use ".rest" or ".rst" or
-".restx", but why bother?  ReStructuredText source files are meant to
-be readable as plaintext, and most operating systems already associate
-".txt" with text files.  Using a specialized filename extension would
-require that users alter their OS settings, which is something that
-many users will not be willing or able to do.
+".rst".
+
+ReStructuredText files should be readable as plaintext, if the filesystem
+makes no special associations.
 
 Also see `What's the official MIME type for reStructuredText data?`_
 
@@ -851,7 +849,7 @@ classes in the HTML:
       .. role:: rtl
 
 .. _stylesheet: docs/user/config.html#stylesheet
-.. _class: docs/ref/rst/directives.txt#class
+.. _class: docs/ref/rst/directives.rst#class
 
 LaTeX is quite hard to implement (it doesn't support the bidi
 algorithm, so all direction changes - even numbers in RTL text - must

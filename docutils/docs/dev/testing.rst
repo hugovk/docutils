@@ -184,7 +184,7 @@ Directory Structure
 
   + ``input/`` The input files.
 
-    - ``some_test.txt``, for example.
+    - ``some_test.rst``, for example.
 
   + ``output/`` The actual output.
 
@@ -212,7 +212,7 @@ always Docutils' main test directory (``test/``).
 For example, ``functional/tests/some_test.py`` could read like this::
 
     # Source and destination file names.
-    test_source = "some_test.txt"
+    test_source = "some_test.rst"
     test_destination = "some_test.html"
 
     # Keyword parameters passed to publish_file.

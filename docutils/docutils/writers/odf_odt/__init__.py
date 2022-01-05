@@ -2672,7 +2672,7 @@ class ODFTranslator(nodes.GenericNodeVisitor):
     visit_doctest_block = visit_literal_block
     depart_doctest_block = depart_literal_block
 
-    # placeholder for math (see docs/dev/todo.txt)
+    # placeholder for math (see docs/dev/todo.rst)
     def visit_math(self, node):
         self.document.reporter.warning('"math" role not supported',
                                        base_node=node)

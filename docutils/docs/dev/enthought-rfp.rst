@@ -10,7 +10,7 @@
 :Copyright: 2004 by Enthought, Inc.
 :License: `Enthought License`_ (BSD Style)
 
-.. _Enthought License: http://docutils.sf.net/licenses/enthought.txt
+.. _Enthought License: http://docutils.sf.net/licenses/enthought.rst
 
 The following is excerpted from the full RFP, and is published here
 with permission from `Enthought, Inc.`_  See the `Plan for Enthought

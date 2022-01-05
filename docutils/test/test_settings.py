@@ -25,12 +25,12 @@ def fixpath(path):
 
 class ConfigFileTests(unittest.TestCase):
 
-    config_files = {'old': fixpath('data/config_old.txt'),
-                    'one': fixpath('data/config_1.txt'),
-                    'two': fixpath('data/config_2.txt'),
-                    'list': fixpath('data/config_list.txt'),
-                    'list2': fixpath('data/config_list_2.txt'),
-                    'error': fixpath('data/config_error_handler.txt')}
+    config_files = {'old': fixpath('data/config_old.rst'),
+                    'one': fixpath('data/config_1.rst'),
+                    'two': fixpath('data/config_2.rst'),
+                    'list': fixpath('data/config_list.rst'),
+                    'list2': fixpath('data/config_list_2.rst'),
+                    'error': fixpath('data/config_error_handler.rst')}
 
     settings = {
         'old': {u'datestamp': u'%Y-%m-%d %H:%M UTC',

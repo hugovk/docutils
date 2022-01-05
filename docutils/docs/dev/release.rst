@@ -17,11 +17,11 @@ Releasing (post 2020)
 
   Consider **feature freeze** or/and **check-in freeze** .
 
-* Update RELEASE-NOTES.txt add section ``Release <version>``.
+* Update RELEASE-NOTES.rst add section ``Release <version>``.
 
-  Consult HISTORY.txt for important changes.
+  Consult HISTORY.rst for important changes.
 
-* Change HISTORY.txt title ``Changes Since <previous release>`` to ``Release <version>``.
+* Change HISTORY.rst title ``Changes Since <previous release>`` to ``Release <version>``.
 
 * Set new version with ``sandbox/infrastructure/set_version.sh <version>``
 
@@ -105,7 +105,7 @@ Releasing (post 2020)
     rm -r docutils.egg-info
     rsync -e ssh -r -t ./ web.sourceforge.net:/home/project-web/docutils/htdocs/0.##
 
-* Check web/index.txt for necessary corrections.
+* Check web/index.rst for necessary corrections.
 * Run sandbox/infrastructure/docutils-update.local to update web-content.
 * Release to sourceforge.
 
@@ -114,7 +114,7 @@ Releasing (post 2020)
 
 * set_version 0.#.#+1b.dev
 * test with py3
-* docutils/HISTORY.txt: add title "Changes Since 0.##"
+* docutils/HISTORY.rst: add title "Changes Since 0.##"
 * run sandbox/infrastructure/docutils-update.local
 
 

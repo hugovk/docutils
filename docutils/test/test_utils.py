@@ -238,7 +238,7 @@ class HelperFunctionTests(unittest.TestCase):
 
     # Test conversion from `version information tuple` to a PEP 440 compliant
     # Docutils version identifier.
-    # See 'Version Numbering' in docs/dev/policies.txt.
+    # See 'Version Numbering' in docs/dev/policies.rst.
     def test_version_identifier(self):
         release_0_14_final = docutils.VersionInfo(
             major=0, minor=14, micro=0,
@@ -328,17 +328,17 @@ class HelperFunctionTests(unittest.TestCase):
         # Search for file `path` in the sequence of directories `dirs`.
         # Return the first expansion that matches an existing file.
         dirs = ('nonex', '.', '..')
-        found = utils.find_file_in_dirs('HISTORY.txt', dirs)
+        found = utils.find_file_in_dirs('HISTORY.rst', dirs)
         # returns
-        # '..\\HISTORY.txt' on windows
-        # '../HISTORY.txt' on other platforms
-        # 'HISTORY.txt' if not called from docutils directory.
-        self.assertTrue(found.startswith('..'), 'HISTORY.txt not found in "..".')
+        # '..\\HISTORY.rst' on windows
+        # '../HISTORY.rst' on other platforms
+        # 'HISTORY.rst' if not called from docutils directory.
+        self.assertTrue(found.startswith('..'), 'HISTORY.rst not found in "..".')
         # Return `path` if the file exists in the cwd or if there is no match
         self.assertEqual(utils.find_file_in_dirs('alltests.py', dirs),
                          'alltests.py')
-        self.assertEqual(utils.find_file_in_dirs('gibts/nicht.txt', dirs),
-                         'gibts/nicht.txt')
+        self.assertEqual(utils.find_file_in_dirs('gibts/nicht.rst', dirs),
+                         'gibts/nicht.rst')
 
     # samples for the (un)escaping tests:
     escaped = r'escapes: \*one, \\*two, \\\*three in\side no\ space' + '\\'

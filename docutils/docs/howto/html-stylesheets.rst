@@ -79,7 +79,7 @@ Docutils' HTML code in a separate stylesheet.
 .. base for relative links is /docutils/docs/howto/
 
 .. _Docutils-users: ../user/mailing-lists.html#docutils-users
-.. _configuration: ../user/config.txt
+.. _configuration: ../user/config.rst
 .. _sandbox: ../../../sandbox
 .. _stylesheet collection: ../../../sandbox/stylesheets/
 

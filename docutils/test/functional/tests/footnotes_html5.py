@@ -2,7 +2,7 @@ with open('functional/tests/_standalone_rst_defaults.py') as _f:
     exec(_f.read())
 
 # Source and destination file names.
-test_source = "footnotes.txt"
+test_source = "footnotes.rst"
 test_destination = "footnotes_html5.html"
 
 # Keyword parameters passed to publish_file.

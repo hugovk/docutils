@@ -27,7 +27,7 @@ def suite():
 mydir = 'test_parsers/test_rst/test_directives/'
 utf_16_csv = os.path.join(mydir, 'utf-16.csv')
 utf_16_csv_rel = DocutilsTestSupport.utils.relative_path(None, utf_16_csv)
-empty_txt = os.path.join(mydir, 'empty.txt')
+empty_txt = os.path.join(mydir, 'empty.rst')
 
 unichr_exception = DocutilsTestSupport.exception_data(
     chr, int("9999999999999", 16))[0]

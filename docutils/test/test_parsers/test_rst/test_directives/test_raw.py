@@ -22,7 +22,7 @@ def suite():
     return s
 
 mydir = 'test_parsers/test_rst/test_directives/'
-raw1 = os.path.join(mydir, 'raw1.txt')
+raw1 = os.path.join(mydir, 'raw1.rst')
 utf_16_file = os.path.join(mydir, 'utf-16.csv')
 utf_16_file_rel = DocutilsTestSupport.utils.relative_path(None, utf_16_file)
 utf_16_error_str = ("UnicodeDecodeError: 'ascii' codec can't decode byte 0xfe "

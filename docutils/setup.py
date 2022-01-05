@@ -40,7 +40,7 @@ what-you-see-is-what-you-get plaintext markup syntax.""",  # wrap at col 60
     'author_email': 'goodger@python.org',
     'maintainer': 'docutils-develop list',
     'maintainer_email': 'docutils-develop@lists.sourceforge.net',
-    'license': 'public domain, Python, 2-Clause BSD, GPL 3 (see COPYING.txt)',
+    'license': 'public domain, Python, 2-Clause BSD, GPL 3 (see COPYING.rst)',
     'platforms': 'OS-independent',
     'python_requires': '>=3.7',
     'include_package_data': True,

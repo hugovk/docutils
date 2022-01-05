@@ -75,7 +75,7 @@ class PublisherTests(DocutilsTestSupport.StandardTestCase):
     def test_output_error_handling(self):
         # pass IOErrors to calling application if `traceback` is True
         try:
-            core.publish_cmdline(argv=['data/include.txt', 'nonexisting/path'],
+            core.publish_cmdline(argv=['data/include.rst', 'nonexisting/path'],
                                        settings_overrides={'traceback': True})
         except IOError as e:
             self.assertTrue(isinstance(e, io.OutputError))

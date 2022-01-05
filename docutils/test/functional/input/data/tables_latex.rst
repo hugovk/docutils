@@ -151,4 +151,4 @@ TODO
 
 * Tweak vertical spacing in table cells containing multiple elements.
 
-See also ``test/functional/input/data/latex-problematic.txt``.
+See also ``test/functional/input/data/latex-problematic.rst``.

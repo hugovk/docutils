@@ -238,7 +238,7 @@ Also see the `SourceForge Bug Tracker`_.
   unrelated to the target names (i.e., "id"-prefix serial IDs).
 
 * The "contents" ID of the local table of contents in
-  ``test/functional/expected/standalone_rst_pseudoxml.txt`` is lost in
+  ``test/functional/expected/standalone_rst_pseudoxml.rst`` is lost in
   the HTML output at
   ``test/functional/expected/standalone_rst_html4css1.html``.
 

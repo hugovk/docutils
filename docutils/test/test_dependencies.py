@@ -19,11 +19,11 @@ from docutils.parsers.rst.directives.images import PIL
 
 # docutils.utils.DependencyList records POSIX paths,
 # i.e. "/" as a path separator even on Windows (not os.path.join).
-paths = {'include': u'data/include.txt',  # included rst file
-         'raw':     u'data/raw.txt',      # included raw "HTML file"
+paths = {'include': u'data/include.rst',  # included rst file
+         'raw':     u'data/raw.rst',      # included raw "HTML file"
          'scaled-image': u'../docs/user/rst/images/biohazard.png',
          'figure-image': u'../docs/user/rst/images/title.png',
-         'stylesheet':   u'data/stylesheet.txt',
+         'stylesheet':   u'data/stylesheet.rst',
         }
 
 # avoid latex writer future warnings:
@@ -33,11 +33,11 @@ latex_settings_overwrites = {'legacy_column_widths': False,
 class RecordDependenciesTests(unittest.TestCase):
 
     def get_record(self, **settings):
-        recordfile = 'record.txt'
+        recordfile = 'record.rst'
         recorder = docutils.utils.DependencyList(recordfile)
         # (Re) create the record file by running a conversion:
         settings.setdefault('source_path',
-                            os.path.join('data', 'dependencies.txt'))
+                            os.path.join('data', 'dependencies.rst'))
         settings.setdefault('settings_overrides', {})
         settings['settings_overrides'].update(_disable_config=True,
                                               record_dependencies=recorder)
@@ -90,9 +90,9 @@ class RecordDependenciesTests(unittest.TestCase):
         self.assertEqual(record, expected)
 
     def test_csv_dependencies(self):
-        csvsource = os.path.join('data', 'csv_dep.txt')
+        csvsource = os.path.join('data', 'csv_dep.rst')
         self.assertEqual(self.get_record(source_path=csvsource),
-                         ['data/csv_data.txt'])
+                         ['data/csv_data.rst'])
 
     def test_stylesheet_dependencies(self):
         stylesheet = paths['stylesheet']

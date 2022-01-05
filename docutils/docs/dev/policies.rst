@@ -285,7 +285,7 @@ also comply with the `backwards compatibility policy`_.
   `Docutils Front-End Tools`_ should have a new section for any
   front-end tool that is added.  `Docutils Configuration Files`_
   should be modified with any settings/options defined.  For any
-  non-trivial change, the HISTORY.txt_ file should be updated.
+  non-trivial change, the HISTORY.rst_ file should be updated.
 
 * _`Tested` means that unit and/or functional tests, that catch all
   bugs fixed and/or cover all new functionality, have been added to
@@ -324,7 +324,7 @@ mistake is easy to fix.  That's what version control is for!
 
 .. _Docutils Front-End Tools: ../user/tools.html
 .. _Docutils Configuration Files: ../user/config.html
-.. _HISTORY.txt: ../../HISTORY.txt
+.. _HISTORY.rst: ../../HISTORY.rst
 
 
 .. _`Version Numbering`:
@@ -606,7 +606,7 @@ structure is recommended::
 
     sandbox/
         project_name/ # For a collaborative project.
-            README.txt  # Describe the requirements, purpose/goals, usage,
+            README.rst  # Describe the requirements, purpose/goals, usage,
                         # and list the maintainers.
             docs/
                 ...
@@ -615,7 +615,7 @@ structure is recommended::
             component/      # The component is a package.
                 __init__.py  # Contains the Reader/Writer class.
                 other1.py    # Other modules and data files used
-                data.txt     # by this component.
+                data.rst     # by this component.
                 ...
             test/       # Test suite.
                 ...
