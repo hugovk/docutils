@@ -105,9 +105,6 @@ class CustomTestCase(unittest.TestCase):
         """
         return f'{self.id}; {super().__str__()}'
 
-    def __repr__(self):
-        return f"<{self.id} {super().__repr__()}>"
-
     def setUp(self):
         super().setUp()
         # Language-specific roles and roles added by the
@@ -140,9 +137,8 @@ def _compare_output(testcase, input, output, expected):
         print(input, file=sys.stderr)
         try:
             print("-: expected\n+: output", file=sys.stderr)
-            print(
-                "".join(_compare(expected.split("\n"), output.split("\n"))),
-                file=sys.stderr)
+            print("".join(_compare(expected.split("\n"), output.split("\n"))),
+                  file=sys.stderr)
         except AttributeError:      # expected or output not a string
             # alternative output for non-strings:
             print(f"expected: {expected!r}", file=sys.stderr)
@@ -177,7 +173,7 @@ class TransformTestCase(CustomTestCase):
         self.parser = parser
         """Input parser for this test case."""
 
-        CustomTestCase.__init__(self, *args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def test_transforms(self):
         settings = self.settings.copy()
