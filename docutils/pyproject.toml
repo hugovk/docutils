@@ -80,6 +80,24 @@ email = "docutils-develop@lists.sourceforge.net"
 [project.scripts]
 docutils-cli = "docutils._cli:_publish"
 
+# rst
+"rst2html.py" = "docutils._cli:publish_html"
+"rst2html4.py" = "docutils._cli:publish_html4"
+"rst2html5.py" = "docutils._cli:publish_html5"
+
+# TeX
+"rst2latex.py" = "docutils._cli:publish_latex"
+"rst2xetex.py" = "docutils._cli:publish_xetex"
+
+# XML
+"rst2xml.py" = "docutils._cli:publish_xml"
+"rst2pseudoxml.py" = "docutils._cli:publish_pseudo_xml"
+
+# misc
+"rst2man.py" = "docutils._cli:publish_man"
+"rstpep2html.py" = "docutils._cli:publish_pep"
+"rst2s5.py" = "docutils._cli:publish_s5"
+
 [tool.flit.sdist]
 include = [
     "*.txt",

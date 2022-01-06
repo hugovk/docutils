@@ -1,5 +1,7 @@
 """
 Generic Docutils command line interface.
+
+Also contains rst* tool entry points.
 """
 
 import argparse
@@ -32,8 +34,8 @@ _parser.add_argument("-w", "--writer", help="name of the writer",
                      default=_config_settings.get("writer", "html5"))
 
 
-def _publish():
-    args, unknown = _parser.parse_known_args()
+def _publish(__argv=None, __description=default_description):
+    args, unknown = _parser.parse_known_args(__argv)
 
     if args.help:
         print(_parser.format_help())
@@ -45,7 +47,7 @@ def _publish():
             parser_name=args.parser,
             writer_name=args.writer,
             config_section=_CONFIG_SECTION,
-            description=default_description,
+            description=__description,
             argv=[*filter(None, [args.source, args.destination, *unknown])],
         )
     except ImportError as err:
@@ -57,3 +59,78 @@ def _publish():
 
 if __name__ == "__main__":
     _publish()
+
+# ENTRY POINTS
+# ############
+import sys
+
+ARGS = sys.argv[1:]
+
+
+def publish_html():
+    description = ('Generates (X)HTML documents from standalone reStructuredText '
+                   'sources.  ' + default_description)
+    _publish(["--writer", "html"] + ARGS, description)
+
+
+def publish_html4():
+    description = ('Generates (X)HTML documents from standalone reStructuredText '
+                   'sources.  ' + default_description)
+    _publish(["--writer", "html4"] + ARGS, description)
+
+
+def publish_html5():
+    description = ('Generates HTML5 documents from standalone '
+                   'reStructuredText sources.\n' + default_description)
+    _publish(["--writer", "html5"] + ARGS, description)
+
+
+def publish_latex():
+    description = ('Generates LaTeX documents from standalone reStructuredText '
+                   'sources. '
+                   'Reads from <source> (default is stdin) and writes to '
+                   '<destination> (default is stdout).  See '
+                   '<https://docutils.sourceforge.io/docs/user/latex.html> for '
+                   'the full reference.')
+    _publish(["--writer", "latex"] + ARGS, description)
+
+
+def publish_xetex():
+    description = ('Generates LaTeX documents from standalone reStructuredText '
+                   'sources for compilation with the Unicode-aware TeX variants '
+                   'XeLaTeX or LuaLaTeX. '
+                   'Reads from <source> (default is stdin) and writes to '
+                   '<destination> (default is stdout).  See '
+                   '<http://docutils.sourceforge.net/docs/user/latex.html> for '
+                   'the full reference.')
+    _publish(["--writer", "xetex"] + ARGS, description)
+
+
+def publish_xml():
+    description = ('Generates Docutils-native XML from standalone '
+                   'reStructuredText sources.  ' + default_description)
+    _publish(["--writer", "xml"] + ARGS, description)
+
+
+def publish_pseudo_xml():
+    description = ('Generates pseudo-XML from standalone reStructuredText '
+                   'sources (for testing purposes).  ' + default_description)
+    _publish(["--writer", "pseudoxml"] + ARGS, description)
+
+
+def publish_man():
+    description = ("Generates plain unix manual documents.  " + default_description)
+    _publish(["--writer", "manpage"] + ARGS, description)
+
+
+def publish_pep():
+    description = ('Generates (X)HTML from reStructuredText-format PEP files.  '
+                   + default_description)
+    _publish(["--reader", "pep", "--writer", "pep_html",
+              "--description", description] + ARGS)
+
+
+def publish_s5():
+    description = ('Generates S5 (X)HTML slideshow documents from standalone '
+                   'reStructuredText sources.  ' + default_description)
+    _publish(["--writer", "s5"] + ARGS, description)
