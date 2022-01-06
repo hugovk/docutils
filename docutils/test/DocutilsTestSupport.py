@@ -71,7 +71,7 @@ class CustomTestCase(unittest.TestCase):
     """
     Helper class, providing extended functionality over unittest.TestCase.
 
-    See the compare_output method and the parameter list of __init__.
+    See the _compare_output method and the parameter list of __init__.
 
     Note: the modified signature is incompatible with
     the "pytest" and "nose" frameworks.
@@ -116,35 +116,38 @@ class CustomTestCase(unittest.TestCase):
         # empties that dictionary.
         roles._roles = {}
 
-    def compare_output(self, input, output, expected):
-        """`input` should by bytes, `output` and `expected` strings."""
-        if isinstance(input, str):
-            input = input.encode('raw_unicode_escape')
-        if isinstance(expected, bytes):
-            expected = expected.decode("utf-8")
-        if isinstance(output, bytes):
-            output = output.decode("utf-8")
-        # Normalize line endings:
-        if expected:
-            expected = "\n".join(expected.splitlines())
-        if output:
-            output = "\n".join(output.splitlines())
+
+_compare = difflib.Differ().compare
+
+
+def _compare_output(testcase, input, output, expected):
+    """`input` should by bytes, `output` and `expected` strings."""
+    if isinstance(input, str):
+        input = input.encode('raw_unicode_escape')
+    if isinstance(expected, bytes):
+        expected = expected.decode("utf-8")
+    if isinstance(output, bytes):
+        output = output.decode("utf-8")
+    # Normalize line endings:
+    if expected:
+        expected = "\n".join(expected.splitlines())
+    if output:
+        output = "\n".join(output.splitlines())
+    try:
+        testcase.assertEqual(output, expected)
+    except AssertionError as error:
+        print(f"\n{testcase}\ninput:", file=sys.stderr)
+        print(input, file=sys.stderr)
         try:
-            self.assertEqual(output, expected)
-        except AssertionError as error:
-            print(f"\n{self}\ninput:", file=sys.stderr)
-            print(input, file=sys.stderr)
-            compare = difflib.Differ().compare
-            try:
-                print("-: expected\n+: output", file=sys.stderr)
-                print(
-                    "".join(compare(expected.split("\n"), output.split("\n"))),
-                    file=sys.stderr)
-            except AttributeError:      # expected or output not a string
-                # alternative output for non-strings:
-                print(f"expected: {expected!r}", file=sys.stderr)
-                print(f"output:   {output!r}", file=sys.stderr)
-            raise error
+            print("-: expected\n+: output", file=sys.stderr)
+            print(
+                "".join(_compare(expected.split("\n"), output.split("\n"))),
+                file=sys.stderr)
+        except AttributeError:      # expected or output not a string
+            # alternative output for non-strings:
+            print(f"expected: {expected!r}", file=sys.stderr)
+            print(f"output:   {output!r}", file=sys.stderr)
+        raise error
 
 
 class TransformTestCase(CustomTestCase):
@@ -188,7 +191,7 @@ class TransformTestCase(CustomTestCase):
         document.transformer.components['writer'] = self
         document.transformer.apply_transforms()
         output = document.pformat()
-        self.compare_output(self.input, output, self.expected)
+        _compare_output(self, self.input, output, self.expected)
 
     def test_transforms_verbosely(self):
         print('\n', self.id)
@@ -205,7 +208,7 @@ class TransformTestCase(CustomTestCase):
         output = document.pformat()
         print('-' * 70)
         print(output)
-        self.compare_output(self.input, output, self.expected)
+        _compare_output(self, self.input, output, self.expected)
 
 
 class ParserTestCase(CustomTestCase):
@@ -233,7 +236,7 @@ class ParserTestCase(CustomTestCase):
         document = utils.new_document('test data', settings)
         self.parser.parse(self.input, document)
         output = document.pformat()
-        self.compare_output(self.input, output, self.expected)
+        _compare_output(self, self.input, output, self.expected)
 
 
 class PEPParserTestCase(ParserTestCase):
@@ -311,8 +314,8 @@ class GridTableParserTestCase(CustomTestCase):
             output = self.parser.cells
         except Exception as details:
             output = '%s: %s' % (details.__class__.__name__, details)
-        self.compare_output(self.input, pformat(output) + '\n',
-                            pformat(self.expected) + '\n')
+        _compare_output(self, self.input, pformat(output) + '\n',
+                       pformat(self.expected) + '\n')
 
     def test_parse(self):
         try:
@@ -320,8 +323,8 @@ class GridTableParserTestCase(CustomTestCase):
                                                   'test data'))
         except Exception as details:
             output = '%s: %s' % (details.__class__.__name__, details)
-        self.compare_output(self.input, pformat(output) + '\n',
-                            pformat(self.expected) + '\n')
+        _compare_output(self, self.input, pformat(output) + '\n',
+                       pformat(self.expected) + '\n')
 
 
 class SimpleTableParserTestCase(GridTableParserTestCase):
@@ -352,7 +355,7 @@ class WriterPublishTestCase(CustomTestCase, docutils.SettingsSpec):
               writer_name=self.writer_name,
               settings_spec=self,
               settings_overrides=self.suite_settings)
-        self.compare_output(self.input, output, self.expected)
+        _compare_output(self, self.input, output, self.expected)
 
 
 class HtmlWriterPublishPartsTestCase(WriterPublishTestCase):
@@ -378,7 +381,7 @@ class HtmlWriterPublishPartsTestCase(WriterPublishTestCase):
         output = self.format_output(parts)
         # interpolate standard variables:
         expected = self.expected % {'version': docutils.__version__}
-        self.compare_output(self.input, output, expected)
+        _compare_output(self, self.input, output, expected)
 
     standard_content_type_template = ('<meta http-equiv="Content-Type"'
                                       ' content="text/html; charset=%s" />\n')
