@@ -13,108 +13,71 @@ import unittest
 from test import DocutilsTestSupport  # before importing docutils!
 
 
-def suite():
-    settings = {'use_latex_toc': False,
-                # avoid latex writer future warnings:
-                'use_latex_citations': False,
-                'legacy_column_widths': True,
-                }
-    suite_id = DocutilsTestSupport.make_id(__file__)
-    s = unittest.TestSuite()
-    for name, cases in totest.items():
-        for casenum, (case_input, case_expected) in enumerate(cases):
-            s.addTest(
-                DocutilsTestSupport.WriterPublishTestCase("test_publish",
-                                                          input=case_input, expected=case_expected,
-                                                          id='%s: totest[%r][%s]' % (suite_id, name, casenum),
-                                                          suite_settings=settings,
-                                                          writer_name="latex")
-            )
-    settings['use_latex_toc'] = True
-    for name, cases in totest_latex_toc.items():
-        for casenum, (case_input, case_expected) in enumerate(cases):
-            s.addTest(
-                DocutilsTestSupport.WriterPublishTestCase("test_publish",
-                                                          input=case_input, expected=case_expected,
-                                                          id='%s: totest[%r][%s]' % (suite_id, name, casenum),
-                                                          suite_settings=settings,
-                                                          writer_name="latex")
-            )
-    settings['documentclass'] = 'book'
-    for name, cases in totest_latex_toc_book.items():
-        for casenum, (case_input, case_expected) in enumerate(cases):
-            s.addTest(
-                DocutilsTestSupport.WriterPublishTestCase("test_publish",
-                                                          input=case_input, expected=case_expected,
-                                                          id='%s: totest[%r][%s]' % (suite_id, name, casenum),
-                                                          suite_settings=settings,
-                                                          writer_name="latex")
-            )
-    del settings['documentclass']
-    settings['use_latex_toc'] = False
-    settings['sectnum_xform'] = False
-    for name, cases in totest_latex_sectnum.items():
-        for casenum, (case_input, case_expected) in enumerate(cases):
-            s.addTest(
-                DocutilsTestSupport.WriterPublishTestCase("test_publish",
-                                                          input=case_input, expected=case_expected,
-                                                          id='%s: totest[%r][%s]' % (suite_id, name, casenum),
-                                                          suite_settings=settings,
-                                                          writer_name="latex")
-            )
-    settings['sectnum_xform'] = True
-    settings['use_latex_citations'] = True
-    for name, cases in totest_latex_citations.items():
-        for casenum, (case_input, case_expected) in enumerate(cases):
-            s.addTest(
-                DocutilsTestSupport.WriterPublishTestCase("test_publish",
-                                                          input=case_input, expected=case_expected,
-                                                          id='%s: totest[%r][%s]' % (suite_id, name, casenum),
-                                                          suite_settings=settings,
-                                                          writer_name="latex")
-            )
-    settings['table_style'] = ['colwidths-auto']
-    for name, cases in totest_table_style_auto.items():
-        for casenum, (case_input, case_expected) in enumerate(cases):
-            s.addTest(
-                DocutilsTestSupport.WriterPublishTestCase("test_publish",
-                                                          input=case_input, expected=case_expected,
-                                                          id='%s: totest[%r][%s]' % (suite_id, name, casenum),
-                                                          suite_settings=settings,
-                                                          writer_name="latex")
-            )
-    settings['table_style'] = ['booktabs']
-    for name, cases in totest_table_style_booktabs.items():
-        for casenum, (case_input, case_expected) in enumerate(cases):
-            s.addTest(
-                DocutilsTestSupport.WriterPublishTestCase("test_publish",
-                                                          input=case_input, expected=case_expected,
-                                                          id='%s: totest[%r][%s]' % (suite_id, name, casenum),
-                                                          suite_settings=settings,
-                                                          writer_name="latex")
-            )
-    settings['stylesheet_path'] = 'data/spam,data/ham.tex'
-    for name, cases in totest_stylesheet.items():
-        for casenum, (case_input, case_expected) in enumerate(cases):
-            s.addTest(
-                DocutilsTestSupport.WriterPublishTestCase("test_publish",
-                                                          input=case_input, expected=case_expected,
-                                                          id='%s: totest[%r][%s]' % (suite_id, name, casenum),
-                                                          suite_settings=settings,
-                                                          writer_name="latex")
-            )
-    settings['embed_stylesheet'] = True
-    settings['warning_stream'] = ''
-    for name, cases in totest_stylesheet_embed.items():
-        for casenum, (case_input, case_expected) in enumerate(cases):
-            s.addTest(
-                DocutilsTestSupport.WriterPublishTestCase("test_publish",
-                                                          input=case_input, expected=case_expected,
-                                                          id='%s: totest[%r][%s]' % (suite_id, name, casenum),
-                                                          suite_settings=settings,
-                                                          writer_name="latex")
-            )
-    return s
+class WriterPublishTestCase(DocutilsTestSupport.WriterPublishTestCase):
+    writer_name = "latex"
+    overrides = {'use_latex_toc': False,
+                 # avoid latex writer future warnings:
+                 'use_latex_citations': False,
+                 'legacy_column_widths': True,
+                 }
+
+    def test_publish(self):
+        for name, cases in totest.items():
+            for casenum, (case_input, case_expected) in enumerate(cases):
+                with self.subTest(id=f'totest[{name!r}][{casenum}]'):
+                    super()._support_publish(input=case_input, expected=case_expected)
+
+        self.overrides['use_latex_toc'] = True
+        for name, cases in totest_latex_toc.items():
+            for casenum, (case_input, case_expected) in enumerate(cases):
+                with self.subTest(id=f'totest_latex_toc[{name!r}][{casenum}]'):
+                    super()._support_publish(input=case_input, expected=case_expected)
+
+        self.overrides['documentclass'] = 'book'
+        for name, cases in totest_latex_toc_book.items():
+            for casenum, (case_input, case_expected) in enumerate(cases):
+                with self.subTest(id=f'totest_latex_toc_book[{name!r}][{casenum}]'):
+                    super()._support_publish(input=case_input, expected=case_expected)
+        del self.overrides["documentclass"]
+
+        self.overrides['use_latex_toc'] = False
+        self.overrides['sectnum_xform'] = False
+        for name, cases in totest_latex_sectnum.items():
+            for casenum, (case_input, case_expected) in enumerate(cases):
+                with self.subTest(id=f'totest_latex_sectnum[{name!r}][{casenum}]'):
+                    super()._support_publish(input=case_input, expected=case_expected)
+
+        self.overrides['sectnum_xform'] = True
+        self.overrides['use_latex_citations'] = True
+        for name, cases in totest_latex_citations.items():
+            for casenum, (case_input, case_expected) in enumerate(cases):
+                with self.subTest(id=f'totest_latex_citations[{name!r}][{casenum}]'):
+                    super()._support_publish(input=case_input, expected=case_expected)
+
+        self.overrides['table_style'] = ['colwidths-auto']
+        for name, cases in totest_table_style_auto.items():
+            for casenum, (case_input, case_expected) in enumerate(cases):
+                with self.subTest(id=f'totest_table_style_auto[{name!r}][{casenum}]'):
+                    super()._support_publish(input=case_input, expected=case_expected)
+
+        self.overrides['table_style'] = ['booktabs']
+        for name, cases in totest_table_style_booktabs.items():
+            for casenum, (case_input, case_expected) in enumerate(cases):
+                with self.subTest(id=f'totest_table_style_booktabs[{name!r}][{casenum}]'):
+                    super()._support_publish(input=case_input, expected=case_expected)
+
+        self.overrides['stylesheet_path'] = 'data/spam,data/ham.tex'
+        for name, cases in totest_stylesheet.items():
+            for casenum, (case_input, case_expected) in enumerate(cases):
+                with self.subTest(id=f'totest_stylesheet[{name!r}][{casenum}]'):
+                    super()._support_publish(input=case_input, expected=case_expected)
+
+        self.overrides['embed_stylesheet'] = True
+        self.overrides['warning_stream'] = ''
+        for name, cases in totest_stylesheet_embed.items():
+            for casenum, (case_input, case_expected) in enumerate(cases):
+                with self.subTest(id=f'totest_stylesheet_embed[{name!r}][{casenum}]'):
+                    super()._support_publish(input=case_input, expected=case_expected)
 
 head_template = string.Template(
 r"""$head_prefix% generated by Docutils <https://docutils.sourceforge.io/>

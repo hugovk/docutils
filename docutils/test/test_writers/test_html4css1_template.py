@@ -15,23 +15,19 @@ import unittest
 from test import DocutilsTestSupport
 
 
-def suite():
-    settings = {'template': os.path.join(DocutilsTestSupport.testroot,
-                                         'data', 'full-template.txt'),
-                'stylesheet_path': '/test.css',
-                'embed_stylesheet': 0,}
-    suite_id = DocutilsTestSupport.make_id(__file__)
-    s = unittest.TestSuite()
-    for name, cases in totest.items():
-        for casenum, (case_input, case_expected) in enumerate(cases):
-            s.addTest(
-                DocutilsTestSupport.WriterPublishTestCase("test_publish",
-                                                          input=case_input, expected=case_expected,
-                                                          id='%s: totest[%r][%s]' % (suite_id, name, casenum),
-                                                          suite_settings=settings,
-                                                          writer_name="html")
-            )
-    return s
+class WriterPublishTestCase(DocutilsTestSupport.WriterPublishTestCase):
+    writer_name = "html"
+    overrides = {'template': os.path.join(DocutilsTestSupport.testroot,
+                                          'data', 'full-template.txt'),
+                 'stylesheet_path': '/test.css',
+                 'embed_stylesheet': 0,}
+
+    def test_publish(self):
+        for name, cases in totest.items():
+            for casenum, (case_input, case_expected) in enumerate(cases):
+                with self.subTest(id=f'totest[{name!r}][{casenum}]'):
+                    super()._support_publish(input=case_input, expected=case_expected)
+
 
 if platform.system() == "Windows":
     drive_prefix = os.path.splitdrive(os.getcwd())[0]
@@ -253,4 +249,4 @@ footer text
 ]
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='suite')
+    unittest.main()

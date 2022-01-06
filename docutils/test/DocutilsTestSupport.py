@@ -77,7 +77,7 @@ class CustomTestCase(unittest.TestCase):
     the "pytest" and "nose" frameworks.
     """ # cf. feature-request #81
 
-    def __init__(self, method_name, input, expected, id,
+    def __init__(self, method_name, input=None, expected=None, id="",
                  suite_settings=None):
         """
         Initialise the CustomTestCase.
@@ -90,12 +90,15 @@ class CustomTestCase(unittest.TestCase):
         id -- unique test identifier, used by the test framework.
         suite_settings -- settings overrides for this test suite.
         """
-        self.id = id
+        self._id = id
         self.input = input
         self.expected = expected
-        self.suite_settings = suite_settings.copy() if suite_settings else {}
+        if suite_settings:
+            self.suite_settings = self.overrides = suite_settings.copy()
+        else:
+            self.suite_settings = self.overrides = {}
 
-        # Ring your mother.
+            # Ring your mother.
         super().__init__(method_name)
 
     def __str__(self):
@@ -103,7 +106,7 @@ class CustomTestCase(unittest.TestCase):
         Return string conversion. Overridden to give test id, in addition to
         method name.
         """
-        return f'{self.id}; {super().__str__()}'
+        return f'{self._id}; {super().__str__()}'
 
     def setUp(self):
         super().setUp()
@@ -114,13 +117,8 @@ class CustomTestCase(unittest.TestCase):
         roles._roles = {}
 
 
-_compare = difflib.Differ().compare
-
-
 def _compare_output(testcase, input, output, expected):
     """`input` should by bytes, `output` and `expected` strings."""
-    if isinstance(input, str):
-        input = input.encode('raw_unicode_escape')
     if isinstance(expected, bytes):
         expected = expected.decode("utf-8")
     if isinstance(output, bytes):
@@ -130,21 +128,7 @@ def _compare_output(testcase, input, output, expected):
         expected = "\n".join(expected.splitlines())
     if output:
         output = "\n".join(output.splitlines())
-    try:
-        testcase.assertEqual(output, expected)
-    except AssertionError as error:
-        print(f"\n{testcase}\ninput:", file=sys.stderr)
-        print(input, file=sys.stderr)
-        try:
-            print("-: expected\n+: output", file=sys.stderr)
-            print("".join(_compare(expected.split("\n"), output.split("\n"))),
-                  file=sys.stderr)
-        except AttributeError:      # expected or output not a string
-            # alternative output for non-strings:
-            print(f"expected: {expected!r}", file=sys.stderr)
-            print(f"output:   {output!r}", file=sys.stderr)
-        raise error
-
+    testcase.assertEqual(output, expected)
 
 class TransformTestCase(CustomTestCase):
 
@@ -334,6 +318,7 @@ class WriterPublishTestCase(CustomTestCase, docutils.SettingsSpec):
     Test case for publish.
     """
 
+    maxDiff = None
     settings_default_overrides = {"_disable_config": True,
                                   "strict_visitor": True}
     writer_name = ""  # set in subclasses or constructor
@@ -344,14 +329,17 @@ class WriterPublishTestCase(CustomTestCase, docutils.SettingsSpec):
         super().__init__(*args, **kwargs)
 
     def test_publish(self):
+        self._support_publish(self.input, self.expected)
+
+    def _support_publish(self, input, expected):
         output = docutils.core.publish_string(
-              source=self.input,
+              source=input,
               reader_name="standalone",
               parser_name="restructuredtext",
               writer_name=self.writer_name,
               settings_spec=self,
-              settings_overrides=self.suite_settings)
-        _compare_output(self, self.input, output, self.expected)
+              settings_overrides=self.overrides)
+        _compare_output(self, input, output, expected)
 
 
 class HtmlWriterPublishPartsTestCase(WriterPublishTestCase):

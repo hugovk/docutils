@@ -11,32 +11,24 @@ Test for pseudo-XML writer.
 import unittest
 from test import DocutilsTestSupport
 
+class WriterPublishTestCase(DocutilsTestSupport.WriterPublishTestCase):
+    writer_name = "pseudoxml"
 
-def suite():
     # Settings dictionary must not be empty for later changes to work.
-    settings = {'expose_internals': []} # default
-    suite_id = DocutilsTestSupport.make_id(__file__)
-    s = unittest.TestSuite()
-    for name, cases in totest.items():
-        for casenum, (case_input, case_expected) in enumerate(cases):
-            s.addTest(
-                DocutilsTestSupport.WriterPublishTestCase("test_publish",
-                                                          input=case_input, expected=case_expected,
-                                                          id='%s: totest[%r][%s]' % (suite_id, name, casenum),
-                                                          suite_settings=settings,
-                                                          writer_name="pseudoxml")
-            )
-    settings['detailed'] = True
-    for name, cases in totest_detailed.items():
-        for casenum, (case_input, case_expected) in enumerate(cases):
-            s.addTest(
-                DocutilsTestSupport.WriterPublishTestCase("test_publish",
-                                                          input=case_input, expected=case_expected,
-                                                          id='%s: totest[%r][%s]' % (suite_id, name, casenum),
-                                                          suite_settings=settings,
-                                                          writer_name="pseudoxml")
-            )
-    return s
+    overrides = {'expose_internals': []}  # default
+
+    def test_publish(self):
+        for name, cases in totest.items():
+            for casenum, (case_input, case_expected) in enumerate(cases):
+                with self.subTest(id=f'totest[{name!r}][{casenum}]'):
+                    super()._support_publish(input=case_input, expected=case_expected)
+
+        self.overrides['detailed'] = True
+        for name, cases in totest_detailed.items():
+            for casenum, (case_input, case_expected) in enumerate(cases):
+                with self.subTest(id=f'totest[{name!r}][{casenum}]'):
+                    super()._support_publish(input=case_input, expected=case_expected)
+
 
 totest = {}
 totest_detailed = {}

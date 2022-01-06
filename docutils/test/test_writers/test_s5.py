@@ -14,33 +14,24 @@ import platform
 import unittest
 from test import DocutilsTestSupport
 
+class WriterPublishTestCase(DocutilsTestSupport.WriterPublishTestCase):
+    writer_name = "s5"
+    overrides = {'stylesheet_path': '/test.css',
+                 'embed_stylesheet': 0,}
 
-def suite():
-    settings = {'stylesheet_path': '/test.css',
-                'embed_stylesheet': 0,}
-    suite_id = DocutilsTestSupport.make_id(__file__)
-    s = unittest.TestSuite()
-    for name, cases in totest_1.items():
-        for casenum, (case_input, case_expected) in enumerate(cases):
-            s.addTest(
-                DocutilsTestSupport.WriterPublishTestCase("test_publish",
-                                                          input=case_input, expected=case_expected,
-                                                          id='%s: totest[%r][%s]' % (suite_id, name, casenum),
-                                                          suite_settings=settings,
-                                                          writer_name="s5")
-            )
-    settings['hidden_controls'] = 0
-    settings['view_mode'] = 'outline'
-    for name, cases in totest_2.items():
-        for casenum, (case_input, case_expected) in enumerate(cases):
-            s.addTest(
-                DocutilsTestSupport.WriterPublishTestCase("test_publish",
-                                                          input=case_input, expected=case_expected,
-                                                          id='%s: totest[%r][%s]' % (suite_id, name, casenum),
-                                                          suite_settings=settings,
-                                                          writer_name="s5")
-            )
-    return s
+    def test_publish(self):
+        for name, cases in totest_1.items():
+            for casenum, (case_input, case_expected) in enumerate(cases):
+                with self.subTest(id=f'totest[{name!r}][{casenum}]'):
+                    super()._support_publish(input=case_input, expected=case_expected)
+
+        self.overrides['hidden_controls'] = 0
+        self.overrides['view_mode'] = 'outline'
+        for name, cases in totest_2.items():
+            for casenum, (case_input, case_expected) in enumerate(cases):
+                with self.subTest(id=f'totest[{name!r}][{casenum}]'):
+                    super()._support_publish(input=case_input, expected=case_expected)
+
 
 interpolations = {
         'version': DocutilsTestSupport.docutils.__version__,
