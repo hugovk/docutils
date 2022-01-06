@@ -14,7 +14,7 @@ standard values, and any entries with empty values.
 
 import unittest
 from test import DocutilsTestSupport  # before importing docutils!
-from DocutilsTestSupport import HtmlWriterPublishPartsTestCase
+from test.DocutilsTestSupport import HtmlWriterPublishPartsTestCase
 from docutils import __version__
 
 
@@ -37,18 +37,15 @@ class Html5WriterPublishPartsTestCase(HtmlWriterPublishPartsTestCase):
     standard_meta_value = standard_html_meta_value % 'utf-8'
     standard_html_prolog = '<!DOCTYPE html>\n'
 
-def suite():
-    suite_id = DocutilsTestSupport.make_id(__file__)
-    s = unittest.TestSuite()
-    for name, (settings_overrides, cases) in totest.items():
-        for casenum, (case_input, case_expected) in enumerate(cases):
-            s.addTest(
-                Html5WriterPublishPartsTestCase("test_publish",
-                                                input=case_input, expected=case_expected,
-                                                id='%s: totest[%r][%s]' % (suite_id, name, casenum),
-                                                suite_settings=settings_overrides)
-            )
-    return s
+    def test_publish(self):
+        for name, (settings_overrides, cases) in totest.items():
+            for casenum, (case_input, case_expected) in enumerate(cases):
+                with self.subTest(id=f'totest[{name!r}][{casenum}]'):
+                    self.input = case_input
+                    self.expected = case_expected
+                    self.suite_settings = settings_overrides
+                    # super()._support_publish(input=case_input, expected=case_expected)
+                    super().test_publish()
 
 
 totest = {}
@@ -723,4 +720,4 @@ The latter are referenced a second time [#f2]_ [twice]_.
 
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='suite')
+    unittest.main()

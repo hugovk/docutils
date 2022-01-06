@@ -318,15 +318,9 @@ class WriterPublishTestCase(CustomTestCase, docutils.SettingsSpec):
     Test case for publish.
     """
 
-    maxDiff = None
     settings_default_overrides = {"_disable_config": True,
                                   "strict_visitor": True}
     writer_name = ""  # set in subclasses or constructor
-
-    def __init__(self, *args, writer_name='', **kwargs):
-        if writer_name:
-            self.writer_name = writer_name
-        super().__init__(*args, **kwargs)
 
     def test_publish(self):
         self._support_publish(self.input, self.expected)
