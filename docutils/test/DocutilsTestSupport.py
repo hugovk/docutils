@@ -77,9 +77,6 @@ class CustomTestCase(unittest.TestCase):
     the "pytest" and "nose" frameworks.
     """ # cf. feature-request #81
 
-    compare = difflib.Differ().compare
-    """Comparison method shared by all subclasses."""
-
     def __init__(self, method_name, input, expected, id,
                  suite_settings=None):
         """
@@ -98,6 +95,7 @@ class CustomTestCase(unittest.TestCase):
         self.expected = expected
         self.suite_settings = suite_settings.copy() if suite_settings else {}
 
+        # Ring your mother.
         super().__init__(method_name)
 
     def __str__(self):
@@ -105,49 +103,47 @@ class CustomTestCase(unittest.TestCase):
         Return string conversion. Overridden to give test id, in addition to
         method name.
         """
-        return '%s; %s' % (self.id, unittest.TestCase.__str__(self))
+        return f'{self.id}; {super().__str__()}'
 
     def __repr__(self):
-        return "<%s %s>" % (self.id, unittest.TestCase.__repr__(self))
+        return f"<{self.id} {super().__repr__()}>"
 
-    def clear_roles(self):
+    def setUp(self):
+        super().setUp()
         # Language-specific roles and roles added by the
         # "default-role" and "role" directives are currently stored
         # globally in the roles._roles dictionary.  This workaround
         # empties that dictionary.
         roles._roles = {}
 
-    def setUp(self):
-        super(CustomTestCase, self).setUp()
-        self.clear_roles()
-
     def compare_output(self, input, output, expected):
         """`input` should by bytes, `output` and `expected` strings."""
         if isinstance(input, str):
             input = input.encode('raw_unicode_escape')
         if isinstance(expected, bytes):
-            expected = expected.decode('utf-8')
+            expected = expected.decode("utf-8")
         if isinstance(output, bytes):
-            output = output.decode('utf-8')
+            output = output.decode("utf-8")
         # Normalize line endings:
         if expected:
-            expected = '\n'.join(expected.splitlines())
+            expected = "\n".join(expected.splitlines())
         if output:
-            output = '\n'.join(output.splitlines())
+            output = "\n".join(output.splitlines())
         try:
             self.assertEqual(output, expected)
         except AssertionError as error:
-            print('\n%s\ninput:' % (self,), file=sys.stderr)
+            print(f"\n{self}\ninput:", file=sys.stderr)
             print(input, file=sys.stderr)
+            compare = difflib.Differ().compare
             try:
-                comparison = ''.join(self.compare(expected.splitlines(True),
-                                                  output.splitlines(True)))
-                print('-: expected\n+: output', file=sys.stderr)
-                print(comparison, file=sys.stderr)
+                print("-: expected\n+: output", file=sys.stderr)
+                print(
+                    "".join(compare(expected.split("\n"), output.split("\n"))),
+                    file=sys.stderr)
             except AttributeError:      # expected or output not a string
                 # alternative output for non-strings:
-                print('expected: %r' % expected, file=sys.stderr)
-                print('output:   %r' % output, file=sys.stderr)
+                print(f"expected: {expected!r}", file=sys.stderr)
+                print(f"output:   {output!r}", file=sys.stderr)
             raise error
 
 
@@ -179,9 +175,6 @@ class TransformTestCase(CustomTestCase):
         """Input parser for this test case."""
 
         CustomTestCase.__init__(self, *args, **kwargs)
-
-    def supports(self, format):
-        return True
 
     def test_transforms(self):
         settings = self.settings.copy()
@@ -342,9 +335,9 @@ class WriterPublishTestCase(CustomTestCase, docutils.SettingsSpec):
     Test case for publish.
     """
 
-    settings_default_overrides = {'_disable_config': True,
-                                  'strict_visitor': True}
-    writer_name = '' # set in subclasses or constructor
+    settings_default_overrides = {"_disable_config": True,
+                                  "strict_visitor": True}
+    writer_name = ""  # set in subclasses or constructor
 
     def __init__(self, *args, writer_name='', **kwargs):
         if writer_name:
@@ -354,8 +347,8 @@ class WriterPublishTestCase(CustomTestCase, docutils.SettingsSpec):
     def test_publish(self):
         output = docutils.core.publish_string(
               source=self.input,
-              reader_name='standalone',
-              parser_name='restructuredtext',
+              reader_name="standalone",
+              parser_name="restructuredtext",
               writer_name=self.writer_name,
               settings_spec=self,
               settings_overrides=self.suite_settings)
