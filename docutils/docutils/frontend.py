@@ -47,6 +47,19 @@ import docutils.io
 import docutils.nodes
 import docutils.utils
 
+
+def __getattr__(name):
+    if name in {"SUPPRESS_HELP", "store_multiple", "read_config_file",
+                "make_paths_absolute", "make_one_path_absolute", "Values",
+                "Option", "OptionParser", "ConfigParser"}:
+        warnings.warn(f"'{name}' is deprecated, and will be removed in "
+                      f"Docutils 1.2.", DeprecationWarning, stacklevel=2)
+    try:
+        return globals()[name]
+    except KeyError:
+        raise AttributeError(f"module {__name__} has no attribute {name}")
+
+
 SUPPRESS_HELP = None
 
 # Lookup table for boolean configuration file settings
