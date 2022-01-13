@@ -51,9 +51,14 @@ class DirectiveOptionConversionTestCase(DocutilsTestSupport.StandardTestCase):
                          directives.parser_name('null'))
         self.assertEqual(docutils.parsers.rst.Parser,
                          directives.parser_name('rst'))
+        self.assertRaises(ValueError, directives.parser_name, 'fantasy')
+
+    @unittest.skipUnless(DocutilsTestSupport.RecommonmarkParserTestCase.parser,
+                         'optional module "recommonmark" not found')
+    def test_parser_name_external_recommonmark(self):
         self.assertEqual(directives.parser_name('recommonmark'),
                          docutils.parsers.recommonmark_wrapper.Parser)
-        self.assertRaises(ValueError, directives.parser_name, 'fantasy')
+
 
 if __name__ == '__main__':
     import unittest

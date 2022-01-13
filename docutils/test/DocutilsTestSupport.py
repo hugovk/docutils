@@ -541,6 +541,8 @@ class RecommonmarkParserTestCase(ParserTestCase):
         settings.report_level = 5
         settings.halt_level = 5
         settings.debug = package_unittest.debug
+    else:
+        parser = None
 
 
 class RecommonmarkParserTestSuite(ParserTestSuite):
