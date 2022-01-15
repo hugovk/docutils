@@ -168,60 +168,6 @@ Optional steps:
 * `Converting the documentation`_
 
 
-GNU/Linux, BSDs, Unix, Mac OS X, etc.
--------------------------------------
-
-1. Open a shell.
-
-2. Go to the directory containing ``setup.py``::
-
-       cd <archive_directory_path>
-
-3. Install the package (you may need root permissions to complete this
-   step)::
-
-       su
-       (enter admin password)
-       python3 setup.py install
-
-   If the python executable isn't on your path, you'll have to specify
-   the complete path, such as ``/usr/local/bin/python``.
-
-   To install for a specific Python version, use this version in the
-   setup call, e.g. ::
-
-       python3.7 setup.py install
-
-   To install for different Python versions, repeat step 3 for every
-   required version. The last installed version will be used in the
-   `shebang line`_ of the `front-end scripts`_.
-
-   .. _shebang line: http://en.wikipedia.org/wiki/Shebang_%28Unix%29
-
-Windows
--------
-
-Just double-click ``install.py``.  If this doesn't work, try the
-following:
-
-1. Open a DOS Box (Command Shell, MS-DOS Prompt, or whatever they're
-   calling it these days).
-
-2. Go to the directory created by expanding the archive::
-
-       cd <archive_directory_path>
-
-3. Install the package::
-
-       <path_to_python.exe>\python setup.py install
-
-   To install for a specific python version, specify the Python
-   executable for this version.
-
-   To install for different Python versions, repeat step 3 for every
-   required version.
-
-
 Usage
 =====
 
