@@ -187,34 +187,6 @@ class TransformTestCase(CustomTestCase):
         _compare_output(self, self.input, output, self.expected)
 
 
-class ParserTestCase(CustomTestCase):
-
-    """
-    Output checker for the parser.
-
-    Should probably be called ParserOutputChecker, but I can deal with
-    that later when/if someone comes up with a category of parser test
-    cases that have nothing to do with the input and output of the parser.
-    """
-
-    parser = rst.Parser()
-    """Parser shared by all ParserTestCases."""
-
-    option_parser = frontend.OptionParser(components=(rst.Parser,))
-    settings = option_parser.get_default_values()
-    settings.report_level = 5
-    settings.halt_level = 5
-    settings.debug = False
-
-    def test_parser(self):
-        settings = self.settings.copy()
-        settings.__dict__.update(self.suite_settings)
-        document = utils.new_document('test data', settings)
-        self.parser.parse(self.input, document)
-        output = document.pformat()
-        _compare_output(self, self.input, output, self.expected)
-
-
 # Optional tests with 3rd party CommonMark parser
 # ===============================================
 

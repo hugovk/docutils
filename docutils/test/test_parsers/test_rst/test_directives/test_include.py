@@ -13,6 +13,10 @@ from test import DocutilsTestSupport
 from docutils import parsers
 from docutils.utils.code_analyzer import with_pygments
 
+from docutils import frontend
+from docutils import utils
+from docutils.parsers import rst
+
 # check markdown parser availability:
 try:
     md_parser_class = parsers.get_parser_class('markdown')
@@ -20,30 +24,45 @@ except ImportError:
     md_parser_class = None
 
 
-def suite():
-    # eventually skip optional parts:
-    if not with_pygments:
-        del(totest['include-code'])
-    if not md_parser_class:
-        del(totest['include-markdown'])
-    suite_id = DocutilsTestSupport.make_id(__file__)
-    s = unittest.TestSuite()
-    for name, cases in totest.items():
-        for casenum, (case_input, case_expected) in enumerate(cases):
-            s.addTest(
-                DocutilsTestSupport.ParserTestCase("test_parser",
-                                                   input=case_input, expected=case_expected,
-                                                   id='%s: totest[%r][%s]' % (suite_id, name, casenum),
-                                                   suite_settings={})
-            )
-    return s
+class ParserTestCase(DocutilsTestSupport.CustomTestCase):
+
+    """
+    Output checker for the parser.
+
+    Should probably be called ParserOutputChecker, but I can deal with
+    that later when/if someone comes up with a category of parser test
+    cases that have nothing to do with the input and output of the parser.
+    """
+
+    parser = rst.Parser()
+    """Parser shared by all ParserTestCases."""
+
+    option_parser = frontend.OptionParser(components=(rst.Parser,))
+    settings = option_parser.get_default_values()
+    settings.report_level = 5
+    settings.halt_level = 5
+    settings.debug = False
+
+    def test_parser(self):
+        for name, cases in totest.items():
+            if not with_pygments and name == "code-parsing":
+                continue
+            if not md_parser_class and name == "include-markdown":
+                continue
+            for casenum, (case_input, case_expected) in enumerate(cases):
+                with self.subTest(id=f'totest[{name!r}][{casenum}]'):
+                    document = utils.new_document('test data', self.settings.copy())
+                    self.parser.parse(case_input, document)
+                    output = document.pformat()
+                    DocutilsTestSupport._compare_output(self, case_input, output, case_expected)
+
 
 # prepend this directory (relative to the test root):
 def mydir(path):
     return os.path.join('test_parsers/test_rst/test_directives/', path)
 # make `path` relative with utils.relative_path():
 def reldir(path):
-    return DocutilsTestSupport.utils.relative_path(None, path)
+    return utils.relative_path(None, path)
 
 include1 = mydir('include1.txt')
 include2 = mydir('include2.txt')
@@ -64,7 +83,7 @@ utf_16_error_str = ("UnicodeDecodeError: 'ascii' codec can't decode byte 0xfe "
                     "in position 0: ordinal not in range(128)")
 nonexistent = os.path.join(os.path.dirname(parsers.rst.states.__file__),
                            'include', 'nonexistent')
-nonexistent_rel = DocutilsTestSupport.utils.relative_path(
+nonexistent_rel = utils.relative_path(
     os.path.join(DocutilsTestSupport.testroot, 'dummy'), nonexistent)
 
 # Different error for path with 8bit chars with locale == C or None:
