@@ -54,46 +54,11 @@ class DevNull:
 
 
 class CustomTestCase(unittest.TestCase):
+    def __init__(self, method_name):
+        self.overrides = {}
 
-    """
-    Helper class, providing extended functionality over unittest.TestCase.
-
-    See the _compare_output method and the parameter list of __init__.
-
-    Note: the modified signature is incompatible with
-    the "pytest" and "nose" frameworks.
-    """ # cf. feature-request #81
-
-    def __init__(self, method_name, input=None, expected=None, id="",
-                 suite_settings=None):
-        """
-        Initialise the CustomTestCase.
-
-        Arguments:
-
-        method_name -- name of test method to run.
-        input -- input to the parser.
-        expected -- expected output from the parser.
-        id -- unique test identifier, used by the test framework.
-        suite_settings -- settings overrides for this test suite.
-        """
-        self._id = id
-        self.input = input
-        self.expected = expected
-        if suite_settings:
-            self.suite_settings = self.overrides = suite_settings.copy()
-        else:
-            self.suite_settings = self.overrides = {}
-
-            # Ring your mother.
+        # Ring your mother.
         super().__init__(method_name)
-
-    def __str__(self):
-        """
-        Return string conversion. Overridden to give test id, in addition to
-        method name.
-        """
-        return f'{self._id}; {super().__str__()}'
 
     def setUp(self):
         super().setUp()
