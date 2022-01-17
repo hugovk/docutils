@@ -7,21 +7,35 @@
 Tests for states.py.
 """
 
+from pprint import pformat
 import unittest
-from test import DocutilsTestSupport
 
-def suite():
-    suite_id = DocutilsTestSupport.make_id(__file__)
-    s = unittest.TestSuite()
-    for name, cases in totest.items():
-        for casenum, (case_input, case_expected) in enumerate(cases):
-            s.addTest(
-                DocutilsTestSupport.SimpleTableParserTestCase("test_parse",
-                                     input=case_input, expected=case_expected,
-                                     id='%s: totest[%r][%s]' % (suite_id, name, casenum),
-                                     suite_settings={})
-            )
-    return s
+from test import DocutilsTestSupport
+from docutils.parsers.rst import tableparser
+from docutils.statemachine import StringList, string2lines
+
+
+class SimpleTableParserTestCase(DocutilsTestSupport.CustomTestCase):
+
+    parser = tableparser.SimpleTableParser()
+
+    def test_parse(self):
+        for name, cases in totest.items():
+            for casenum, (case_input, case_expected) in enumerate(cases):
+                with self.subTest(id=f'totest[{name!r}][{casenum}]'):
+                    try:
+                        output = self.parser.parse(
+                            StringList(string2lines(case_input), 'test data')
+                        )
+                    except Exception as details:
+                        output = f'{details.__class__.__name__}: {details}'
+                    DocutilsTestSupport._compare_output(
+                        self,
+                        case_input,
+                        pformat(output) + '\n',
+                        pformat(case_expected) + '\n'
+                    )
+
 
 totest = {}
 
