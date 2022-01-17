@@ -10,20 +10,34 @@ Tests for RFC-2822 headers in PEPs (readers/pep.py).
 
 import unittest
 from test import DocutilsTestSupport
+from docutils import frontend
+from docutils import utils
+from docutils.parsers import rst
+from docutils.readers import pep
 
 
-def suite():
-    suite_id = DocutilsTestSupport.make_id(__file__)
-    s = unittest.TestSuite()
-    for name, cases in totest.items():
-        for casenum, (case_input, case_expected) in enumerate(cases):
-            s.addTest(
-                DocutilsTestSupport.PEPParserTestCase("test_parser",
-                                                      input=case_input, expected=case_expected,
-                                                      id='%s: totest[%r][%s]' % (suite_id, name, casenum),
-                                                      suite_settings={})
-            )
-    return s
+class PEPParserTestCase_RFC2822(DocutilsTestSupport.CustomTestCase):
+
+    """PEP-specific parser test case."""
+
+    parser = rst.Parser(rfc2822=True, inliner=rst.states.Inliner())
+    """Parser shared by all PEPParserTestCases."""
+
+    option_parser = frontend.OptionParser(components=(rst.Parser, pep.Reader))
+    settings = option_parser.get_default_values()
+    settings.report_level = 5
+    settings.halt_level = 5
+    settings.debug = False
+
+    def test_parser(self):
+        for name, cases in totest.items():
+            for casenum, (case_input, case_expected) in enumerate(cases):
+                with self.subTest(id=f'totest[{name!r}][{casenum}]'):
+                    document = utils.new_document('test data', self.settings.copy())
+                    self.parser.parse(case_input, document)
+                    output = document.pformat()
+                    DocutilsTestSupport._compare_output(self, case_input, output, case_expected)
+
 
 totest = {}
 

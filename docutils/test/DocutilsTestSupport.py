@@ -20,9 +20,6 @@ Exports the following:
     - `TransformTestCase`
     - `ParserTestCase`
     - `ParserTransformTestCase`
-    - `PEPParserTestCase`
-    - `GridTableParserTestCase`
-    - `SimpleTableParserTestCase`
     - `WriterPublishTestCase`
     - `LatexWriterPublishTestCase`
     - `PseudoXMLWriterPublishTestCase`
@@ -217,20 +214,6 @@ class ParserTestCase(CustomTestCase):
         self.parser.parse(self.input, document)
         output = document.pformat()
         _compare_output(self, self.input, output, self.expected)
-
-
-class PEPParserTestCase(ParserTestCase):
-
-    """PEP-specific parser test case."""
-
-    parser = rst.Parser(rfc2822=True, inliner=rst.states.Inliner())
-    """Parser shared by all PEPParserTestCases."""
-
-    option_parser = frontend.OptionParser(components=(rst.Parser, pep.Reader))
-    settings = option_parser.get_default_values()
-    settings.report_level = 5
-    settings.halt_level = 5
-    settings.debug = False
 
 
 # Optional tests with 3rd party CommonMark parser
