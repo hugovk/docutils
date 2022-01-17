@@ -271,36 +271,6 @@ class RecommonmarkParserTestCase(ParserTestCase):
         settings.debug = False
 
 
-class GridTableParserTestCase(CustomTestCase):
-
-    parser = tableparser.GridTableParser()
-
-    def test_parse_table(self):
-        self.parser.setup(StringList(string2lines(self.input), 'test data'))
-        try:
-            self.parser.find_head_body_sep()
-            self.parser.parse_table()
-            output = self.parser.cells
-        except Exception as details:
-            output = '%s: %s' % (details.__class__.__name__, details)
-        _compare_output(self, self.input, pformat(output) + '\n',
-                       pformat(self.expected) + '\n')
-
-    def test_parse(self):
-        try:
-            output = self.parser.parse(StringList(string2lines(self.input),
-                                                  'test data'))
-        except Exception as details:
-            output = '%s: %s' % (details.__class__.__name__, details)
-        _compare_output(self, self.input, pformat(output) + '\n',
-                       pformat(self.expected) + '\n')
-
-
-class SimpleTableParserTestCase(GridTableParserTestCase):
-
-    parser = tableparser.SimpleTableParser()
-
-
 class WriterPublishTestCase(CustomTestCase, docutils.SettingsSpec):
 
     """

@@ -7,27 +7,52 @@
 Tests for states.py.
 """
 
+from pprint import pformat
 import unittest
-from test import DocutilsTestSupport
 
-def suite():
-    suite_id = DocutilsTestSupport.make_id(__file__)
-    s = unittest.TestSuite()
-    for name, cases in totest.items():
-        for casenum, (case_input, case_expected_table, case_expected) in enumerate(cases):
-            s.addTest(
-                DocutilsTestSupport.GridTableParserTestCase("test_parse_table",
-                                     input=case_input, expected=case_expected_table,
-                                     id='%s: totest[%r][%s]' % (suite_id, name, casenum),
-                                     suite_settings={})
-            )
-            s.addTest(
-                DocutilsTestSupport.GridTableParserTestCase("test_parse",
-                                     input=case_input, expected=case_expected,
-                                     id='%s: totest[%r][%s]' % (suite_id, name, casenum),
-                                     suite_settings={})
-            )
-    return s
+from test import DocutilsTestSupport
+from docutils.parsers.rst import tableparser
+from docutils.statemachine import StringList, string2lines
+
+
+class GridTableParserTestCase(DocutilsTestSupport.CustomTestCase):
+
+    parser = tableparser.GridTableParser()
+
+    def test_parse_table(self):
+        for name, cases in totest.items():
+            for casenum, (case_input, case_expected_table, case_expected) in enumerate(cases):
+                with self.subTest(id=f'totest[{name!r}][{casenum}]'):
+                    self.parser.setup(StringList(string2lines(case_input), 'test data'))
+                    try:
+                        self.parser.find_head_body_sep()
+                        self.parser.parse_table()
+                        output = self.parser.cells
+                    except Exception as details:
+                        output = '%s: %s' % (details.__class__.__name__, details)
+                    DocutilsTestSupport._compare_output(
+                        self,
+                        case_input,
+                        pformat(output) + '\n',
+                        pformat(case_expected_table) + '\n'
+                    )
+
+    def test_parse(self):
+        for name, cases in totest.items():
+            for casenum, (case_input, case_expected_table, case_expected) in enumerate(cases):
+                with self.subTest(id=f'totest[{name!r}][{casenum}]'):
+                    try:
+                        output = self.parser.parse(StringList(string2lines(case_input),
+                                                              'test data'))
+                    except Exception as details:
+                        output = '%s: %s' % (details.__class__.__name__, details)
+                    DocutilsTestSupport._compare_output(
+                        self,
+                        case_input,
+                        pformat(output) + '\n',
+                        pformat(case_expected) + '\n'
+                    )
+
 
 totest = {}
 
