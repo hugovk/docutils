@@ -17,7 +17,6 @@ Exports the following:
 
 :Classes:
     - `CustomTestCase`
-    - `TransformTestCase`
     - `ParserTestCase`
     - `ParserTransformTestCase`
     - `LatexWriterPublishTestCase`
@@ -125,66 +124,6 @@ def _compare_output(testcase, input, output, expected):
     if output:
         output = "\n".join(output.splitlines())
     testcase.assertEqual(output, expected)
-
-class TransformTestCase(CustomTestCase):
-
-    """
-    Output checker for the transform.
-
-    Should probably be called TransformOutputChecker, but I can deal with
-    that later when/if someone comes up with a category of transform test
-    cases that have nothing to do with the input and output of the transform.
-    """
-
-    option_parser = frontend.OptionParser(components=(rst.Parser,))
-    settings = option_parser.get_default_values()
-    settings.report_level = 1
-    settings.halt_level = 5
-    settings.debug = False
-    settings.warning_stream = DevNull()
-    unknown_reference_resolvers = ()
-
-    def __init__(self, *args, parser=None, transforms=None, **kwargs):
-        assert transforms is not None, 'required argument'
-        self.transforms = transforms
-        """List of transforms to perform for this test case."""
-
-        assert parser is not None, 'required argument'
-        self.parser = parser
-        """Input parser for this test case."""
-
-        super().__init__(*args, **kwargs)
-
-    def test_transforms(self):
-        settings = self.settings.copy()
-        settings.__dict__.update(self.suite_settings)
-        document = utils.new_document('test data', settings)
-        self.parser.parse(self.input, document)
-        # Don't do a ``populate_from_components()`` because that would
-        # enable the Transformer's default transforms.
-        document.transformer.add_transforms(self.transforms)
-        document.transformer.add_transform(universal.TestMessages)
-        document.transformer.components['writer'] = self
-        document.transformer.apply_transforms()
-        output = document.pformat()
-        _compare_output(self, self.input, output, self.expected)
-
-    def test_transforms_verbosely(self):
-        print('\n', self.id)
-        print('-' * 70)
-        print(self.input)
-        settings = self.settings.copy()
-        settings.__dict__.update(self.suite_settings)
-        document = utils.new_document('test data', settings)
-        self.parser.parse(self.input, document)
-        print('-' * 70)
-        print(document.pformat())
-        for transformClass in self.transforms:
-            transformClass(document).apply()
-        output = document.pformat()
-        print('-' * 70)
-        print(output)
-        _compare_output(self, self.input, output, self.expected)
 
 
 # Optional tests with 3rd party CommonMark parser
