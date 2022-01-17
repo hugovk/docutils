@@ -20,7 +20,6 @@ Exports the following:
     - `TransformTestCase`
     - `ParserTestCase`
     - `ParserTransformTestCase`
-    - `WriterPublishTestCase`
     - `LatexWriterPublishTestCase`
     - `PseudoXMLWriterPublishTestCase`
     - `DevNull` (output sink)
@@ -252,27 +251,6 @@ class RecommonmarkParserTestCase(ParserTestCase):
         settings.report_level = 5
         settings.halt_level = 5
         settings.debug = False
-
-
-class WriterPublishTestCase(CustomTestCase, docutils.SettingsSpec):
-
-    """
-    Test case for publish.
-    """
-
-    settings_default_overrides = {"_disable_config": True,
-                                  "strict_visitor": True}
-    writer_name = ""  # set in subclasses or constructor
-
-    def _support_publish(self, input, expected):
-        output = docutils.core.publish_string(
-              source=input,
-              reader_name="standalone",
-              parser_name="restructuredtext",
-              writer_name=self.writer_name,
-              settings_spec=self,
-              settings_overrides=self.overrides)
-        _compare_output(self, input, output, expected)
 
 
 def _format_parts_output(

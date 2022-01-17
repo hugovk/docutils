@@ -11,23 +11,44 @@ Test for pseudo-XML writer.
 import unittest
 from test import DocutilsTestSupport
 
-class WriterPublishTestCase(DocutilsTestSupport.WriterPublishTestCase):
+import docutils
+import docutils.core
+
+
+class WriterPublishTestCase(DocutilsTestSupport.CustomTestCase, docutils.SettingsSpec):
+
+    """
+    Test case for publish.
+    """
+
+    settings_default_overrides = {"_disable_config": True,
+                                  "strict_visitor": True}
     writer_name = "pseudoxml"
 
     # Settings dictionary must not be empty for later changes to work.
     overrides = {'expose_internals': []}  # default
 
+    def _support_publish(self, input, expected):
+        output = docutils.core.publish_string(
+              source=input,
+              reader_name="standalone",
+              parser_name="restructuredtext",
+              writer_name=self.writer_name,
+              settings_spec=self,
+              settings_overrides=self.overrides)
+        DocutilsTestSupport._compare_output(self, input, output, expected)
+
     def test_publish(self):
         for name, cases in totest.items():
             for casenum, (case_input, case_expected) in enumerate(cases):
                 with self.subTest(id=f'totest[{name!r}][{casenum}]'):
-                    super()._support_publish(input=case_input, expected=case_expected)
+                    self._support_publish(input=case_input, expected=case_expected)
 
         self.overrides['detailed'] = True
         for name, cases in totest_detailed.items():
             for casenum, (case_input, case_expected) in enumerate(cases):
                 with self.subTest(id=f'totest[{name!r}][{casenum}]'):
-                    super()._support_publish(input=case_input, expected=case_expected)
+                    self._support_publish(input=case_input, expected=case_expected)
 
 
 totest = {}

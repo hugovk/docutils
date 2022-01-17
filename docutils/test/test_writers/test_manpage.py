@@ -11,15 +11,32 @@ Tests for manpage writer.
 import unittest
 from test import DocutilsTestSupport
 
+import docutils
+import docutils.core
 
-class WriterPublishTestCase(DocutilsTestSupport.WriterPublishTestCase):
+
+class WriterPublishTestCase(DocutilsTestSupport.CustomTestCase, docutils.SettingsSpec):
+
+    """
+    Test case for publish.
+    """
+
+    settings_default_overrides = {"_disable_config": True,
+                                  "strict_visitor": True}
     writer_name = "manpage"
 
     def test_publish(self):
         for name, cases in totest.items():
             for casenum, (case_input, case_expected) in enumerate(cases):
                 with self.subTest(id=f'totest[{name!r}][{casenum}]'):
-                    super()._support_publish(input=case_input, expected=case_expected)
+                    output = docutils.core.publish_string(
+                        source=case_input,
+                        reader_name="standalone",
+                        parser_name="restructuredtext",
+                        writer_name=self.writer_name,
+                        settings_spec=self,
+                        settings_overrides=self.overrides)
+                    DocutilsTestSupport._compare_output(self, case_input, output, case_expected)
 
 
 indend_macros = r""".

@@ -14,23 +14,44 @@ import platform
 import unittest
 from test import DocutilsTestSupport
 
-class WriterPublishTestCase(DocutilsTestSupport.WriterPublishTestCase):
+import docutils
+import docutils.core
+
+
+class WriterPublishTestCase(DocutilsTestSupport.CustomTestCase, docutils.SettingsSpec):
+
+    """
+    Test case for publish.
+    """
+
+    settings_default_overrides = {"_disable_config": True,
+                                  "strict_visitor": True}
     writer_name = "s5"
     overrides = {'stylesheet_path': '/test.css',
                  'embed_stylesheet': 0,}
+
+    def _support_publish(self, input, expected):
+        output = docutils.core.publish_string(
+              source=input,
+              reader_name="standalone",
+              parser_name="restructuredtext",
+              writer_name=self.writer_name,
+              settings_spec=self,
+              settings_overrides=self.overrides)
+        DocutilsTestSupport._compare_output(self, input, output, expected)
 
     def test_publish(self):
         for name, cases in totest_1.items():
             for casenum, (case_input, case_expected) in enumerate(cases):
                 with self.subTest(id=f'totest[{name!r}][{casenum}]'):
-                    super()._support_publish(input=case_input, expected=case_expected)
+                    self._support_publish(input=case_input, expected=case_expected)
 
         self.overrides['hidden_controls'] = 0
         self.overrides['view_mode'] = 'outline'
         for name, cases in totest_2.items():
             for casenum, (case_input, case_expected) in enumerate(cases):
                 with self.subTest(id=f'totest[{name!r}][{casenum}]'):
-                    super()._support_publish(input=case_input, expected=case_expected)
+                    self._support_publish(input=case_input, expected=case_expected)
 
 
 interpolations = {
