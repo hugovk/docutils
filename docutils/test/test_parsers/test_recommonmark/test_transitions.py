@@ -28,8 +28,6 @@ def suite():
 
 totest = {}
 
-# See DocutilsTestSupport.RecommonmarkParserTestSuite.generateTests for a
-# description of the 'totest' data structure.
 totest['transitions'] = [
 ["""\
 Test transition markers.

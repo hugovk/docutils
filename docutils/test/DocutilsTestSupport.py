@@ -252,6 +252,11 @@ if md_parser_class and md_parser_name == 'recommonmark':
         md_parser_class = None
         md_skip_msg = f'"{md_parser_name}" parser too old, skip tests'
 
+
+def recommonmark_ready_for_tests():
+    return md_parser_class is not None
+
+
 @unittest.skipUnless(md_parser_class, md_skip_msg)
 class RecommonmarkParserTestCase(ParserTestCase):
 
@@ -264,22 +269,6 @@ class RecommonmarkParserTestCase(ParserTestCase):
         settings.report_level = 5
         settings.halt_level = 5
         settings.debug = False
-
-
-class RecommonmarkParserTestSuite(CustomTestCase):
-
-    """A collection of RecommonmarkParserTestCases."""
-
-    test_case_class = RecommonmarkParserTestCase
-
-def recommonmark_ready_for_tests():
-    if not RecommonmarkParserTestCase.parser_class:
-        return False
-    # TODO: currently the tests are too version-specific
-    import recommonmark
-    if recommonmark.__version__ != '0.4.0':
-        return False
-    return True
 
 
 class GridTableParserTestCase(CustomTestCase):
@@ -321,9 +310,6 @@ class WriterPublishTestCase(CustomTestCase, docutils.SettingsSpec):
     settings_default_overrides = {"_disable_config": True,
                                   "strict_visitor": True}
     writer_name = ""  # set in subclasses or constructor
-
-    def test_publish(self):
-        self._support_publish(self.input, self.expected)
 
     def _support_publish(self, input, expected):
         output = docutils.core.publish_string(
@@ -407,16 +393,6 @@ class HtmlWriterPublishPartsTestCase(WriterPublishTestCase):
 
 def make_id(path):
     return os.path.relpath(path, testroot)
-
-
-def recommonmark_ready_for_tests():
-    if not RecommonmarkParserTestCase.parser_class:
-        return False
-    # TODO: currently the tests are too version-specific
-    import recommonmark
-    if recommonmark.__version__ != '0.4.0':
-        return False
-    return True
 
 
 def exception_data(func, *args, **kwds):
