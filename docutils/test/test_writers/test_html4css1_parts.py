@@ -14,21 +14,48 @@ standard values, and any entries with empty values.
 
 import unittest
 from test import DocutilsTestSupport
-from docutils import core
+from test.DocutilsTestSupport import CustomTestCase
+from docutils import __version__
+import docutils
+import docutils.core
 
 
-def suite():
-    suite_id = DocutilsTestSupport.make_id(__file__)
-    s = unittest.TestSuite()
-    for name, (settings_overrides, cases) in totest.items():
-        for casenum, (case_input, case_expected) in enumerate(cases):
-            s.addTest(
-                DocutilsTestSupport.HtmlWriterPublishPartsTestCase("test_publish",
-                                    input=case_input, expected=case_expected,
-                                    id='%s: totest[%r][%s]' % (suite_id, name, casenum),
-                                    suite_settings=settings_overrides)
-            )
-    return s
+class Html4WriterPublishPartsTestCase(CustomTestCase, docutils.SettingsSpec):
+    writer_name = 'html4'
+
+    settings_default_overrides = {"_disable_config": True,
+                                  "strict_visitor": True,
+                                  "stylesheet": ""}
+
+    standard_html_meta_value = (
+        '<meta http-equiv="Content-Type"'
+        ' content="text/html; charset=%s" />\n'
+        '<meta name="generator"'
+        f' content="Docutils {__version__}: http://docutils.sourceforge.net/" />\n')
+    standard_html_prolog = """\
+<?xml version="1.0" encoding="%s" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+"""
+
+    def test_publish(self):
+        for name, (settings_overrides, cases) in totest.items():
+            for casenum, (case_input, case_expected) in enumerate(cases):
+                with self.subTest(id=f'totest[{name!r}][{casenum}]'):
+                    parts = docutils.core.publish_parts(
+                        source=case_input,
+                        reader_name='standalone',
+                        parser_name='restructuredtext',
+                        writer_name=self.writer_name,
+                        settings_spec=self,
+                        settings_overrides=settings_overrides)
+                    output = DocutilsTestSupport._format_parts_output(
+                        parts,
+                        self.standard_html_meta_value,
+                        self.standard_html_prolog
+                    )
+                    # interpolate standard variables:
+                    case_expected = case_expected % {'version': docutils.__version__}
+                    DocutilsTestSupport._compare_output(self, case_input, output, case_expected)
 
 
 totest = {}

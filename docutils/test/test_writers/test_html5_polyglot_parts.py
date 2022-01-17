@@ -14,39 +14,49 @@ standard values, and any entries with empty values.
 
 import unittest
 from test import DocutilsTestSupport  # before importing docutils!
-from test.DocutilsTestSupport import HtmlWriterPublishPartsTestCase
+from test.DocutilsTestSupport import CustomTestCase
 from docutils import __version__
+import docutils
+import docutils.core
 
 
-class Html5WriterPublishPartsTestCase(HtmlWriterPublishPartsTestCase):
+class Html5WriterPublishPartsTestCase(CustomTestCase, docutils.SettingsSpec):
     """Test case for HTML5 writer via the publish_parts interface."""
 
     writer_name = 'html5'
-    settings_default_overrides = HtmlWriterPublishPartsTestCase.settings_default_overrides.copy()
-    settings_default_overrides['section_self_link'] = True
 
-    standard_content_type_template = '<meta charset="%s"/>\n'
-    standard_generator_template = '<meta name="generator"' \
-        ' content="Docutils %s: https://docutils.sourceforge.io/" />\n'
-    standard_viewport_template = '<meta name="viewport"' \
+    settings_default_overrides = {"_disable_config": True,
+                                  "strict_visitor": True,
+                                  "stylesheet": "",
+                                  "section_self_link": True}
+
+    standard_html_meta_value = (
+        '<meta charset="%s"/>\n'
+        '<meta name="viewport"'
         ' content="width=device-width, initial-scale=1" />\n'
-
-    standard_html_meta_value = (standard_content_type_template
-                                + standard_viewport_template
-                                + standard_generator_template % __version__)
-    standard_meta_value = standard_html_meta_value % 'utf-8'
+        '<meta name="generator"'
+        f' content="Docutils {__version__}: http://docutils.sourceforge.net/" />\n')
     standard_html_prolog = '<!DOCTYPE html>\n'
 
     def test_publish(self):
         for name, (settings_overrides, cases) in totest.items():
             for casenum, (case_input, case_expected) in enumerate(cases):
                 with self.subTest(id=f'totest[{name!r}][{casenum}]'):
-                    self.input = case_input
-                    self.expected = case_expected
-                    self.suite_settings = settings_overrides
-                    # super()._support_publish(input=case_input, expected=case_expected)
-                    super().test_publish()
-
+                    parts = docutils.core.publish_parts(
+                        source=case_input,
+                        reader_name='standalone',
+                        parser_name='restructuredtext',
+                        writer_name=self.writer_name,
+                        settings_spec=self,
+                        settings_overrides=settings_overrides)
+                    output = DocutilsTestSupport._format_parts_output(
+                        parts,
+                        self.standard_html_meta_value,
+                        self.standard_html_prolog
+                    )
+                    # interpolate standard variables:
+                    case_expected = case_expected % {'version': docutils.__version__}
+                    DocutilsTestSupport._compare_output(self, case_input, output, case_expected)
 
 totest = {}
 
