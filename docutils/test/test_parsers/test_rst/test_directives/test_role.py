@@ -301,4 +301,4 @@ Can't use the :raw:`role` directly.
 
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='suite')
+    unittest.main()

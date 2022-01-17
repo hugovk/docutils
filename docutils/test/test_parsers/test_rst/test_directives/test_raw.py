@@ -192,4 +192,4 @@ Raw input file is UTF-16-encoded, and is not valid ASCII.
 ]
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='suite')
+    unittest.main()

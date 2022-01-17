@@ -151,4 +151,4 @@ expected output and check it in:
 
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='suite')
+    unittest.main()

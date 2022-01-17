@@ -90,4 +90,4 @@ totest['admonitions'] = ((writer_aux.Admonitions,), [
 
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='suite')
+    unittest.main()

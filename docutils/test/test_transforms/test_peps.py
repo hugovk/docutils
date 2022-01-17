@@ -96,4 +96,4 @@ A "References" section should be generated.
 
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='suite')
+    unittest.main()

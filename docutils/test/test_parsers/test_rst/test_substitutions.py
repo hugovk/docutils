@@ -322,4 +322,4 @@ Elements that are prohibited inside of substitution definitions:
 
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='suite')
+    unittest.main()

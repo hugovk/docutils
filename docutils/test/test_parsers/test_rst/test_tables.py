@@ -1336,4 +1336,4 @@ Note       The first row of this table may expand
 
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='suite')
+    unittest.main()

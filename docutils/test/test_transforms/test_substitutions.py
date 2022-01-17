@@ -406,4 +406,4 @@ Make sure this substitution definition is not registered: |target|
 
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='suite')
+    unittest.main()

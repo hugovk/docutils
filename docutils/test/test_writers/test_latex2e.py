@@ -1191,4 +1191,4 @@ two stylesheets embedded in the header
 ]
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='suite')
+    unittest.main()

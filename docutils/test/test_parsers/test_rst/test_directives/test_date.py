@@ -101,4 +101,4 @@ if locale_encoding in ['utf8', 'utf-8', 'latin-1']:
     ]
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='suite')
+    unittest.main()

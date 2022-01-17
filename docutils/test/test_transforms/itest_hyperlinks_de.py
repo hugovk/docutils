@@ -101,4 +101,4 @@ Target_ should propagate past the system_message to set "id" on note.
 ])
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='suite')
+    unittest.main()

@@ -561,4 +561,4 @@ Dutch "smart quotes" and 's Gravenhage (leading apostrophe).
 
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='suite')
+    unittest.main()

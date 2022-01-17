@@ -95,4 +95,4 @@ for block_quote_type in ('epigraph', 'highlights', 'pull-quote'):
 
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='suite')
+    unittest.main()

@@ -495,4 +495,4 @@ totest_ru['bibliographic_field_lists'] = ((DocInfo,), [
 
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='suite')
+    unittest.main()

@@ -195,4 +195,4 @@ We're just checking the settings
 ]
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='suite')
+    unittest.main()

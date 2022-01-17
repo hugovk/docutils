@@ -456,4 +456,4 @@ totest['unknown_roles'] = [
 
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='suite')
+    unittest.main()
