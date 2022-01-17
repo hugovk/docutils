@@ -27,24 +27,16 @@ __docformat__ = 'reStructuredText'
 
 import sys
 import os
-import difflib
 import unittest
-from pprint import pformat
 
 testroot = os.path.abspath(os.path.dirname(__file__) or os.curdir)
 os.chdir(testroot)
 sys.path.insert(0, os.path.dirname(testroot))
 sys.path.insert(0, testroot)
 
-import docutils
-import docutils.core
-import docutils.io
-from docutils import frontend, utils
-from docutils.transforms import universal
-from docutils.parsers import rst
-from docutils.parsers.rst import tableparser, roles
-from docutils.readers import pep
-from docutils.statemachine import StringList, string2lines
+import docutils.parsers
+from docutils.parsers.rst import roles
+from docutils.statemachine import StringList
 
 # Hack to make repr(StringList) look like repr(list):
 StringList.__repr__ = StringList.__str__
