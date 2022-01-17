@@ -17,20 +17,33 @@ Cf. the `CommonMark Specification <https://spec.commonmark.org/>`__
 import unittest
 from test import DocutilsTestSupport
 
+from docutils import frontend
+from docutils import utils
 
-def suite():
-    suite_id = DocutilsTestSupport.make_id(__file__)
-    s = unittest.TestSuite()
-    if DocutilsTestSupport.recommonmark_ready_for_tests():
+md_parser_class = DocutilsTestSupport.md_parser_class
+
+
+@unittest.skipUnless(md_parser_class, DocutilsTestSupport.md_skip_msg)
+class RecommonmarkParserTestCase(DocutilsTestSupport.CustomTestCase):
+
+    """Test case for 3rd-party CommonMark parsers."""
+
+    if md_parser_class:
+        parser = md_parser_class()
+        option_parser = frontend.OptionParser(components=(md_parser_class,))
+        settings = option_parser.get_default_values()
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+
+    def test_parser(self):
         for name, cases in totest.items():
             for casenum, (case_input, case_expected) in enumerate(cases):
-                s.addTest(
-                    DocutilsTestSupport.RecommonmarkParserTestCase("test_parser",
-                                                                   input=case_input, expected=case_expected,
-                                                                   id='%s: totest[%r][%s]' % (suite_id, name, casenum),
-                                                                   suite_settings={})
-                )
-    return s
+                with self.subTest(id=f'totest[{name!r}][{casenum}]'):
+                    document = utils.new_document('test data', self.settings.copy())
+                    self.parser.parse(case_input, document)
+                    output = document.pformat()
+                    DocutilsTestSupport._compare_output(self, case_input, output, case_expected)
 
 totest = {}
 

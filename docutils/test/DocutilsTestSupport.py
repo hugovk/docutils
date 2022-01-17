@@ -235,24 +235,6 @@ if md_parser_class and md_parser_name == 'recommonmark':
         md_skip_msg = f'"{md_parser_name}" parser too old, skip tests'
 
 
-def recommonmark_ready_for_tests():
-    return md_parser_class is not None
-
-
-@unittest.skipUnless(md_parser_class, md_skip_msg)
-class RecommonmarkParserTestCase(ParserTestCase):
-
-    """Test case for 3rd-party CommonMark parsers."""
-
-    if md_parser_class:
-        parser = md_parser_class()
-        option_parser = frontend.OptionParser(components=(md_parser_class,))
-        settings = option_parser.get_default_values()
-        settings.report_level = 5
-        settings.halt_level = 5
-        settings.debug = False
-
-
 def _format_parts_output(
     parts,
     standard_html_meta_value,
