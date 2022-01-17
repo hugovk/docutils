@@ -55,26 +55,7 @@ def get_languages():
 
 class LanguageTestCase(DocutilsTestSupport.CustomTestCase):
 
-    test_methods = ['test_labels', 'test_bibliographic_fields',
-                    'test_directives', 'test_roles']
-    """Names of methods used to test each language."""
-
-    def __init__(self, *args, language=None, **kwargs):
-        """
-        Set self.ref (from module variable) and self.language.
-
-        Requires keyword argument `language`.
-        Pass remaining arguments to parent __init__.
-
-        Note: the modified signature is incompatible with
-        the "pytest" and "nose" frameworks.
-        """ # cf. feature-request #81
-
-        self.ref = docutils.languages.get_language(reference_language,
-                                                   _reporter)
-        assert language is not None, 'required argument'
-        self.language = language
-        super().__init__(*args, **kwargs)
+    ref = docutils.languages.get_language(reference_language, _reporter)
 
     def _xor(self, ref_dict, l_dict):
         """
@@ -99,106 +80,100 @@ class LanguageTestCase(DocutilsTestSupport.CustomTestCase):
         return inverted
 
     def test_labels(self):
-        try:
-            module = docutils.languages.get_language(self.language, _reporter)
-            if not module:
-                raise ImportError
-        except ImportError:
-            self.fail('No docutils.languages.%s module.' % self.language)
-        missed, unknown = self._xor(self.ref.labels, module.labels)
-        if missed or unknown:
-            self.fail('Module docutils.languages.%s.labels:\n'
-                      '    Missed: %s; Unknown: %s'
-                      % (self.language, str(missed), str(unknown)))
+        for language in get_languages():
+            with self.subTest(id=f"{language}.py"):
+                try:
+                    module = docutils.languages.get_language(language, _reporter)
+                    if not module:
+                        raise ImportError
+                except ImportError:
+                    self.fail('No docutils.languages.%s module.' % language)
+                missed, unknown = self._xor(self.ref.labels, module.labels)
+                if missed or unknown:
+                    self.fail('Module docutils.languages.%s.labels:\n'
+                              '    Missed: %s; Unknown: %s'
+                              % (language, str(missed), str(unknown)))
 
     def test_bibliographic_fields(self):
-        try:
-            module = docutils.languages.get_language(self.language, _reporter)
-            if not module:
-                raise ImportError
-        except ImportError:
-            self.fail('No docutils.languages.%s module.' % self.language)
-        missed, unknown = self._xor(
-            self._invert(self.ref.bibliographic_fields),
-            self._invert(module.bibliographic_fields))
-        if missed or unknown:
-            self.fail('Module docutils.languages.%s.bibliographic_fields:\n'
-                      '    Missed: %s; Unknown: %s'
-                      % (self.language, str(missed), str(unknown)))
+        for language in get_languages():
+            with self.subTest(id=f"{language}.py"):
+                try:
+                    module = docutils.languages.get_language(language, _reporter)
+                    if not module:
+                        raise ImportError
+                except ImportError:
+                    self.fail('No docutils.languages.%s module.' % language)
+                missed, unknown = self._xor(
+                    self._invert(self.ref.bibliographic_fields),
+                    self._invert(module.bibliographic_fields))
+                if missed or unknown:
+                    self.fail('Module docutils.languages.%s.bibliographic_fields:\n'
+                              '    Missed: %s; Unknown: %s'
+                              % (language, str(missed), str(unknown)))
 
     def test_directives(self):
-        try:
-            module = docutils.parsers.rst.languages.get_language(
-                self.language)
-            if not module:
-                raise ImportError
-        except ImportError:
-            self.fail('No docutils.parsers.rst.languages.%s module.'
-                      % self.language)
-        failures = []
-        for d in module.directives.keys():
-            try:
-                func, msg = directives.directive(d, module, None)
-                if not func:
-                    failures.append('"%s": unknown directive' % d)
-            except Exception as error:
-                failures.append('"%s": %s' % (d, error))
-        inverted = self._invert(module.directives)
-        canonical = sorted(directives._directive_registry.keys())
-        canonical.remove('restructuredtext-test-directive')
-        for name in canonical:
-            if name not in inverted:
-                failures.append('"%s": translation missing' % name)
-        if failures:
-            text = ('Module docutils.parsers.rst.languages.%s:\n    %s'
-                    % (self.language, '\n    '.join(failures)))
-            if isinstance(text, str):
-                text = text.encode('raw_unicode_escape')
-            self.fail(text)
+        for language in get_languages():
+            with self.subTest(id=f"{language}.py"):
+                try:
+                    module = docutils.parsers.rst.languages.get_language(
+                        language)
+                    if not module:
+                        raise ImportError
+                except ImportError:
+                    self.fail('No docutils.parsers.rst.languages.%s module.'
+                              % language)
+                failures = []
+                for d in module.directives.keys():
+                    try:
+                        func, msg = directives.directive(d, module, None)
+                        if not func:
+                            failures.append('"%s": unknown directive' % d)
+                    except Exception as error:
+                        failures.append('"%s": %s' % (d, error))
+                inverted = self._invert(module.directives)
+                canonical = sorted(directives._directive_registry.keys())
+                canonical.remove('restructuredtext-test-directive')
+                for name in canonical:
+                    if name not in inverted:
+                        failures.append('"%s": translation missing' % name)
+                if failures:
+                    text = ('Module docutils.parsers.rst.languages.%s:\n    %s'
+                            % (language, '\n    '.join(failures)))
+                    if isinstance(text, str):
+                        text = text.encode('raw_unicode_escape')
+                    self.fail(text)
 
     def test_roles(self):
-        module = docutils.parsers.rst.languages.get_language(self.language)
-        if not module:
-            self.fail('No docutils.parsers.rst.languages.%s module.'
-                      % self.language)
-        if not hasattr(module, "roles"):
-            self.fail('No "roles" mapping in docutils.parsers.rst.languages.'
-                      '%s module.' % self.language)
-        failures = []
-        for d in module.roles.values():
-            try:
-                method = roles._role_registry[d]
-                #if not method:
-                #    failures.append('"%s": unknown role' % d)
-            except KeyError as error:
-                failures.append('"%s": %s' % (d, error))
-        inverted = self._invert(module.roles)
-        canonical = sorted(roles._role_registry.keys())
-        canonical.remove('restructuredtext-unimplemented-role')
-        for name in canonical:
-            if name not in inverted:
-                failures.append('"%s": translation missing' % name)
-        if failures:
-            text = ('Module docutils.parsers.rst.languages.%s:\n    %s'
-                    % (self.language, '\n    '.join(failures)))
-            if isinstance(text, str):
-                text = text.encode('raw_unicode_escape')
-            self.fail(text)
-
-
-def suite():
-    s = unittest.TestSuite()
-    for language in get_languages():
-        for method in LanguageTestCase.test_methods:
-            s.addTest(
-                LanguageTestCase(method,
-                                 input=None, expected=None,
-                                 id=language + ".py",
-                                 suite_settings={},
-                                 language=language)
-            )
-    return s
+        for language in get_languages():
+            with self.subTest(id=f"{language}.py"):
+                module = docutils.parsers.rst.languages.get_language(language)
+                if not module:
+                    self.fail('No docutils.parsers.rst.languages.%s module.'
+                              % language)
+                if not hasattr(module, "roles"):
+                    self.fail('No "roles" mapping in docutils.parsers.rst.languages.'
+                              '%s module.' % language)
+                failures = []
+                for d in module.roles.values():
+                    try:
+                        method = roles._role_registry[d]
+                        #if not method:
+                        #    failures.append('"%s": unknown role' % d)
+                    except KeyError as error:
+                        failures.append('"%s": %s' % (d, error))
+                inverted = self._invert(module.roles)
+                canonical = sorted(roles._role_registry.keys())
+                canonical.remove('restructuredtext-unimplemented-role')
+                for name in canonical:
+                    if name not in inverted:
+                        failures.append('"%s": translation missing' % name)
+                if failures:
+                    text = ('Module docutils.parsers.rst.languages.%s:\n    %s'
+                            % (language, '\n    '.join(failures)))
+                    if isinstance(text, str):
+                        text = text.encode('raw_unicode_escape')
+                    self.fail(text)
 
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='suite')
+    unittest.main()
