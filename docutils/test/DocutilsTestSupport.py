@@ -55,7 +55,8 @@ class DevNull:
 
 class CustomTestCase(unittest.TestCase):
     def __init__(self, method_name):
-        self.overrides = {}
+        if not hasattr(self, "overrides"):
+            self.overrides = {}
 
         # Ring your mother.
         super().__init__(method_name)
