@@ -33,22 +33,14 @@ def join_path(*args):
 
 
 def clear_output_directory():
-    files = os.listdir(os.path.join('functional', 'output'))
-    for f in files:
-        if f in ('README.txt', '.svn', 'CVS'):
-            continue                # don't touch the infrastructure
-        path = os.path.join('functional', 'output', f)
-        if os.path.isdir(path):
-            shutil.rmtree(path)
-        else:
-            os.remove(path)
+    for entry in os.scandir(Path("functional", "output")):
+        if os.path.isdir(entry):
+            shutil.rmtree(entry)
+        elif entry.name != "README.txt":
+            os.unlink(entry)
 
 
-class FunctionalTestCase(DocutilsTestSupport.CustomTestCase):
-
-    """Test case for one config file."""
-
-    no_expected_template = """\
+no_expected_template = """\
 Cannot find expected output at %(exp)s
 If the output in %(out)s
 is correct, move it to the expected/ dir and check it in:
@@ -57,7 +49,7 @@ is correct, move it to the expected/ dir and check it in:
   svn add %(exp)s
   svn commit -m "<comment>" %(exp)s"""
 
-    expected_output_differs_template = """\
+expected_output_differs_template = """\
 The expected and actual output differs.
 Please compare the expected and actual output files:
 
@@ -70,24 +62,38 @@ expected output and check it in:
   svn add %(exp)s
   svn commit -m "<comment>" %(exp)s"""
 
+
+class FunctionalTestCase(DocutilsTestSupport.CustomTestCase):
+
+    """Test case for one config file."""
+
     def setUp(self):
         clear_output_directory()
 
     def test(self):
         """Process configfile."""
-        for path in Path(datadir, 'tests').rglob("[!_]*.py"):
+        for path in Path(datadir, 'tests').rglob("[!_]*.py"):  # TODO document recursion not allowed and switch to .glob
             configfile = path.as_posix()
-            with self.subTest(id=configfile):
+            print(configfile)
+            with self.subTest("message", configfile=configfile):
                 # Keyword parameters for publish_file:
                 namespace = {}
-                # Initialize 'settings_overrides' for test settings scripts,
-                # and disable configuration files:
-                namespace['settings_overrides'] = {'_disable_config': True}
+                # Initialize 'settings_overrides' for test settings scripts:
+                namespace['settings_overrides'] = {
+                    # disable configuration files
+                    '_disable_config': True,
+                    # Default settings for all tests.
+                    'report_level': 2,
+                    'halt_level': 5,
+                    'warning_stream': '',
+                    'input_encoding': 'utf-8',
+                    'embed_stylesheet': False,
+                    'auto_id_prefix': '%',
+                    # avoid "Pygments not found"
+                    'syntax_highlight': 'none'
+                }
                 # Read the variables set in the default config file and in
                 # the current config file into namespace:
-                with open(join_path(datadir, 'tests', '_default.py')) as f:
-                    defaultpy = f.read()
-                    exec(defaultpy, namespace)
                 with open(configfile) as f:
                     exec(f.read(), namespace)
                 # Check for required settings:
@@ -123,7 +129,7 @@ expected output and check it in:
                 # Normalize line endings:
                 output = '\n'.join(output.splitlines())
                 # Get the expected output *after* writing the actual output.
-                no_expected = self.no_expected_template % {
+                no_expected = no_expected_template % {
                     'exp': expected_path, 'out': params['destination_path']}
                 self.assertTrue(os.access(expected_path, os.R_OK), no_expected)
                 # samples are UTF8 encoded. 'rb' leads to errors with Python 3!
@@ -132,7 +138,7 @@ expected output and check it in:
                 expected = '\n'.join(f.read().splitlines())
                 f.close()
         
-                diff = self.expected_output_differs_template % {
+                diff = expected_output_differs_template % {
                     'exp': expected_path, 'out': params['destination_path']}
                 try:
                     self.assertEqual(output, expected, diff)
