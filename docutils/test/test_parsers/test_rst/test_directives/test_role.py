@@ -16,7 +16,7 @@ from docutils import utils
 from docutils.parsers import rst
 
 
-class ParserTestCase(DocutilsTestSupport.CustomTestCase):
+class TestRoleDirective(DocutilsTestSupport.CustomTestCase):
 
     """
     Output checker for the parser.
@@ -35,18 +35,24 @@ class ParserTestCase(DocutilsTestSupport.CustomTestCase):
     settings.halt_level = 5
     settings.debug = False
 
-    def test_parser(self):
-        for name, cases in totest.items():
-            for casenum, (case_input, case_expected) in enumerate(cases):
-                with self.subTest(id=f'totest[{name!r}][{casenum}]'):
-                    document = utils.new_document('test data', self.settings.copy())
-                    self.parser.parse(case_input, document)
-                    output = document.pformat()
-                    DocutilsTestSupport._compare_output(self, case_input, output, case_expected)
+    def test_role(self):
+        for casenum, (case_input, case_expected) in enumerate(cases_role):
+            with self.subTest(id=f'test_role[{casenum}]'):
+                document = utils.new_document('test data', self.settings.copy())
+                self.parser.parse(case_input, document)
+                output = document.pformat()
+                DocutilsTestSupport._compare_output(self, case_input, output, case_expected)
 
-totest = {}
+    def test_raw_role(self):
+        for casenum, (case_input, case_expected) in enumerate(cases_raw_role):
+            with self.subTest(id=f'test_raw_role[{casenum}]'):
+                document = utils.new_document('test data', self.settings.copy())
+                self.parser.parse(case_input, document)
+                output = document.pformat()
+                DocutilsTestSupport._compare_output(self, case_input, output, case_expected)
 
-totest['role'] = [
+
+cases_role = [
 ["""\
 .. role:: custom
 .. role:: special
@@ -252,7 +258,7 @@ Role names are :cAsInG:`case-insensitive`.
 """],
 ]
 
-totest['raw_role'] = [
+cases_raw_role = [
 ["""\
 .. role:: html(raw)
    :format: html
