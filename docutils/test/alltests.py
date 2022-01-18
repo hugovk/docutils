@@ -18,7 +18,7 @@ import docutils
 STARTUP_MESSAGE = f"""\
 Testing Docutils {docutils.__version__} with Python {sys.version.split()[0]}
 OS: {platform.system()} {platform.release()} {platform.version()} ({sys.platform}, {platform.platform()})
-Working directory: {Path().cwd()}
+Working directory: {Path.cwd()}
 Docutils package: {Path(docutils.__file__).parent}"""
 
 if __name__ == '__main__':
