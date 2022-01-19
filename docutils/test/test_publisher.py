@@ -14,16 +14,13 @@ from test import DocutilsTestSupport              # must be imported before docu
 import docutils
 from docutils import core, nodes, io
 
-u_prefix = b''
-
-
 test_document = """\
 Test Document
 =============
 
 This is a test document with a broken reference: nonexistent_
 """
-pseudoxml_output = b"""\
+pseudoxml_output = """\
 <document ids="test-document" names="test\\ document" source="<string>" title="Test Document">
     <title>
         Test Document
@@ -38,11 +35,8 @@ pseudoxml_output = b"""\
             <paragraph>
                 Unknown target name: "nonexistent".
 """
-exposed_pseudoxml_output = (
-    b'<document ids="test-document" internal:refnames="{'
-    + u_prefix
-    + b"""\
-\'nonexistent\': [<reference: <#text: \'nonexistent\'>>]}" names="test\\ document" source="<string>" title="Test Document">
+exposed_pseudoxml_output = ("""\
+<document ids="test-document" internal:refnames="{\'nonexistent\': [<reference: <#text: \'nonexistent\'>>]}" names="test\\ document" source="<string>" title="Test Document">
     <title>
         Test Document
     <paragraph>
@@ -55,7 +49,7 @@ exposed_pseudoxml_output = (
         <system_message backrefs="problematic-1" ids="system-message-1" level="3" line="4" source="<string>" type="ERROR">
             <paragraph>
                 Unknown target name: "nonexistent".
-""") # % u_prefix # %-expansion not supported in bytes in 3.3 and 3.4
+""")
 
 
 class PublisherTests(unittest.TestCase):

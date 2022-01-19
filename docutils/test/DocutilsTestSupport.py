@@ -70,13 +70,9 @@ class CustomTestCase(unittest.TestCase):
         roles._roles = {}
 
 
-def _compare_output(testcase, input, output, expected):
+def _compare_output(testcase, _, output, expected):
     """`input` should by bytes, `output` and `expected` strings."""
-    if isinstance(expected, bytes):
-        expected = expected.decode("utf-8")
-    if isinstance(output, bytes):
-        output = output.decode("utf-8")
-    # Normalize line endings:
+    # Normalise line endings:
     if expected:
         expected = "\n".join(expected.splitlines())
     if output:

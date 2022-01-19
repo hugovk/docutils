@@ -53,7 +53,7 @@ second term:
 """
         result = core.publish_string(data, writer_name='html5_polyglot',
                                      settings_overrides=self.mys)
-        self.assertIn(b'<dt class="for the second item">second term:</dt>',
+        self.assertIn('<dt class="for the second item">second term:</dt>',
                       result)
 
     def test_definition_list_item_name(self):
@@ -70,7 +70,7 @@ second term:
 """
         result = core.publish_string(data, writer_name='html5_polyglot',
                                      settings_overrides=self.mys)
-        self.assertIn(b'<dt id="second-item">second term:</dt>',
+        self.assertIn('<dt id="second-item">second term:</dt>',
                       result)
 
 

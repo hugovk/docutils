@@ -30,11 +30,11 @@ Instructions for adding a new test:
 
 """
 
-import os
 import unittest
 import zipfile
 import xml.etree.ElementTree as etree
 from io import BytesIO
+from pathlib import Path
 
 from test import DocutilsTestSupport
 import docutils
@@ -53,16 +53,13 @@ class DocutilsOdtTestCase(unittest.TestCase):
                      save_output_name=None, settings_overrides=None):
         # Test that xmlcharrefreplace is the default output encoding
         # error handler.
-        input_file = open(INPUT_PATH + input_filename, 'rb')
-        expected_file = open(EXPECTED_PATH + expected_filename, 'rb')
-        input = input_file.read()
-        expected = expected_file.read()
-        input_file.close()
-        expected_file.close()
+        input = Path(INPUT_PATH + input_filename).read_bytes()
+        expected = Path(EXPECTED_PATH + expected_filename).read_bytes()
         if settings_overrides is None:
-            settings_overrides={}
-            settings_overrides['_disable_config'] = True
-            settings_overrides['language_code'] = 'en-US'
+            settings_overrides = {
+                '_disable_config': True,
+                'language_code': 'en-US'
+            }
 
         result = docutils.core.publish_string(
             source=input,
@@ -73,10 +70,7 @@ class DocutilsOdtTestCase(unittest.TestCase):
 ##             len(expected), len(result), )
 ##         self.assertEqual(str(len(result)), str(len(expected)))
         if save_output_name:
-            filename = '%s%s%s' % (TEMP_FILE_PATH, os.sep, save_output_name,)
-            outfile = open(filename, 'wb')
-            outfile.write(result)
-            outfile.close()
+            Path(TEMP_FILE_PATH, save_output_name).write_bytes(result)
         content1 = self.extract_file(result, 'content.xml')
         content2 = self.extract_file(expected, 'content.xml')
         msg = 'content.xml not equal: expected len: %d  actual len: %d' % (
