@@ -38,7 +38,7 @@ class WriterPublishTestCase(DocutilsTestSupport.CustomTestCase, docutils.Setting
               writer_name=self.writer_name,
               settings_spec=self,
               settings_overrides=self.overrides)
-        DocutilsTestSupport._compare_output(self, input, output, expected)
+        DocutilsTestSupport._compare_output(self, output, expected)
 
     def test_publish(self):
         for name, cases in totest_1.items():

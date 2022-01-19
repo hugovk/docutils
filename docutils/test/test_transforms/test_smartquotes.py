@@ -70,7 +70,7 @@ class TestSmartQuotes(DocutilsTestSupport.CustomTestCase):
                     document.transformer.components['writer'] = self
                     document.transformer.apply_transforms()
                     output = document.pformat()
-                    DocutilsTestSupport._compare_output(self, case_input, output, case_expected)
+                    DocutilsTestSupport._compare_output(self, output, case_expected)
 
     def test_de(self):
         for name, (transforms, cases) in totest_de.items():
@@ -90,7 +90,7 @@ class TestSmartQuotes(DocutilsTestSupport.CustomTestCase):
                     document.transformer.components['writer'] = self
                     document.transformer.apply_transforms()
                     output = document.pformat()
-                    DocutilsTestSupport._compare_output(self, case_input, output, case_expected)
+                    DocutilsTestSupport._compare_output(self, output, case_expected)
 
     def test_de_alternative(self):
         for name, (transforms, cases) in totest_de_alt.items():
@@ -110,7 +110,7 @@ class TestSmartQuotes(DocutilsTestSupport.CustomTestCase):
                     document.transformer.components['writer'] = self
                     document.transformer.apply_transforms()
                     output = document.pformat()
-                    DocutilsTestSupport._compare_output(self, case_input, output, case_expected)
+                    DocutilsTestSupport._compare_output(self, output, case_expected)
 
     def test_de_locales(self):
         for name, (transforms, cases) in totest_locales.items():
@@ -131,7 +131,7 @@ class TestSmartQuotes(DocutilsTestSupport.CustomTestCase):
                     document.transformer.components['writer'] = self
                     document.transformer.apply_transforms()
                     output = document.pformat()
-                    DocutilsTestSupport._compare_output(self, case_input, output, case_expected)
+                    DocutilsTestSupport._compare_output(self, output, case_expected)
 
 
 totest = {}

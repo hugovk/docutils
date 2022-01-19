@@ -31,7 +31,6 @@ class SimpleTableParserTestCase(DocutilsTestSupport.CustomTestCase):
                         output = f'{details.__class__.__name__}: {details}'
                     DocutilsTestSupport._compare_output(
                         self,
-                        case_input,
                         pformat(output) + '\n',
                         pformat(case_expected) + '\n'
                     )

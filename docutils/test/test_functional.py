@@ -74,7 +74,6 @@ class FunctionalTestCase(DocutilsTestSupport.CustomTestCase):
         """Process configfile."""
         for path in Path(datadir, 'tests').rglob("[!_]*.py"):  # TODO document recursion not allowed and switch to .glob
             configfile = path.as_posix()
-            print(configfile)
             with self.subTest("message", configfile=configfile):
                 # Keyword parameters for publish_file:
                 namespace = {}

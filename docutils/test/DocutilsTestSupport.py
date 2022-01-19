@@ -70,7 +70,7 @@ class CustomTestCase(unittest.TestCase):
         roles._roles = {}
 
 
-def _compare_output(testcase, _, output, expected):
+def _compare_output(testcase, output, expected):
     """`input` should by bytes, `output` and `expected` strings."""
     # Normalise line endings:
     if expected:

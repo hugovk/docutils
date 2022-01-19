@@ -32,7 +32,6 @@ class GridTableParserTestCase(DocutilsTestSupport.CustomTestCase):
                         output = '%s: %s' % (details.__class__.__name__, details)
                     DocutilsTestSupport._compare_output(
                         self,
-                        case_input,
                         pformat(output) + '\n',
                         pformat(case_expected_table) + '\n'
                     )
@@ -48,7 +47,6 @@ class GridTableParserTestCase(DocutilsTestSupport.CustomTestCase):
                         output = '%s: %s' % (details.__class__.__name__, details)
                     DocutilsTestSupport._compare_output(
                         self,
-                        case_input,
                         pformat(output) + '\n',
                         pformat(case_expected) + '\n'
                     )

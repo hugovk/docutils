@@ -40,7 +40,7 @@ class TestHTML4Template(DocutilsTestSupport.CustomTestCase, docutils.SettingsSpe
                 'stylesheet_path': '/test.css',
                 'embed_stylesheet': 0,
             })
-        DocutilsTestSupport._compare_output(self, case_input, output, case_expected)
+        DocutilsTestSupport._compare_output(self, output, case_expected)
 
 
 if platform.system() == "Windows":

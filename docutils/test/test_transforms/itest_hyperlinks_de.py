@@ -64,7 +64,7 @@ class TransformTestCase(DocutilsTestSupport.CustomTestCase):
                     document.transformer.components['writer'] = self
                     document.transformer.apply_transforms()
                     output = document.pformat()
-                    DocutilsTestSupport._compare_output(self, case_input, output, case_expected)
+                    DocutilsTestSupport._compare_output(self, output, case_expected)
 
 
 totest = {}

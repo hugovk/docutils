@@ -55,7 +55,7 @@ class Html4WriterPublishPartsTestCase(CustomTestCase, docutils.SettingsSpec):
                     )
                     # interpolate standard variables:
                     case_expected = case_expected % {'version': docutils.__version__}
-                    DocutilsTestSupport._compare_output(self, case_input, output, case_expected)
+                    DocutilsTestSupport._compare_output(self, output, case_expected)
 
 
 totest = {}

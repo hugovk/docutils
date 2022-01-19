@@ -36,7 +36,7 @@ class WriterPublishTestCase(DocutilsTestSupport.CustomTestCase, docutils.Setting
                         writer_name=self.writer_name,
                         settings_spec=self,
                         settings_overrides=self.overrides)
-                    DocutilsTestSupport._compare_output(self, case_input, output, case_expected)
+                    DocutilsTestSupport._compare_output(self, output, case_expected)
 
 
 totest = {}

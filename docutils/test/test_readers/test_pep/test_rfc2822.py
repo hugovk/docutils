@@ -36,7 +36,7 @@ class PEPParserTestCase_RFC2822(DocutilsTestSupport.CustomTestCase):
                     document = utils.new_document('test data', self.settings.copy())
                     self.parser.parse(case_input, document)
                     output = document.pformat()
-                    DocutilsTestSupport._compare_output(self, case_input, output, case_expected)
+                    DocutilsTestSupport._compare_output(self, output, case_expected)
 
 
 totest = {}
