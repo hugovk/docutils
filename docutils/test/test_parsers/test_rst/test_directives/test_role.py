@@ -14,6 +14,7 @@ from test import DocutilsTestSupport
 from docutils import frontend
 from docutils import utils
 from docutils.parsers import rst
+from docutils.parsers.rst import roles
 
 
 class TestRoleDirective(DocutilsTestSupport.CustomTestCase):
@@ -38,6 +39,12 @@ class TestRoleDirective(DocutilsTestSupport.CustomTestCase):
     def test_role(self):
         for casenum, (case_input, case_expected) in enumerate(cases_role):
             with self.subTest(id=f'test_role[{casenum}]'):
+                # Language-specific roles and roles added by the
+                # "default-role" and "role" directives are currently stored
+                # globally in the roles._roles dictionary.  This workaround
+                # empties that dictionary.
+                roles._roles = {}
+
                 document = utils.new_document('test data', self.settings.copy())
                 self.parser.parse(case_input, document)
                 output = document.pformat()
@@ -46,6 +53,12 @@ class TestRoleDirective(DocutilsTestSupport.CustomTestCase):
     def test_raw_role(self):
         for casenum, (case_input, case_expected) in enumerate(cases_raw_role):
             with self.subTest(id=f'test_raw_role[{casenum}]'):
+                # Language-specific roles and roles added by the
+                # "default-role" and "role" directives are currently stored
+                # globally in the roles._roles dictionary.  This workaround
+                # empties that dictionary.
+                roles._roles = {}
+
                 document = utils.new_document('test data', self.settings.copy())
                 self.parser.parse(case_input, document)
                 output = document.pformat()

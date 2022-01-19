@@ -15,14 +15,23 @@
 Test module for universal.SmartQuotes transform.
 """
 
+from contextlib import contextmanager
 import unittest
+
 from test import DocutilsTestSupport  # before importing docutils!
-from docutils.transforms.universal import SmartQuotes
-from docutils.parsers.rst import Parser
+
 from docutils import frontend
 from docutils import utils
 from docutils.parsers import rst
 from docutils.transforms import universal
+from docutils.utils import smartquotes
+
+
+@contextmanager
+def local_quotes():
+    orig = smartquotes.smartchars.quotes.copy()
+    yield
+    smartquotes.smartchars.quotes = orig
 
 
 class TestSmartQuotes(DocutilsTestSupport.CustomTestCase):
@@ -42,12 +51,12 @@ class TestSmartQuotes(DocutilsTestSupport.CustomTestCase):
     settings.debug = False
     settings.warning_stream = DocutilsTestSupport.DevNull()
     unknown_reference_resolvers = ()
-    parser = Parser()
+    parser = rst.Parser()
 
     def test_default(self):
         for name, (transforms, cases) in totest.items():
             for casenum, (case_input, case_expected) in enumerate(cases):
-                with self.subTest(id=f'totest[{name!r}][{casenum}]'):
+                with local_quotes(), self.subTest(id=f'totest[{name!r}][{casenum}]'):
                     settings = self.settings.copy()
                     settings.smart_quotes = True
                     settings.trim_footnote_ref_space = True
@@ -66,7 +75,7 @@ class TestSmartQuotes(DocutilsTestSupport.CustomTestCase):
     def test_de(self):
         for name, (transforms, cases) in totest_de.items():
             for casenum, (case_input, case_expected) in enumerate(cases):
-                with self.subTest(id=f'totest[{name!r}][{casenum}]'):
+                with local_quotes(), self.subTest(id=f'totest[{name!r}][{casenum}]'):
                     settings = self.settings.copy()
                     settings.smart_quotes = True
                     settings.trim_footnote_ref_space = True
@@ -86,7 +95,7 @@ class TestSmartQuotes(DocutilsTestSupport.CustomTestCase):
     def test_de_alternative(self):
         for name, (transforms, cases) in totest_de_alt.items():
             for casenum, (case_input, case_expected) in enumerate(cases):
-                with self.subTest(id=f'totest[{name!r}][{casenum}]'):
+                with local_quotes(), self.subTest(id=f'totest[{name!r}][{casenum}]'):
                     settings = self.settings.copy()
                     settings.smart_quotes = "alternative"
                     settings.trim_footnote_ref_space = True
@@ -106,7 +115,7 @@ class TestSmartQuotes(DocutilsTestSupport.CustomTestCase):
     def test_de_locales(self):
         for name, (transforms, cases) in totest_locales.items():
             for casenum, (case_input, case_expected) in enumerate(cases):
-                with self.subTest(id=f'totest[{name!r}][{casenum}]'):
+                with local_quotes(), self.subTest(id=f'totest[{name!r}][{casenum}]'):
                     settings = self.settings.copy()
                     settings.smart_quotes = True
                     settings.trim_footnote_ref_space = True
@@ -130,7 +139,7 @@ totest_de = {}
 totest_de_alt = {}
 totest_locales = {}
 
-totest['smartquotes'] = ((SmartQuotes,), [
+totest['smartquotes'] = ((universal.SmartQuotes,), [
 ["""\
 Test "smart quotes", 'secondary smart quotes',
 "'nested' smart" quotes
@@ -496,7 +505,7 @@ Alternative German "smart quotes" and 'secondary smart quotes'.
 """],
 ])
 
-totest_de['smartquotes'] = ((SmartQuotes,), [
+totest_de['smartquotes'] = ((universal.SmartQuotes,), [
 ["""\
 German "smart quotes" and 'secondary smart quotes'.
 
@@ -513,7 +522,7 @@ English "smart quotes" and 'secondary smart quotes'.
 """],
 ])
 
-totest_de_alt['smartquotes'] = ((SmartQuotes,), [
+totest_de_alt['smartquotes'] = ((universal.SmartQuotes,), [
 ["""\
 Alternative German "smart quotes" and 'secondary smart quotes'.
 
@@ -542,7 +551,7 @@ Romanian "smart quotes" and 'secondary' smart quotes.
 """],
 ])
 
-totest_locales['smartquotes'] = ((SmartQuotes,), [
+totest_locales['smartquotes'] = ((universal.SmartQuotes,), [
 ["""\
 German "smart quotes" and 'secondary smart quotes'.
 
