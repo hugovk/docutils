@@ -19,7 +19,7 @@ import unittest
 import difflib
 from pathlib import Path
 
-from test import DocutilsTestSupport              # must be imported before docutils
+import DocutilsTestSupport              # must be imported before docutils
 import docutils
 import docutils.core
 

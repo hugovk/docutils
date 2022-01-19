@@ -35,6 +35,9 @@ class NumbersTestResult(unittest.TextTestResult):
 if __name__ == '__main__':
     print(STARTUP_MESSAGE)
     sys.stdout.flush()
-    suite = unittest.defaultTestLoader.discover(DocutilsTestSupport.testroot)
+    suite = unittest.defaultTestLoader.discover(
+        DocutilsTestSupport.testroot,
+        top_level_dir=Path(__file__, "..", "..").as_posix()
+    )
     result = unittest.TextTestRunner(resultclass=NumbersTestResult).run(suite)
     raise SystemExit(not result.wasSuccessful())

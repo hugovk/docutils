@@ -55,7 +55,7 @@ def _compare_output(testcase, output, expected):
         expected = "\n".join(expected.splitlines())
     if output:
         output = "\n".join(output.splitlines())
-    testcase.assertEqual(output, expected)
+    testcase.assertEqual(expected, output)
 
 
 def exception_data(func, *args, **kwds):

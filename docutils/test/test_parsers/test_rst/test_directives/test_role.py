@@ -26,6 +26,7 @@ class TestRoleDirective(DocutilsTestSupport.CustomTestCase):
     that later when/if someone comes up with a category of parser test
     cases that have nothing to do with the input and output of the parser.
     """
+    maxDiff = None
 
     parser = rst.Parser()
     """Parser shared by all ParserTestCases."""
