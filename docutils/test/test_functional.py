@@ -72,7 +72,7 @@ class FunctionalTestCase(DocutilsTestSupport.CustomTestCase):
 
     def test(self):
         """Process configfile."""
-        for path in Path(datadir, 'tests').rglob("[!_]*.py"):  # TODO document recursion not allowed and switch to .glob
+        for path in Path(datadir, 'tests').glob("*.py"):
             configfile = path.as_posix()
             with self.subTest("message", configfile=configfile):
                 # Keyword parameters for publish_file:
