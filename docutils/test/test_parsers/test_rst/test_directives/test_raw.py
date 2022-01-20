@@ -53,7 +53,7 @@ totest['raw'] = [
 ["""\
 .. raw:: html
    :file: rawfile.html
-   :url: http://example.org/
+   :url: https://example.org/
 """,
 """\
 <document source="test data">
@@ -63,7 +63,7 @@ totest['raw'] = [
         <literal_block xml:space="preserve">
             .. raw:: html
                :file: rawfile.html
-               :url: http://example.org/
+               :url: https://example.org/
 """],
 ["""\
 .. raw:: html

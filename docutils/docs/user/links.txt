@@ -20,7 +20,7 @@ something to publish, you can get write access, too!
 The most current version of this link list can always be found at
 https://docutils.sourceforge.io/docs/user/links.html.
 
-.. _Docutils: http://docutils.sourceforge.io/
+.. _Docutils: https://docutils.sourceforge.io/
 .. _Docutils Sandbox: https://docutils.sourceforge.io/sandbox/README.html
 
 
@@ -75,7 +75,7 @@ Advanced text editors with reStructuredText support, IDEs, and docutils GUIs:
   as `document editor`__ with outlines containing reStructuredText markup.
 
   .. _Leo: http://leoeditor.com/
-  .. _outliner: http://en.wikipedia.org/wiki/Outliner
+  .. _outliner: https://en.wikipedia.org/wiki/Outliner
   __ http://leoeditor.com/tutorial-rst3.html
 
 * `NoTex <https://notex.ch>`_ is a browser-based reStructuredText editor
@@ -364,7 +364,7 @@ Development
 
   The `Python documentation`_ is based on reStructuredText and Sphinx.
   
-  .. _Python documentation: http://docs.python.org/
+  .. _Python documentation: https://docs.python.org/
 
 * Trac_, a project management and bug/issue tracking system, supports
   `using reStructuredText
@@ -388,7 +388,7 @@ CMS Systems
   application that is complete and ready to install.
 
 .. _Plone: http://plone.org/
-.. _Zope: http://www.zope.org/
+.. _Zope: https://www.zope.org/
 .. _ZReST: https://docutils.sourceforge.io/sandbox/richard/ZReST/
 
 

@@ -134,7 +134,7 @@ def blahtexml(math_code, inline=True, reporter=None):
     if reporter and (err.find('**** Error') >= 0 or not result):
         reporter.error(err)
     start, end = result.find('<markup>')+9, result.find('</markup>')
-    result = ('<math xmlns="http://www.w3.org/1998/Math/MathML"%s>\n'
+    result = ('<math xmlns="https://www.w3.org/1998/Math/MathML"%s>\n'
               '%s</math>\n') % (mathmode_arg, result[start:end])
     return result
 

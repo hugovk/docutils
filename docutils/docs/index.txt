@@ -166,15 +166,15 @@ Please note that PEPs in the `master repository`_ may not be current,
 whereas the local versions are.
 
 __ peps/pep-0256.html
-__ http://www.python.org/peps/pep-0256.html
+__ https://www.python.org/peps/pep-0256.html
 __ peps/pep-0257.html
-__ http://www.python.org/peps/pep-0257.html
+__ https://www.python.org/peps/pep-0257.html
 .. _PEP 258:
 __ peps/pep-0258.html
-__ http://www.python.org/peps/pep-0258.html
+__ https://www.python.org/peps/pep-0258.html
 __ peps/pep-0287.html
-__ http://www.python.org/peps/pep-0287.html
-.. _master repository: http://www.python.org/peps/
+__ https://www.python.org/peps/pep-0287.html
+.. _master repository: https://www.python.org/peps/
 
 
 .. _api:

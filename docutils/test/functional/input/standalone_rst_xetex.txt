@@ -14,7 +14,7 @@ Võro, ייִדיש , Žemaitėška.
 There is extended support for more than 40 languages in the
 polyglossia_ package.
 
-.. _polyglossia: http://ctan.org/pkg/polyglossia
+.. _polyglossia: https://ctan.org/pkg/polyglossia
 
 .. preface for System Messages:
 .. include:: data/errors.txt

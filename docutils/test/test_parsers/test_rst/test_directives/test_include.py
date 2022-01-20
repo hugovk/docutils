@@ -819,7 +819,7 @@ b"""\
         This data file has been placed in the public domain.
     <comment xml:space="preserve">
         Derived from the Unicode character mappings available from
-        <http://www.w3.org/2003/entities/xml/>.
+        <https://www.w3.org/2003/entities/xml/>.
         Processed by unicode2rstsubs.py, part of Docutils:
         <https://docutils.sourceforge.io>.
     <substitution_definition names="b.Gammad">

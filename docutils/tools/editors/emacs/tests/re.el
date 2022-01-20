@@ -810,7 +810,7 @@ and the numbered matches are compared."
 	     (concat re-imp1 "\\(" re-uris1 ":\\S +\\)" re-ims1)
 	     "=== rst.el.~rst_el_1_68~:3099"
 	     (rst-re 'ilm-pfx '(:grp uri-tag ":\\S +") 'ilm-sfx)
-	     (list "http://example.com/"
+	     (list "https://example.com/"
 		   (cons 2 1))
 	     (cons "^\\\\(" "\\(?:") ;; Make a group shy
 	     (cons "\\\\(acap" "\\(?:acap") ;; Make a group shy

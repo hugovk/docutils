@@ -286,10 +286,10 @@ References and Footnotes
 ========================
 
 .. [1] PEP 256, Docstring Processing System Framework, Goodger
-   (http://www.python.org/peps/pep-0256.html)
+   (https://www.python.org/peps/pep-0256.html)
 
 .. [2] PEP 258, Docutils Design Specification, Goodger
-   (http://www.python.org/peps/pep-0258.html)
+   (https://www.python.org/peps/pep-0258.html)
 
 .. [3] Guido van Rossum, Python's creator and Benevolent Dictator For
    Life.
@@ -297,9 +297,9 @@ References and Footnotes
 .. _Docutils: https://docutils.sourceforge.io/
 
 .. _Python Style Guide:
-   http://www.python.org/doc/essays/styleguide.html
+   https://www.python.org/doc/essays/styleguide.html
 
-.. _Doc-SIG: http://www.python.org/sigs/doc-sig/
+.. _Doc-SIG: https://www.python.org/sigs/doc-sig/
 
 
 Copyright

@@ -1315,7 +1315,7 @@ def tex2mathml(tex_math, inline=True):
     Set `inline` to False for displayed math.
     """
     # Set up tree
-    math_tree = math(xmlns='http://www.w3.org/1998/Math/MathML')
+    math_tree = math(xmlns='https://www.w3.org/1998/Math/MathML')
     node = math_tree
     if not inline:
         math_tree['display'] = 'block'
@@ -1329,15 +1329,15 @@ def tex2mathml(tex_math, inline=True):
     return math_tree.toprettyxml()
 
 # >>> print(tex2mathml('3'))
-# <math xmlns="http://www.w3.org/1998/Math/MathML">
+# <math xmlns="https://www.w3.org/1998/Math/MathML">
 #   <mn>3</mn>
 # </math>
 # >>> print(tex2mathml('3', inline=False))
-# <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+# <math xmlns="https://www.w3.org/1998/Math/MathML" display="block">
 #   <mn>3</mn>
 # </math>
 # >>> print(tex2mathml(r'a & b \\ c & d', inline=False))
-# <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+# <math xmlns="https://www.w3.org/1998/Math/MathML" display="block">
 #   <mtable class="align" columnalign="right left" columnspacing="0" displaystyle="true">
 #     <mtr>
 #       <mtd>
@@ -1358,7 +1358,7 @@ def tex2mathml(tex_math, inline=True):
 #   </mtable>
 # </math>
 # >>> print(tex2mathml(r'a \\ b', inline=False))
-# <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+# <math xmlns="https://www.w3.org/1998/Math/MathML" display="block">
 #   <mtable class="align" displaystyle="true">
 #     <mtr>
 #       <mtd>

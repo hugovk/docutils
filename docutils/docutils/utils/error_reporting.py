@@ -32,7 +32,7 @@ fail in some Python versions:
 
 * In Python <= 2.6, ``unicode(<exception instance>)`` uses
   `__str__` and fails with non-ASCII chars in`unicode` arguments.
-  (work around http://bugs.python.org/issue2517):
+  (work around https://bugs.python.org/issue2517):
 
 * In Python 2, unicode(<exception instance>) fails, with non-ASCII
   chars in arguments. (Use case: in some locales, the errstr
@@ -67,7 +67,7 @@ else:
         # has side-effects | might return a wrong guess.
         # (cf. Update 1 in http://stackoverflow.com/questions/4082645/using-python-2-xs-locale-module-to-format-numbers-and-currency)
     except ValueError as error: # OS X may set UTF-8 without language code
-        # see http://bugs.python.org/issue18378
+        # see https://bugs.python.org/issue18378
         # and https://sourceforge.net/p/docutils/bugs/298/
         if "unknown locale: UTF-8" in error.args:
             locale_encoding = "UTF-8"
@@ -123,7 +123,7 @@ class SafeString(object):
         Try ``unicode(self.data)``, catch `UnicodeError` and
 
         * if `self.data` is an Exception instance, work around
-          http://bugs.python.org/issue2517 with an emulation of
+          https://bugs.python.org/issue2517 with an emulation of
           Exception.__unicode__,
 
         * else decode with `self.encoding` and `self.decoding_errors`.

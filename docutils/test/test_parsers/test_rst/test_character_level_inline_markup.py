@@ -377,30 +377,30 @@ totest['standalone_hyperlink'] = [
 [r"""
 Valid URLs with escaped markup characters:
 
-http://example.com/\*content\*/whatever
+https://example.com/\*content\*/whatever
 
 Invalid with the simple-inline-markup setting:
 
-http://example.com/\*content*/whatever
-http://example.com/rST_for_all.html
+https://example.com/\*content*/whatever
+https://example.com/rST_for_all.html
 """,
 """\
 <document source="test data">
     <paragraph>
         Valid URLs with escaped markup characters:
     <paragraph>
-        <reference refuri="http://example.com/*content*/whatever">
-            http://example.com/*content*/whatever
+        <reference refuri="https://example.com/*content*/whatever">
+            https://example.com/*content*/whatever
     <paragraph>
         Invalid with the simple-inline-markup setting:
     <paragraph>
-        <reference refuri="http://example.com/*content">
-            http://example.com/*content
+        <reference refuri="https://example.com/*content">
+            https://example.com/*content
         <problematic ids="problematic-1" refid="system-message-1">
             *
         /whatever
-        <reference refuri="http://example.com/">
-            http://example.com/
+        <reference refuri="https://example.com/">
+            https://example.com/
         <reference name="rST_for" refname="rst_for">
             rST_for
         all.html

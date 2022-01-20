@@ -969,13 +969,13 @@ stylist code will lower the barrier considerably.
 ==========================
 
 .. [#PEP-256] PEP 256, Docstring Processing System Framework, Goodger
-   (http://www.python.org/peps/pep-0256.html)
+   (https://www.python.org/peps/pep-0256.html)
 
 .. [#PEP-224] PEP 224, Attribute Docstrings, Lemburg
-   (http://www.python.org/peps/pep-0224.html)
+   (https://www.python.org/peps/pep-0224.html)
 
 .. [#PEP-216] PEP 216, Docstring Format, Zadka
-   (http://www.python.org/peps/pep-0216.html)
+   (https://www.python.org/peps/pep-0216.html)
 
 .. _docutils.dtd:
    https://docutils.sourceforge.io/docs/ref/docutils.dtd
@@ -997,7 +997,7 @@ stylist code will lower the barrier considerably.
 
 .. _ISO 639: http://www.loc.gov/standards/iso639-2/englangn.html
 
-.. _Python Doc-SIG: http://www.python.org/sigs/doc-sig/
+.. _Python Doc-SIG: https://www.python.org/sigs/doc-sig/
 
 
 

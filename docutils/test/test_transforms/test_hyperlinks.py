@@ -768,7 +768,7 @@ Duplicate external targets (different URIs) without reference:
 ["""\
 Several__ anonymous__ hyperlinks__, but not enough targets.
 
-__ http://example.org
+__ https://example.org
 """,
 """\
 <document source="test data">
@@ -782,7 +782,7 @@ __ http://example.org
         <problematic ids="problematic-3" refid="system-message-1">
             hyperlinks__
         , but not enough targets.
-    <target anonymous="1" ids="target-1" refuri="http://example.org">
+    <target anonymous="1" ids="target-1" refuri="https://example.org">
     <system_message backrefs="problematic-1 problematic-2 problematic-3" ids="system-message-1" level="3" source="test data" type="ERROR">
         <paragraph>
             Anonymous hyperlink mismatch: 3 references but 1 targets.

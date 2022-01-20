@@ -55,7 +55,7 @@ mailing lists; use the one you feel most comfortable with.
   complete **archive** of the mailing list; use the search form at the
   top of this page to search it.)
 
-  __ http://news.gmane.org/gmane.text.docutils.user
+  __ https://news.gmane.org/gmane.text.docutils.user
 
 * Use a newsreader with Gmane's `NNTP interface`__
   (gmane.text.docutils.user on news.gmane.org).
@@ -98,7 +98,7 @@ To see the collection of prior postings to the list, visit the
 
 __ `Docutils-develop mailing list`_
 __ nntp://news.gmane.org/gmane.text.docutils.devel
-__ http://sourceforge.net/mailarchive/forum.php?forum_name=docutils-develop
+__ https://sourceforge.net/mailarchive/forum.php?forum_name=docutils-develop
 
 Docutils-checkins
 -----------------
@@ -140,17 +140,17 @@ __ nntp://news.gmane.org/gmane.comp.python.documentation
 
 
 .. _Docutils-users mailing list:
-   http://lists.sourceforge.net/lists/listinfo/docutils-users
+   https://lists.sourceforge.net/lists/listinfo/docutils-users
 .. _Docutils-users Archives:
-   http://sourceforge.net/mailarchive/forum.php?forum_name=docutils-users
+   https://sourceforge.net/mailarchive/forum.php?forum_name=docutils-users
 .. _Docutils-develop mailing list:
-   http://lists.sourceforge.net/lists/listinfo/docutils-develop
+   https://lists.sourceforge.net/lists/listinfo/docutils-develop
 .. _Docutils-develop Archives:
-   http://sourceforge.net/mailarchive/forum.php?forum_name=docutils-develop
+   https://sourceforge.net/mailarchive/forum.php?forum_name=docutils-develop
 .. _Docutils-checkins list:
-   http://lists.sourceforge.net/lists/listinfo/docutils-checkins
+   https://lists.sourceforge.net/lists/listinfo/docutils-checkins
 .. _Doc-SIG:
-   http://mail.python.org/mailman/listinfo/doc-sig
+   https://mail.python.org/mailman/listinfo/doc-sig
 
 .. _Subversion repository: ../dev/repository.html
 .. _Docutils: https://docutils.sourceforge.io/

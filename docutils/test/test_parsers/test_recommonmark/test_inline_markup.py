@@ -379,12 +379,12 @@ across lines]
 
 totest['appended_URIs'] = [
 ["""\
-[anonymous reference](http://example.com)
+[anonymous reference](https://example.com)
 """,
 """\
 <document source="test data">
     <paragraph>
-        <reference refuri="http://example.com">
+        <reference refuri="https://example.com">
             anonymous reference
 """],
 ["""\
@@ -410,13 +410,13 @@ Inline image ![a train](train.jpg) more text.
 # """],
 ["""\
 [URI must follow immediately]
-(http://example.com)
+(https://example.com)
 """,
 """\
 <document source="test data">
     <paragraph>
         [URI must follow immediately]
-        (http://example.com)
+        (https://example.com)
 """],
 ["""\
 Relative URIs' reference text can't be omitted:
@@ -436,15 +436,15 @@ Relative URIs' reference text can't be omitted:
 totest['standalone hyperlink'] = [
 ["""\
 CommonMark calls standalone hyperlinks
-like <http://example.com> "autolinks".
+like <https://example.com> "autolinks".
 """,
 """\
 <document source="test data">
     <paragraph>
         CommonMark calls standalone hyperlinks
         like \n\
-        <reference refuri="http://example.com">
-            http://example.com
+        <reference refuri="https://example.com">
+            https://example.com
          "autolinks".
 """],
 ]

@@ -234,7 +234,7 @@ class HTMLTranslator(nodes.NodeVisitor):
     doctype = '<!DOCTYPE html>\n'
     doctype_mathml = doctype
 
-    head_prefix_template = ('<html xmlns="http://www.w3.org/1999/xhtml"'
+    head_prefix_template = ('<html xmlns="https://www.w3.org/1999/xhtml"'
                             ' xml:lang="%(lang)s" lang="%(lang)s">\n<head>\n')
     content_type = '<meta charset="%s"/>\n'
     generator = ('<meta name="generator" content="Docutils %s: '
@@ -1500,7 +1500,7 @@ class HTMLTranslator(nodes.NodeVisitor):
     # h1–h6 elements must not be used to markup subheadings, subtitles,
     # alternative titles and taglines unless intended to be the heading for a
     # new section or subsection.
-    # -- http://www.w3.org/TR/html51/sections.html#headings-and-sections
+    # -- https://www.w3.org/TR/html51/sections.html#headings-and-sections
     def visit_subtitle(self, node):
         if isinstance(node.parent, nodes.sidebar):
             classes = ['sidebar-subtitle']

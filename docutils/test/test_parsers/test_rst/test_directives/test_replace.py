@@ -76,7 +76,7 @@ Test the |name| directive.
 ["""\
 .. |Python| replace:: Python, *the* best language around
 
-.. _Python: http://www.python.org/
+.. _Python: https://www.python.org/
 
 I recommend you try |Python|_.
 """,
@@ -87,7 +87,7 @@ I recommend you try |Python|_.
         <emphasis>
             the
          best language around
-    <target ids="python" names="python" refuri="http://www.python.org/">
+    <target ids="python" names="python" refuri="https://www.python.org/">
     <paragraph>
         I recommend you try \n\
         <reference refname="python">

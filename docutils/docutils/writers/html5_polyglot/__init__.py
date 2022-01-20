@@ -14,7 +14,7 @@
 # .. _2-Clause BSD license: https://opensource.org/licenses/BSD-2-Clause
 
 # Use "best practice" as recommended by the W3C:
-# http://www.w3.org/2009/cheatsheet/
+# https://www.w3.org/2009/cheatsheet/
 
 """
 Plain HyperText Markup Language document tree Writer.

@@ -15,11 +15,11 @@
 
 .. footer:: |HTML 5| |validator| |valid-CSS2|
 
-.. |HTML 5| image:: http://www.w3.org/html/logo/badge/html5-badge-h-css3-semantics.png
+.. |HTML 5| image:: https://www.w3.org/html/logo/badge/html5-badge-h-css3-semantics.png
    :height: 31
    :width: 88
    :alt: Conforms to HTML 5
-   :target: http://www.w3.org/TR/html5/
+   :target: https://www.w3.org/TR/html5/
 
 .. |validator| image:: https://www.w3.org/Icons/ValidatorSuite/vs-blue-190.png
    :height: 31

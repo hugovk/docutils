@@ -964,56 +964,56 @@ Invalid phrase reference:
 
 totest['embedded_URIs'] = [
 ["""\
-`phrase reference <http://example.com>`_
+`phrase reference <https://example.com>`_
 """,
 """\
 <document source="test data">
     <paragraph>
-        <reference name="phrase reference" refuri="http://example.com">
+        <reference name="phrase reference" refuri="https://example.com">
             phrase reference
-        <target ids="phrase-reference" names="phrase\\ reference" refuri="http://example.com">
+        <target ids="phrase-reference" names="phrase\\ reference" refuri="https://example.com">
 """],
 ["""\
-`anonymous reference <http://example.com>`__
+`anonymous reference <https://example.com>`__
 """,
 """\
 <document source="test data">
     <paragraph>
-        <reference name="anonymous reference" refuri="http://example.com">
+        <reference name="anonymous reference" refuri="https://example.com">
             anonymous reference
 """],
 ["""\
 `embedded URI on next line
-<http://example.com>`__
+<https://example.com>`__
 """,
 """\
 <document source="test data">
     <paragraph>
-        <reference name="embedded URI on next line" refuri="http://example.com">
+        <reference name="embedded URI on next line" refuri="https://example.com">
             embedded URI on next line
 """],
 ["""\
-`embedded URI across lines <http://example.com/
+`embedded URI across lines <https://example.com/
 long/path>`__
 """,
 """\
 <document source="test data">
     <paragraph>
-        <reference name="embedded URI across lines" refuri="http://example.com/long/path">
+        <reference name="embedded URI across lines" refuri="https://example.com/long/path">
             embedded URI across lines
 """],
 ["""\
-`embedded URI with whitespace <http://example.com/
+`embedded URI with whitespace <https://example.com/
 long/path /and  /whitespace>`__
 """,
 """\
 <document source="test data">
     <paragraph>
-        <reference name="embedded URI with whitespace" refuri="http://example.com/long/path/and/whitespace">
+        <reference name="embedded URI with whitespace" refuri="https://example.com/long/path/and/whitespace">
             embedded URI with whitespace
 """],
 [r"""
-`embedded URI with escaped whitespace <http://example.com/a\
+`embedded URI with escaped whitespace <https://example.com/a\
 long/path\ and/some\ escaped\ whitespace>`__
 
 `<omitted\ reference\ text\ with\ escaped\ whitespace>`__
@@ -1021,7 +1021,7 @@ long/path\ and/some\ escaped\ whitespace>`__
 """\
 <document source="test data">
     <paragraph>
-        <reference name="embedded URI with escaped whitespace" refuri="http://example.com/a long/path and/some escaped whitespace">
+        <reference name="embedded URI with escaped whitespace" refuri="https://example.com/a long/path and/some escaped whitespace">
             embedded URI with escaped whitespace
     <paragraph>
         <reference name="omitted reference text with escaped whitespace" refuri="omitted reference text with escaped whitespace">
@@ -1043,34 +1043,34 @@ long/path\ and/some\ escaped\ whitespace>`__
             embedded email address broken across lines
 """],
 [r"""
-`embedded URI with too much whitespace < http://example.com/
+`embedded URI with too much whitespace < https://example.com/
 long/path /and  /whitespace >`__
 
-`embedded URI with too much whitespace at end <http://example.com/
+`embedded URI with too much whitespace at end <https://example.com/
 long/path /and  /whitespace >`__
 
-`embedded URI with no preceding whitespace<http://example.com>`__
+`embedded URI with no preceding whitespace<https://example.com>`__
 
-`escaped URI \<http://example.com>`__
+`escaped URI \<https://example.com>`__
 
 See `HTML Anchors: \<a>`_.
 """,
 """\
 <document source="test data">
     <paragraph>
-        <reference anonymous="1" name="embedded URI with too much whitespace < http://example.com/ long/path /and /whitespace >">
-            embedded URI with too much whitespace < http://example.com/
+        <reference anonymous="1" name="embedded URI with too much whitespace < https://example.com/ long/path /and /whitespace >">
+            embedded URI with too much whitespace < https://example.com/
             long/path /and  /whitespace >
     <paragraph>
-        <reference anonymous="1" name="embedded URI with too much whitespace at end <http://example.com/ long/path /and /whitespace >">
-            embedded URI with too much whitespace at end <http://example.com/
+        <reference anonymous="1" name="embedded URI with too much whitespace at end <https://example.com/ long/path /and /whitespace >">
+            embedded URI with too much whitespace at end <https://example.com/
             long/path /and  /whitespace >
     <paragraph>
-        <reference anonymous="1" name="embedded URI with no preceding whitespace<http://example.com>">
-            embedded URI with no preceding whitespace<http://example.com>
+        <reference anonymous="1" name="embedded URI with no preceding whitespace<https://example.com>">
+            embedded URI with no preceding whitespace<https://example.com>
     <paragraph>
-        <reference anonymous="1" name="escaped URI <http://example.com>">
-            escaped URI <http://example.com>
+        <reference anonymous="1" name="escaped URI <https://example.com>">
+            escaped URI <https://example.com>
     <paragraph>
         See \n\
         <reference name="HTML Anchors: <a>" refname="html anchors: <a>">
@@ -1528,11 +1528,11 @@ http://www.standalone.hyperlink.com
 
 http:/one-slash-only.absolute.path
 
-[http://example.com]
+[https://example.com]
 
-(http://example.com)
+(https://example.com)
 
-<http://example.com>
+<https://example.com>
 
 http://[1080:0:0:0:8:800:200C:417A]/IPv6address.html
 
@@ -1560,18 +1560,18 @@ ftp://ends.with.a.period.
             http:/one-slash-only.absolute.path
     <paragraph>
         [
-        <reference refuri="http://example.com">
-            http://example.com
+        <reference refuri="https://example.com">
+            https://example.com
         ]
     <paragraph>
         (
-        <reference refuri="http://example.com">
-            http://example.com
+        <reference refuri="https://example.com">
+            https://example.com
         )
     <paragraph>
         <
-        <reference refuri="http://example.com">
-            http://example.com
+        <reference refuri="https://example.com">
+            https://example.com
         >
     <paragraph>
         <reference refuri="http://[1080:0:0:0:8:800:200C:417A]/IPv6address.html">
@@ -1607,25 +1607,25 @@ ftp://ends.with.a.period.
 [r"""
 Valid URLs with escaped markup characters:
 
-http://example.com/\*content\*/whatever
+https://example.com/\*content\*/whatever
 
-http://example.com/\*content*/whatever
+https://example.com/\*content*/whatever
 """,
 """\
 <document source="test data">
     <paragraph>
         Valid URLs with escaped markup characters:
     <paragraph>
-        <reference refuri="http://example.com/*content*/whatever">
-            http://example.com/*content*/whatever
+        <reference refuri="https://example.com/*content*/whatever">
+            https://example.com/*content*/whatever
     <paragraph>
-        <reference refuri="http://example.com/*content*/whatever">
-            http://example.com/*content*/whatever
+        <reference refuri="https://example.com/*content*/whatever">
+            https://example.com/*content*/whatever
 """],
 ["""\
 Valid URLs may end with punctuation inside "<>":
 
-<http://example.org/ends-with-dot.>
+<https://example.org/ends-with-dot.>
 """,
 """\
 <document source="test data">
@@ -1633,22 +1633,22 @@ Valid URLs may end with punctuation inside "<>":
         Valid URLs may end with punctuation inside "<>":
     <paragraph>
         <
-        <reference refuri="http://example.org/ends-with-dot.">
-            http://example.org/ends-with-dot.
+        <reference refuri="https://example.org/ends-with-dot.">
+            https://example.org/ends-with-dot.
         >
 """],
 ["""\
 Valid URLs with interesting endings:
 
-http://example.org/ends-with-pluses++
+https://example.org/ends-with-pluses++
 """,
 """\
 <document source="test data">
     <paragraph>
         Valid URLs with interesting endings:
     <paragraph>
-        <reference refuri="http://example.org/ends-with-pluses++">
-            http://example.org/ends-with-pluses++
+        <reference refuri="https://example.org/ends-with-pluses++">
+            https://example.org/ends-with-pluses++
 """],
 ["""\
 None of these are standalone hyperlinks (their "schemes"

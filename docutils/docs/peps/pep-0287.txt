@@ -561,10 +561,10 @@ Questions & Answers
 
        References and Footnotes
 
-           [1] http://www.example.org/
+           [1] https://www.example.org/
 
            [2] PEP 9876, Let's Hope We Never Get Here
-               http://www.python.org/peps/pep-9876.html
+               https://www.python.org/peps/pep-9876.html
 
            [3] "Bogus Complexity Addition"
 
@@ -584,7 +584,7 @@ Questions & Answers
        References & Footnotes
        ======================
 
-       .. _frungible doodads: http://www.example.org/
+       .. _frungible doodads: https://www.example.org/
 
        .. [#pep9876] PEP 9876, Let's Hope We Never Get Here
 
@@ -728,32 +728,32 @@ References & Footnotes
 ======================
 
 .. [#PEP-1] PEP 1, PEP Guidelines, Warsaw, Hylton
-   (http://www.python.org/peps/pep-0001.html)
+   (https://www.python.org/peps/pep-0001.html)
 
 .. [#PEP-9] PEP 9, Sample PEP Template, Warsaw
-   (http://www.python.org/peps/pep-0009.html)
+   (https://www.python.org/peps/pep-0009.html)
 
 .. [#Zen] From `The Zen of Python (by Tim Peters)`__ (or just
    "``import this``" in Python)
 
-__ http://www.python.org/doc/Humor.html#zen
+__ https://www.python.org/doc/Humor.html#zen
 
 .. [#PEP-216] PEP 216, Docstring Format, Zadka
-   (http://www.python.org/peps/pep-0216.html)
+   (https://www.python.org/peps/pep-0216.html)
 
 .. _reStructuredText markup: https://docutils.sourceforge.io/rst.html
 
-.. _Doc-SIG: http://www.python.org/sigs/doc-sig/
+.. _Doc-SIG: https://www.python.org/sigs/doc-sig/
 
-.. _XML: http://www.w3.org/XML/
+.. _XML: https://www.w3.org/XML/
 
 .. _SGML: http://www.oasis-open.org/cover/general.html
 
 .. _DocBook: http://docbook.org/tdg/en/html/docbook.html
 
-.. _HTML: http://www.w3.org/MarkUp/
+.. _HTML: https://www.w3.org/MarkUp/
 
-.. _XHTML: http://www.w3.org/MarkUp/#xhtml1
+.. _XHTML: https://www.w3.org/MarkUp/#xhtml1
 
 .. _TeX: http://www.tug.org/interest.html
 
@@ -764,7 +764,7 @@ __ http://www.python.org/doc/Humor.html#zen
 .. _Setext: https://docutils.sourceforge.io/mirror/setext.html
 
 .. _StructuredText:
-   http://www.zope.org/DevHome/Members/jim/StructuredTextWiki/FrontPage
+   https://www.zope.org/DevHome/Members/jim/StructuredTextWiki/FrontPage
 
 .. _A ReStructuredText Primer:
    https://docutils.sourceforge.io/docs/user/rst/quickstart.html

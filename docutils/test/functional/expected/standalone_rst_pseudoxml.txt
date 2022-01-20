@@ -414,10 +414,10 @@
                         inline literals
                     , standalone hyperlinks
                     (
-                    <reference refuri="http://www.python.org">
-                        http://www.python.org
+                    <reference refuri="https://www.python.org">
+                        https://www.python.org
                     ), external hyperlinks (
-                    <reference name="Python" refuri="http://www.python.org/">
+                    <reference name="Python" refuri="https://www.python.org/">
                         Python
                      
                     <footnote_reference auto="1" ids="footnote-reference-10" refid="footnote-6">
@@ -428,10 +428,10 @@
                         example
                     ), external hyperlinks with embedded URIs
                     (
-                    <reference name="Python web site" refuri="http://www.python.org">
+                    <reference name="Python web site" refuri="https://www.python.org">
                         Python web site
                     ), 
-                    <reference anonymous="1" name="anonymous hyperlink references" refuri="http://www.python.org/">
+                    <reference anonymous="1" name="anonymous hyperlink references" refuri="https://www.python.org/">
                         anonymous hyperlink
                         references
                      
@@ -497,7 +497,7 @@
                     <reference name="subtitle" refid="subtitle">
                         subtitle
                     .
-                <target anonymous="1" ids="target-1" refuri="http://www.python.org/">
+                <target anonymous="1" ids="target-1" refuri="https://www.python.org/">
                 <target anonymous="1" ids="target-2" refuri="https://docutils.sourceforge.io/">
                 <paragraph>
                     The default role for interpreted text is 
@@ -505,11 +505,11 @@
                         Title Reference
                     .  Here are
                     some explicit interpreted text roles: a PEP reference (
-                    <reference refuri="http://www.python.org/dev/peps/pep-0287">
+                    <reference refuri="https://www.python.org/dev/peps/pep-0287">
                         PEP 287
                     ); an
                     RFC reference (
-                    <reference refuri="http://tools.ietf.org/html/rfc2822.html">
+                    <reference refuri="https://tools.ietf.org/html/rfc2822.html">
                         RFC 2822
                     ); an abbreviation (
                     <abbreviation>
@@ -1115,13 +1115,13 @@
             <paragraph>
                 Explicit external targets are interpolated into references such as
                 "
-                <reference name="Python" refuri="http://www.python.org/">
+                <reference name="Python" refuri="https://www.python.org/">
                     Python
                  
                 <footnote_reference auto="1" ids="footnote-reference-11" refid="footnote-6">
                     5
                 ".
-            <target ids="python" names="python" refuri="http://www.python.org/">
+            <target ids="python" names="python" refuri="https://www.python.org/">
             <paragraph>
                 Targets may be indirect and anonymous.  Thus 
                 <reference anonymous="1" name="this phrase" refid="targets">
@@ -1662,14 +1662,14 @@
                     <label>
                         5
                     <paragraph>
-                        <reference refuri="http://www.python.org/">
-                            http://www.python.org/
+                        <reference refuri="https://www.python.org/">
+                            https://www.python.org/
                 <footnote auto="1" backrefs="footnote-reference-13" ids="footnote-7" names="TARGET_NOTE:\ footnote-7">
                     <label>
                         6
                     <paragraph>
-                        <reference refuri="http://pygments.org/">
-                            http://pygments.org/
+                        <reference refuri="https://pygments.org/">
+                            https://pygments.org/
                 <footnote auto="1" backrefs="footnote-reference-15" ids="footnote-8" names="TARGET_NOTE:\ footnote-8">
                     <label>
                         7
@@ -1695,7 +1695,7 @@
                     Replacement Text
                 <paragraph>
                     I recommend you try 
-                    <reference refuri="http://www.python.org/">
+                    <reference refuri="https://www.python.org/">
                         Python, 
                         <emphasis>
                             the
@@ -1901,9 +1901,9 @@
                     <target ids="hyperlink-targets" names="hyperlink\ targets">
                         hyperlink targets
                     , and 
-                    <reference name="references" refuri="http://www.python.org/">
+                    <reference name="references" refuri="https://www.python.org/">
                         references
-                    <target ids="references" names="references" refuri="http://www.python.org/">
+                    <target ids="references" names="references" refuri="https://www.python.org/">
                     .
             <section ids="code" names="code">
                 <title auto="1" refid="toc-entry-52">
@@ -1916,7 +1916,7 @@
                         code
                      directive. If the code
                     language is specified, the content is parsed and tagged by the 
-                    <reference name="Pygments" refuri="http://pygments.org/">
+                    <reference name="Pygments" refuri="https://pygments.org/">
                         Pygments
                      
                     <footnote_reference auto="1" ids="footnote-reference-13" refid="footnote-7">
@@ -1982,7 +1982,7 @@
                     <inline classes="ln">
                         2 
                     .. footer:: Document footer
-                <target ids="pygments" names="pygments" refuri="http://pygments.org/">
+                <target ids="pygments" names="pygments" refuri="https://pygments.org/">
             <section ids="meta" names="meta">
                 <title auto="1" refid="toc-entry-53">
                     <generated classes="sectnum">

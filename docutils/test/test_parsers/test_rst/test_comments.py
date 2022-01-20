@@ -142,7 +142,7 @@ the parser from recognizing a directive.
 """],
 ["""\
 ..
-   _comment: http://example.org
+   _comment: https://example.org
 
 The extra newline before the comment text prevents
 the parser from recognizing a hyperlink target.
@@ -150,7 +150,7 @@ the parser from recognizing a hyperlink target.
 """\
 <document source="test data">
     <comment xml:space="preserve">
-        _comment: http://example.org
+        _comment: https://example.org
     <paragraph>
         The extra newline before the comment text prevents
         the parser from recognizing a hyperlink target.

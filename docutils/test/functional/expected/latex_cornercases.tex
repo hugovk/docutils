@@ -933,9 +933,9 @@ The characters \textasciicircum{}, \{, \}, and \texttt{\textbackslash{}} are inv
 and not recognized as part of it:
 
 \begin{DUlineblock}{0em}
-\item[] \url{http://www.example.org}/strange\textasciicircum{}\textasciicircum{}name
-\item[] \url{http://www.example.org}\textbackslash{}using\textbackslash{}DOS\textbackslash{}paths\textbackslash{}
-\item[] \url{http://www.example.org/XML}/strange\{n\}ame
+\item[] \url{https://www.example.org}/strange\textasciicircum{}\textasciicircum{}name
+\item[] \url{https://www.example.org}\textbackslash{}using\textbackslash{}DOS\textbackslash{}paths\textbackslash{}
+\item[] \url{https://www.example.org/XML}/strange\{n\}ame
 \end{DUlineblock}
 
 They can, however be used in paths and/or filenames.
@@ -946,10 +946,10 @@ Handling by the LaTeX writer:
 \item \texttt{\#}, \texttt{\textbackslash{}} and \texttt{\%} are escaped:
 
 \begin{DUlineblock}{0em}
-\item[] \href{http://www.w3.org/XML/Schema\#dev}{URL with \#}
-\url{http://www.w3.org/XML/Schema\#dev}
-\item[] \href{http://www.w3.org/XML/Schema\%dev}{URL with \%}
-\url{http://example.org/Schema\%dev}
+\item[] \href{https://www.w3.org/XML/Schema\#dev}{URL with \#}
+\url{https://www.w3.org/XML/Schema\#dev}
+\item[] \href{https://www.w3.org/XML/Schema\%dev}{URL with \%}
+\url{https://example.org/Schema\%dev}
 \item[] \href{A:DOS\\path\\}{file with DOS path} \url{A:DOS\\path\\}
 \end{DUlineblock}
 
@@ -960,8 +960,8 @@ Handling by the LaTeX writer:
 These URLs are typeset inside a LaTeX command without error.
 
 \begin{DUlineblock}{0em}
-\item[] \url{http://www.w3.org/XML/Schema\#dev}
-\item[] \url{http://example.org/Schema\%dev}
+\item[] \url{https://www.w3.org/XML/Schema\#dev}
+\item[] \url{https://example.org/Schema\%dev}
 \item[] \url{A:DOS\\path\\}
 \end{DUlineblock}
 \end{DUadmonition}

@@ -816,7 +816,7 @@ u"""\
 ["""\
 .. csv-table:: external file and url
    :file: bogus.csv
-   :url: http://example.org/bogus.csv
+   :url: https://example.org/bogus.csv
 """,
 """\
 <document source="test data">
@@ -826,7 +826,7 @@ u"""\
         <literal_block xml:space="preserve">
             .. csv-table:: external file and url
                :file: bogus.csv
-               :url: http://example.org/bogus.csv
+               :url: https://example.org/bogus.csv
 """],
 ["""\
 .. csv-table:: error in the *title

@@ -42,17 +42,17 @@ totest['targets'] = [
 [r"""
 External hyperlink targets:
 
-.. _one-liner: http://structuredtext.sourceforge.net
+.. _one-liner: https://docutils.sourceforge.io
 
-.. _starts-on-this-line: http://
-                         structuredtext.
-                         sourceforge.net
+.. _starts-on-this-line: https://
+                         docutils.
+                         sourceforge.io
 
 .. _entirely-below:
-   http://structuredtext.
-   sourceforge.net
+   https://docutils.
+   sourceforge.io
 
-.. _escaped-whitespace: http://example.org/a\ path\ with\
+.. _escaped-whitespace: https://example.org/a\ path\ with\
    spaces.html
 
 .. _not-indirect: uri\_
@@ -61,10 +61,10 @@ External hyperlink targets:
 <document source="test data">
     <paragraph>
         External hyperlink targets:
-    <target ids="one-liner" names="one-liner" refuri="http://structuredtext.sourceforge.net">
-    <target ids="starts-on-this-line" names="starts-on-this-line" refuri="http://structuredtext.sourceforge.net">
-    <target ids="entirely-below" names="entirely-below" refuri="http://structuredtext.sourceforge.net">
-    <target ids="escaped-whitespace" names="escaped-whitespace" refuri="http://example.org/a path with spaces.html">
+    <target ids="one-liner" names="one-liner" refuri="https://docutils.sourceforge.io">
+    <target ids="starts-on-this-line" names="starts-on-this-line" refuri="https://docutils.sourceforge.io">
+    <target ids="entirely-below" names="entirely-below" refuri="https://docutils.sourceforge.io">
+    <target ids="escaped-whitespace" names="escaped-whitespace" refuri="https://example.org/a path with spaces.html">
     <target ids="not-indirect" names="not-indirect" refuri="uri_">
 """],
 ["""\
@@ -125,13 +125,13 @@ Indirect hyperlink targets:
 ["""\
 External hyperlink:
 
-.. _target: http://www.python.org/
+.. _target: https://www.python.org/
 """,
 """\
 <document source="test data">
     <paragraph>
         External hyperlink:
-    <target ids="target" names="target" refuri="http://www.python.org/">
+    <target ids="target" names="target" refuri="https://www.python.org/">
 """],
 ["""\
 .. _email: jdoe@example.com
