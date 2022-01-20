@@ -21,9 +21,20 @@ OS: {platform.system()} {platform.release()} {platform.version()} ({sys.platform
 Working directory: {Path.cwd()}
 Docutils package: {Path(docutils.__file__).parent}"""
 
+
+class NumbersTestResult(unittest.TextTestResult):
+    """Result class that counts subTests."""
+    def addSubTest(self, test, subtest, error):
+        super().addSubTest(test, subtest, error)
+        self.testsRun += 1
+        if self.dots:
+            self.stream.write('.' if error is None else 'E')
+            self.stream.flush()
+
+
 if __name__ == '__main__':
     print(STARTUP_MESSAGE)
     sys.stdout.flush()
     suite = unittest.defaultTestLoader.discover(DocutilsTestSupport.testroot)
-    result = unittest.TextTestRunner().run(suite)
+    result = unittest.TextTestRunner(resultclass=NumbersTestResult).run(suite)
     raise SystemExit(not result.wasSuccessful())
