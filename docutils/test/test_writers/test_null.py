@@ -34,8 +34,7 @@ class WriterPublishTestCase(DocutilsTestSupport.CustomTestCase, docutils.Setting
                         reader_name="standalone",
                         parser_name="restructuredtext",
                         writer_name=self.writer_name,
-                        settings_spec=self,
-                        settings_overrides=self.overrides)
+                        settings_spec=self)
                     DocutilsTestSupport._compare_output(self, output, case_expected)
 
 

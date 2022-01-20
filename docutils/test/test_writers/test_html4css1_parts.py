@@ -20,6 +20,40 @@ import docutils
 import docutils.core
 
 
+def _format_parts_output(
+        parts,
+        standard_html_meta_value,
+        standard_html_prolog
+):
+    """Minimize & standardize the output."""
+    # remove redundant parts & uninteresting parts:
+    del parts['whole']
+    assert parts['body'] == parts['fragment']
+    del parts['body']
+    del parts['body_pre_docinfo']
+    del parts['body_prefix']
+    del parts['body_suffix']
+    del parts['head']
+    del parts['head_prefix']
+    del parts['encoding']
+    del parts['version']
+    # remove standard portions:
+    parts['meta'] = parts['meta'].replace(standard_html_meta_value % 'utf-8', '')
+    parts['html_head'] = parts['html_head'].replace(
+        standard_html_meta_value, '...')
+    parts['html_prolog'] = parts['html_prolog'].replace(
+        standard_html_prolog, '')
+    output = []
+    for key in sorted(parts.keys()):
+        if not parts[key]:
+            continue
+        output.append("%r: '''%s'''"
+                      % (key, parts[key]))
+        if output[-1].endswith("\n'''"):
+            output[-1] = output[-1][:-4] + "\\n'''"
+    return '{' + ',\n '.join(output) + '}\n'
+
+
 class Html4WriterPublishPartsTestCase(CustomTestCase, docutils.SettingsSpec):
     writer_name = 'html4'
 
@@ -48,13 +82,11 @@ class Html4WriterPublishPartsTestCase(CustomTestCase, docutils.SettingsSpec):
                         writer_name=self.writer_name,
                         settings_spec=self,
                         settings_overrides=settings_overrides)
-                    output = DocutilsTestSupport._format_parts_output(
+                    output = _format_parts_output(
                         parts,
                         self.standard_html_meta_value,
                         self.standard_html_prolog
                     )
-                    # interpolate standard variables:
-                    case_expected = case_expected % {'version': docutils.__version__}
                     DocutilsTestSupport._compare_output(self, output, case_expected)
 
 
@@ -376,8 +408,8 @@ And even more stuff
 """\
 {'fragment': '''<table border="1" class="docutils align-right">
 <colgroup>
-<col width="50%%" />
-<col width="50%%" />
+<col width="50%" />
+<col width="50%" />
 </colgroup>
 <tbody valign="top">
 <tr><td>1</td>
@@ -391,8 +423,8 @@ And even more stuff
  'html_body': '''<div class="document">
 <table border="1" class="docutils align-right">
 <colgroup>
-<col width="50%%" />
-<col width="50%%" />
+<col width="50%" />
+<col width="50%" />
 </colgroup>
 <tbody valign="top">
 <tr><td>1</td>

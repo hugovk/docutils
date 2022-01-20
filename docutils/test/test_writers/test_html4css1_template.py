@@ -76,7 +76,7 @@ case_expected = fr'''head_prefix = """\
 
 head = """\
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils {DocutilsTestSupport.docutils.__version__}: https://docutils.sourceforge.io/" />
+<meta name="generator" content="Docutils {docutils.__version__}: https://docutils.sourceforge.io/" />
 <title>Document Title</title>
 <meta name="author" content="Me" />"""
 
@@ -133,7 +133,7 @@ head_prefix = """\
 
 head = """\
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils {DocutilsTestSupport.docutils.__version__}: https://docutils.sourceforge.io/" />
+<meta name="generator" content="Docutils {docutils.__version__}: https://docutils.sourceforge.io/" />
 <title>Document Title</title>
 <meta name="author" content="Me" />"""
 
@@ -202,7 +202,7 @@ footer text
 
 meta = """\
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils {DocutilsTestSupport.docutils.__version__}: https://docutils.sourceforge.io/" />
+<meta name="generator" content="Docutils {docutils.__version__}: https://docutils.sourceforge.io/" />
 <meta name="author" content="Me" />"""
 
 
@@ -220,7 +220,7 @@ html_prolog = """\
 
 html_head = """\
 <meta http-equiv="Content-Type" content="text/html; charset=%s" />
-<meta name="generator" content="Docutils {DocutilsTestSupport.docutils.__version__}: https://docutils.sourceforge.io/" />
+<meta name="generator" content="Docutils {docutils.__version__}: https://docutils.sourceforge.io/" />
 <title>Document Title</title>
 <meta name="author" content="Me" />"""
 

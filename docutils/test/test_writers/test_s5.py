@@ -55,7 +55,7 @@ class WriterPublishTestCase(DocutilsTestSupport.CustomTestCase, docutils.Setting
 
 
 interpolations = {
-        'version': DocutilsTestSupport.docutils.__version__,
+        'version': docutils.__version__,
         'drive': '', }
 
 if platform.system() == 'Windows':
