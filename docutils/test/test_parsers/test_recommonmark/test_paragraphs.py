@@ -11,24 +11,23 @@ Tests for states.py.
 import unittest
 from test import DocutilsTestSupport
 
+import docutils.parsers
 from docutils import frontend
 from docutils import utils
 
-md_parser_class = DocutilsTestSupport.md_parser_class
+md_parser_class = docutils.parsers.get_parser_class('recommonmark')
 
 
-@unittest.skipUnless(md_parser_class, DocutilsTestSupport.md_skip_msg)
 class RecommonmarkParserTestCase(DocutilsTestSupport.CustomTestCase):
 
     """Test case for 3rd-party CommonMark parsers."""
 
-    if md_parser_class:
-        parser = md_parser_class()
-        option_parser = frontend.OptionParser(components=(md_parser_class,))
-        settings = option_parser.get_default_values()
-        settings.report_level = 5
-        settings.halt_level = 5
-        settings.debug = False
+    parser = md_parser_class()
+    option_parser = frontend.OptionParser(components=(md_parser_class,))
+    settings = option_parser.get_default_values()
+    settings.report_level = 5
+    settings.halt_level = 5
+    settings.debug = False
 
     def test_parser(self):
         for name, cases in totest.items():

@@ -80,26 +80,6 @@ def _compare_output(testcase, output, expected):
     testcase.assertEqual(output, expected)
 
 
-# Optional tests with 3rd party CommonMark parser
-# ===============================================
-
-# TODO: test with alternative CommonMark parsers?
-md_parser_name = 'recommonmark'
-# md_parser_name = 'pycmark'
-# md_parser_name = 'myst'
-md_skip_msg = f'Cannot test "{md_parser_name}". Parser not found.'
-try:
-    md_parser_class = docutils.parsers.get_parser_class(
-                                                md_parser_name)
-except ImportError:
-    md_parser_class = None
-if md_parser_class and md_parser_name == 'recommonmark':
-    import recommonmark
-    if recommonmark.__version__ < '0.6.0':
-        md_parser_class = None
-        md_skip_msg = f'"{md_parser_name}" parser too old, skip tests'
-
-
 def _format_parts_output(
     parts,
     standard_html_meta_value,

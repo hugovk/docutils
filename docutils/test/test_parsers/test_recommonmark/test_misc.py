@@ -15,17 +15,15 @@ Various tests for the recommonmark parser.
 
 import unittest
 
-import unittest
 from test import DocutilsTestSupport # must be imported before docutils
-from docutils import core, utils, parsers
+
+import docutils.parsers
+import docutils.parsers.rst.directives
+import docutils.parsers.recommonmark_wrapper
 from docutils.core import publish_string
 
-# Import `docutils.parsers.recommonmark_wrapper` and
-# the optional `recommonmark.parser`. Create parser instance.
-try:
-    parser = parsers.get_parser_class('recommonmark')()
-except ImportError:
-    parser = None
+md_parser_class = docutils.parsers.get_parser_class('recommonmark')
+parser = md_parser_class()
 
 sample_with_html = """\
 A paragraph:
@@ -40,14 +38,14 @@ Next paragraph.
 Final paragraph.
 """
 
-@unittest.skipUnless(parser, 'Optional "recommonmark" module not found.')
+
 class RecommonmarkParserTests(unittest.TestCase):
 
     def test_parser_name(self):
         # cf. ../test_rst/test_directives/test__init__.py
         # this is used in the "include" directive's :parser: option.
-        self.assertEqual(parsers.rst.directives.parser_name('recommonmark'),
-                         parsers.recommonmark_wrapper.Parser)
+        self.assertEqual(docutils.parsers.rst.directives.parser_name('recommonmark'),
+                         docutils.parsers.recommonmark_wrapper.Parser)
 
     def test_raw_disabled(self):
         output = publish_string(sample_with_html, parser=parser,
