@@ -1,5 +1,5 @@
 # $Id$
-# :Author: Günter Milde <milde@users.sf.net>
+# :Author: Günter Milde <milde@users.sourceforge.net>
 #          Based on the html4css1 writer by David Goodger.
 # :Maintainer: docutils-develop@lists.sourceforge.net
 # :Copyright: © 2005, 2009, 2015 Günter Milde,

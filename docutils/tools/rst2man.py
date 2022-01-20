@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # Author:
-# Contact: grubert@users.sf.net
+# Contact: grubert@users.sourceforge.net
 # Copyright: This module has been placed in the public domain.
 
 """

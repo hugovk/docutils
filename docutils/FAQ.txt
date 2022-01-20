@@ -861,7 +861,7 @@ If you have any questions/problems/bugs related to bidi with docutils,
 ask `Beni Cherniavsky`__ directly or the `Docutils-users`_ mailing
 list.
 
-__ mailto:cben@users.sf.net
+__ mailto:cben@users.sourceforge.net
 
 
 What's the official MIME type for reStructuredText data?
