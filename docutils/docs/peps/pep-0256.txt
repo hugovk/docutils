@@ -242,13 +242,13 @@ References and Footnotes
 ========================
 
 .. [#PEP-287] PEP 287, reStructuredText Docstring Format, Goodger
-   (http://www.python.org/peps/pep-0287.html)
+   (https://www.python.org/peps/pep-0287.html)
 
 .. [#PEP-257] PEP 257, Docstring Conventions, Goodger, Van Rossum
-   (http://www.python.org/peps/pep-0257.html)
+   (https://www.python.org/peps/pep-0257.html)
 
 .. [#PEP-258] PEP 258, Docutils Design Specification, Goodger
-   (http://www.python.org/peps/pep-0258.html)
+   (https://www.python.org/peps/pep-0258.html)
 
 .. _Literate Programming: http://www.literateprogramming.com/
 
@@ -269,7 +269,7 @@ References and Footnotes
 
 .. _HappyDoc: http://happydoc.sourceforge.net/
 
-.. _pydoc: http://www.python.org/doc/current/lib/module-pydoc.html
+.. _pydoc: https://www.python.org/doc/current/lib/module-pydoc.html
 
 .. _docutils: http://www.tibsnjoan.co.uk/docutils.html
 
@@ -277,7 +277,7 @@ References and Footnotes
 
 .. _STMinus: http://www.cis.upenn.edu/~edloper/pydoc/
 
-.. _Python Doc-SIG: http://www.python.org/sigs/doc-sig/
+.. _Python Doc-SIG: https://www.python.org/sigs/doc-sig/
 
 
 Copyright

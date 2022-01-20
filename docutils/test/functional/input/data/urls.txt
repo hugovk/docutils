@@ -17,9 +17,9 @@ unbalanced braces.
 The characters ^, {, }, and ``\`` are invalid in a "http:" or "ftp:" URL
 and not recognized as part of it:
 
-| http://www.example.org/strange^^name
-| http://www.example.org\\using\\DOS\\paths\\
-| http://www.example.org/XML/strange{n}ame
+| https://www.example.org/strange^^name
+| https://www.example.org\\using\\DOS\\paths\\
+| https://www.example.org/XML/strange{n}ame
 
 They can, however be used in paths and/or filenames.
 
@@ -27,16 +27,16 @@ Handling by the LaTeX writer:
 
 * ``#``, ``\`` and ``%`` are escaped:
 
-  | `URL with # <http://www.w3.org/XML/Schema#dev>`__
-    http://www.w3.org/XML/Schema#dev
-  | `URL with % <http://www.w3.org/XML/Schema%dev>`__
-    http://example.org/Schema%dev
+  | `URL with # <https://www.w3.org/XML/Schema#dev>`__
+    https://www.w3.org/XML/Schema#dev
+  | `URL with % <https://www.w3.org/XML/Schema%dev>`__
+    https://example.org/Schema%dev
   | `file with DOS path`__ `A:DOS\\path\\`__
 
   .. note:: These URLs are typeset inside a LaTeX command without error.
 
-    | http://www.w3.org/XML/Schema#dev
-    | http://example.org/Schema%dev
+    | https://www.w3.org/XML/Schema#dev
+    | https://example.org/Schema%dev
     | `A:DOS\\path\\`__
 
 __

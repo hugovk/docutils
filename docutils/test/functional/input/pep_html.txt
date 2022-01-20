@@ -17,7 +17,7 @@ Abstract
 This is just a test [#]_.  See the `PEP repository`_ for the real
 thing.
 
-.. _PEP repository: http://www.python.org/peps/
+.. _PEP repository: https://www.python.org/peps/
 
 
 Copyright

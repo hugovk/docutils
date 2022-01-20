@@ -106,12 +106,12 @@ CONTENT_NAMESPACE_DICT = CNSD = {
     #'office:version': '1.0',
     'chart': 'urn:oasis:names:tc:opendocument:xmlns:chart:1.0',
     'dc': 'http://purl.org/dc/elements/1.1/',
-    'dom': 'http://www.w3.org/2001/xml-events',
+    'dom': 'https://www.w3.org/2001/xml-events',
     'dr3d': 'urn:oasis:names:tc:opendocument:xmlns:dr3d:1.0',
     'draw': 'urn:oasis:names:tc:opendocument:xmlns:drawing:1.0',
     'fo': 'urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0',
     'form': 'urn:oasis:names:tc:opendocument:xmlns:form:1.0',
-    'math': 'http://www.w3.org/1998/Math/MathML',
+    'math': 'https://www.w3.org/1998/Math/MathML',
     'meta': 'urn:oasis:names:tc:opendocument:xmlns:meta:1.0',
     'number': 'urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0',
     'office': NAME_SPACE_1,
@@ -125,22 +125,22 @@ CONTENT_NAMESPACE_DICT = CNSD = {
     'svg': 'urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0',
     'table': 'urn:oasis:names:tc:opendocument:xmlns:table:1.0',
     'text': 'urn:oasis:names:tc:opendocument:xmlns:text:1.0',
-    'xforms': 'http://www.w3.org/2002/xforms',
-    'xlink': 'http://www.w3.org/1999/xlink',
-    'xsd': 'http://www.w3.org/2001/XMLSchema',
-    'xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+    'xforms': 'https://www.w3.org/2002/xforms',
+    'xlink': 'https://www.w3.org/1999/xlink',
+    'xsd': 'https://www.w3.org/2001/XMLSchema',
+    'xsi': 'https://www.w3.org/2001/XMLSchema-instance',
 }
 
 STYLES_NAMESPACE_DICT = SNSD = {
     #'office:version': '1.0',
     'chart': 'urn:oasis:names:tc:opendocument:xmlns:chart:1.0',
     'dc': 'http://purl.org/dc/elements/1.1/',
-    'dom': 'http://www.w3.org/2001/xml-events',
+    'dom': 'https://www.w3.org/2001/xml-events',
     'dr3d': 'urn:oasis:names:tc:opendocument:xmlns:dr3d:1.0',
     'draw': 'urn:oasis:names:tc:opendocument:xmlns:drawing:1.0',
     'fo': 'urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0',
     'form': 'urn:oasis:names:tc:opendocument:xmlns:form:1.0',
-    'math': 'http://www.w3.org/1998/Math/MathML',
+    'math': 'https://www.w3.org/1998/Math/MathML',
     'meta': 'urn:oasis:names:tc:opendocument:xmlns:meta:1.0',
     'number': 'urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0',
     'office': NAME_SPACE_1,
@@ -153,7 +153,7 @@ STYLES_NAMESPACE_DICT = SNSD = {
     'svg': 'urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0',
     'table': 'urn:oasis:names:tc:opendocument:xmlns:table:1.0',
     'text': 'urn:oasis:names:tc:opendocument:xmlns:text:1.0',
-    'xlink': 'http://www.w3.org/1999/xlink',
+    'xlink': 'https://www.w3.org/1999/xlink',
 }
 
 MANIFEST_NAMESPACE_DICT = MANNSD = {
@@ -166,7 +166,7 @@ META_NAMESPACE_DICT = METNSD = {
     'meta': 'urn:oasis:names:tc:opendocument:xmlns:meta:1.0',
     'office': NAME_SPACE_1,
     'ooo': 'http://openoffice.org/2004/office',
-    'xlink': 'http://www.w3.org/1999/xlink',
+    'xlink': 'https://www.w3.org/1999/xlink',
 }
 
 # Attribute dictionaries for use with ElementTree, which
@@ -176,12 +176,12 @@ CONTENT_NAMESPACE_ATTRIB = {
     #'office:version': '1.0',
     'xmlns:chart': 'urn:oasis:names:tc:opendocument:xmlns:chart:1.0',
     'xmlns:dc': 'http://purl.org/dc/elements/1.1/',
-    'xmlns:dom': 'http://www.w3.org/2001/xml-events',
+    'xmlns:dom': 'https://www.w3.org/2001/xml-events',
     'xmlns:dr3d': 'urn:oasis:names:tc:opendocument:xmlns:dr3d:1.0',
     'xmlns:draw': 'urn:oasis:names:tc:opendocument:xmlns:drawing:1.0',
     'xmlns:fo': 'urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0',
     'xmlns:form': 'urn:oasis:names:tc:opendocument:xmlns:form:1.0',
-    'xmlns:math': 'http://www.w3.org/1998/Math/MathML',
+    'xmlns:math': 'https://www.w3.org/1998/Math/MathML',
     'xmlns:meta': 'urn:oasis:names:tc:opendocument:xmlns:meta:1.0',
     'xmlns:number': 'urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0',
     'xmlns:office': NAME_SPACE_1,
@@ -195,22 +195,22 @@ CONTENT_NAMESPACE_ATTRIB = {
     'xmlns:svg': 'urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0',
     'xmlns:table': 'urn:oasis:names:tc:opendocument:xmlns:table:1.0',
     'xmlns:text': 'urn:oasis:names:tc:opendocument:xmlns:text:1.0',
-    'xmlns:xforms': 'http://www.w3.org/2002/xforms',
-    'xmlns:xlink': 'http://www.w3.org/1999/xlink',
-    'xmlns:xsd': 'http://www.w3.org/2001/XMLSchema',
-    'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+    'xmlns:xforms': 'https://www.w3.org/2002/xforms',
+    'xmlns:xlink': 'https://www.w3.org/1999/xlink',
+    'xmlns:xsd': 'https://www.w3.org/2001/XMLSchema',
+    'xmlns:xsi': 'https://www.w3.org/2001/XMLSchema-instance',
 }
 
 STYLES_NAMESPACE_ATTRIB = {
     #'office:version': '1.0',
     'xmlns:chart': 'urn:oasis:names:tc:opendocument:xmlns:chart:1.0',
     'xmlns:dc': 'http://purl.org/dc/elements/1.1/',
-    'xmlns:dom': 'http://www.w3.org/2001/xml-events',
+    'xmlns:dom': 'https://www.w3.org/2001/xml-events',
     'xmlns:dr3d': 'urn:oasis:names:tc:opendocument:xmlns:dr3d:1.0',
     'xmlns:draw': 'urn:oasis:names:tc:opendocument:xmlns:drawing:1.0',
     'xmlns:fo': 'urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0',
     'xmlns:form': 'urn:oasis:names:tc:opendocument:xmlns:form:1.0',
-    'xmlns:math': 'http://www.w3.org/1998/Math/MathML',
+    'xmlns:math': 'https://www.w3.org/1998/Math/MathML',
     'xmlns:meta': 'urn:oasis:names:tc:opendocument:xmlns:meta:1.0',
     'xmlns:number': 'urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0',
     'xmlns:office': NAME_SPACE_1,
@@ -224,7 +224,7 @@ STYLES_NAMESPACE_ATTRIB = {
     'xmlns:svg': 'urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0',
     'xmlns:table': 'urn:oasis:names:tc:opendocument:xmlns:table:1.0',
     'xmlns:text': 'urn:oasis:names:tc:opendocument:xmlns:text:1.0',
-    'xmlns:xlink': 'http://www.w3.org/1999/xlink',
+    'xmlns:xlink': 'https://www.w3.org/1999/xlink',
 }
 
 MANIFEST_NAMESPACE_ATTRIB = {
@@ -237,7 +237,7 @@ META_NAMESPACE_ATTRIB = {
     'xmlns:meta': 'urn:oasis:names:tc:opendocument:xmlns:meta:1.0',
     'xmlns:office': NAME_SPACE_1,
     'xmlns:ooo': 'http://openoffice.org/2004/office',
-    'xmlns:xlink': 'http://www.w3.org/1999/xlink',
+    'xmlns:xlink': 'https://www.w3.org/1999/xlink',
 }
 
 

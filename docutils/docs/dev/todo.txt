@@ -24,7 +24,7 @@ see done but are unable to implement it yourself, please consider
 donating to Docutils: |donate|
 
 .. |donate| image:: http://images.sourceforge.net/images/project-support.jpg
-   :target: http://sourceforge.net/donate/index.php?group_id=38414
+   :target: https://sourceforge.net/donate/index.php?group_id=38414
    :align: middle
    :width: 88
    :height: 32
@@ -143,7 +143,7 @@ Code cleanup and modernization:
     +1  Allows to configure command-line encoding in a config file,
     -1  More complicated.
 
-  Cf. <http://thread.gmane.org/gmane.text.docutils.user/2890/focus=2957>.
+  Cf. <https://thread.gmane.org/gmane.text.docutils.user/2890/focus=2957>.
 
 * Improve handling on Windows:
 
@@ -386,7 +386,7 @@ Code cleanup and modernization:
   can either be embedded or referenced) and the destination (which can
   either be embedded or referenced as well).
 
-  See <http://article.gmane.org/gmane.text.docutils.devel/3631>.
+  See <https://article.gmane.org/gmane.text.docutils.devel/3631>.
 
 * Add testing for Docutils' front end tools?
 
@@ -476,7 +476,7 @@ Code cleanup and modernization:
   "rest checking and source path"`_ thread.
 
   .. _2004-02-18 "rest checking and source path":
-     http://thread.gmane.org/gmane.text.docutils.user/1112
+     https://thread.gmane.org/gmane.text.docutils.user/1112
 
 * Add a "disable_transforms" setting? Would allow for easy syntax
   checking. Where ("null" writer, generic, parser(s), docutils-cli.py)?
@@ -687,7 +687,7 @@ User Docs
 
 * Add a FAQ entry about using Docutils (with reStructuredText) on a
   server and that it's terribly slow.  See the first paragraphs in
-  <http://article.gmane.org/gmane.text.docutils.user/1584>.
+  <https://article.gmane.org/gmane.text.docutils.user/1584>.
 
 * Add document about what Docutils has previously been used for
   (web/use-cases.txt?).
@@ -910,21 +910,21 @@ Misc
 
 * Treat enumerated lists that are not arabic and consist of only one
   item in a single line as ordinary paragraphs.  See
-  <http://article.gmane.org/gmane.text.docutils.user/2635>.
+  <https://article.gmane.org/gmane.text.docutils.user/2635>.
 
 * The citation syntax could use some improvements.  See
-  <http://thread.gmane.org/gmane.text.docutils.user/2499> (and the
+  <https://thread.gmane.org/gmane.text.docutils.user/2499> (and the
   sub-thread at
-  <http://thread.gmane.org/gmane.text.docutils.user/2499/focus=3028>,
+  <https://thread.gmane.org/gmane.text.docutils.user/2499/focus=3028>,
   and the follow-ups at
-  <http://thread.gmane.org/gmane.text.docutils.user/3087>,
-  <http://thread.gmane.org/gmane.text.docutils.user/3110>,
-  <http://thread.gmane.org/gmane.text.docutils.user/3114>),
-  <http://thread.gmane.org/gmane.text.docutils.user/2443>,
-  <http://thread.gmane.org/gmane.text.docutils.user/2715>,
-  <http://thread.gmane.org/gmane.text.docutils.user/3027>,
-  <http://thread.gmane.org/gmane.text.docutils.user/3120>,
-  <http://thread.gmane.org/gmane.text.docutils.user/3253>.
+  <https://thread.gmane.org/gmane.text.docutils.user/3087>,
+  <https://thread.gmane.org/gmane.text.docutils.user/3110>,
+  <https://thread.gmane.org/gmane.text.docutils.user/3114>),
+  <https://thread.gmane.org/gmane.text.docutils.user/2443>,
+  <https://thread.gmane.org/gmane.text.docutils.user/2715>,
+  <https://thread.gmane.org/gmane.text.docutils.user/3027>,
+  <https://thread.gmane.org/gmane.text.docutils.user/3120>,
+  <https://thread.gmane.org/gmane.text.docutils.user/3253>.
 
 * The current list-recognition logic has too many false positives, as
   in ::
@@ -937,7 +937,7 @@ Misc
   confusion.  We need to find a solution that resolves such problems
   without complicating the spec to much.
 
-  See <http://thread.gmane.org/gmane.text.docutils.user/2524>.
+  See <https://thread.gmane.org/gmane.text.docutils.user/2524>.
 
 * Add indirect links via citation references & footnote references.
   Example::
@@ -947,12 +947,12 @@ Misc
       .. _Goodger (2005): [goodger2005]_
       .. [goodger2005] citation text
 
-  See <http://thread.gmane.org/gmane.text.docutils.user/2499>.
+  See <https://thread.gmane.org/gmane.text.docutils.user/2499>.
 
 * Complain about bad URI characters
-  (http://article.gmane.org/gmane.text.docutils.user/2046) and
+  (https://article.gmane.org/gmane.text.docutils.user/2046) and
   disallow internal whitespace
-  (http://article.gmane.org/gmane.text.docutils.user/2214).
+  (https://article.gmane.org/gmane.text.docutils.user/2214).
 
 * Create ``info``-level system messages for unnecessarily
   backslash-escaped characters (as in ``"\something"``, rendered as
@@ -971,7 +971,7 @@ Misc
 
 * Support generic hyperlink references to _`targets in other
   documents`?  Not in an HTML-centric way, though (it's trivial to say
-  ``http://www.example.com/doc#name``, and useless in non-HTML
+  ``https://www.example.com/doc#name``, and useless in non-HTML
   contexts).  XLink/XPointer?  ``.. baseref::``?  See Doc-SIG
   2001-08-10.
 
@@ -1025,7 +1025,7 @@ Misc
   Appendix E ("Recommendations for Delimiting URI in Context") of `RFC
   2396`_.
 
-  .. _RFC 2396: http://www.rfc-editor.org/rfc/rfc2396.txt
+  .. _RFC 2396: https://www.rfc-editor.org/rfc/rfc2396.txt
 
 * Use the vertical spacing of the source text to determine the
   corresponding vertical spacing of the output?
@@ -1156,7 +1156,7 @@ Misc
   grid tables inside XML comments.
 
   .. _feature request [6]:
-      http://sourceforge.net/p/docutils/feature-requests/6
+      https://sourceforge.net/p/docutils/feature-requests/6
   .. _list-table: ../ref/rst/directives.html#list-table
 
 
@@ -1428,7 +1428,7 @@ MathML_
   For an overview of MathML implementations and tests, see, e.g.,
   the `mathweb wiki`_ or the `ConTeXT MathML page`_.
 
-  .. _MathML: http://www.w3.org/TR/MathML2/
+  .. _MathML: https://www.w3.org/TR/MathML2/
   .. _mathweb wiki: http://www.mathweb.org/wiki/MathML
   .. _ConTeXT MathML page: http://wiki.contextgarden.net/MathML
 
@@ -1462,7 +1462,7 @@ ASCIIMath_
   .. _ASCIIMath tutorial:
      http://www.wjagray.co.uk/maths/ASCIIMathTutorial.html
   .. _ASCIIMathML: http://pypi.python.org/pypi/asciimathml/
-  .. _ASCIIMathPython: http://sourceforge.net/projects/asciimathpython/
+  .. _ASCIIMathPython: https://sourceforge.net/projects/asciimathpython/
   __ http://fletcherpenney.net/multimarkdown/
 
 `Unicode Nearly Plain Text Encoding of Mathematics`_
@@ -1474,11 +1474,11 @@ ASCIIMath_
    the Unicode Consortium.)
 
    .. _Unicode Nearly Plain Text Encoding of Mathematics:
-      http://www.unicode.org/notes/tn28/
+      https://www.unicode.org/notes/tn28/
 
 itex
   See `the culmination of a relevant discussion in 2003
-  <http://article.gmane.org/gmane.text.docutils.user/118>`__.
+  <https://article.gmane.org/gmane.text.docutils.user/118>`__.
 
 
 
@@ -1539,7 +1539,7 @@ MathML_
     * the Unicode-Char <-> LaTeX mappings database unimathsymbols_
 
   __ http://msevior.livejournal.com/26377.html
-  .. _MathML: http://www.w3.org/TR/MathML2/
+  .. _MathML: https://www.w3.org/TR/MathML2/
   .. _ttm: http://hutchinson.belmont.ma.us/tth/mml/
   .. _TeX4ht: http://www.tug.org/applications/tex4ht/mn.html
   .. _MathToWeb:  http://www.mathtoweb.com/
@@ -1626,12 +1626,12 @@ directive function.  The "module." is not part of the directive name
 when used in a document.
 
 * Allow for field lists in list tables.  See
-  <http://thread.gmane.org/gmane.text.docutils.devel/3392>.
+  <https://thread.gmane.org/gmane.text.docutils.devel/3392>.
 
 * .. _unify tables:
 
   Unify table implementations and unify options of table directives
-  (http://article.gmane.org/gmane.text.docutils.user/1857).
+  (https://article.gmane.org/gmane.text.docutils.user/1857).
 
 * Allow directives to be added at run-time?
 
@@ -1698,7 +1698,7 @@ when used in a document.
   - _`misc.class`:
 
     - Add a ``:parent:`` option for setting the parent's class
-      (http://article.gmane.org/gmane.text.docutils.devel/3165).
+      (https://article.gmane.org/gmane.text.docutils.devel/3165).
 
   - _`misc.include`:
 
@@ -1712,7 +1712,7 @@ when used in a document.
     - Add support for inclusion by URL? ::
 
           .. include::
-             :url: http://www.example.org/inclusion.txt
+             :url: https://www.example.org/inclusion.txt
 
     - Strip blank lines from begin and end of a literal included file or
       file section. This would correspond to the way a literal block is
@@ -1770,7 +1770,7 @@ when used in a document.
       "language by class attribute" does not change parsing (localized
       directives etc.), only supporting writers.
 
-    .. _BCP 47: http://www.rfc-editor.org/rfc/bcp/bcp47.txt
+    .. _BCP 47: https://www.rfc-editor.org/rfc/bcp/bcp47.txt
 
 
   - _`misc.settings`: Set any(?) Docutils runtime setting from within
@@ -1782,7 +1782,7 @@ when used in a document.
     the directive (like ``tab-width``) shouldn't be accessible either.
 
     See this sub-thread:
-    <http://thread.gmane.org/gmane.text.docutils.user/3620/focus=3649>
+    <https://thread.gmane.org/gmane.text.docutils.user/3620/focus=3649>
 
   - _`misc.gather`: Gather (move, or copy) all instances of a specific
     element.  A generalization of the `Footnote & Citation Gathering`_
@@ -2446,7 +2446,7 @@ Test and consider moving the better one into the docutils core.
 __ ../user/links.html#ePub
 .. _International Digital Publishing Forum: http://www.idpf.org/
 .. _electronic reading devices:
-   http://en.wikipedia.org/wiki/List_of_e-book_readers
+   https://en.wikipedia.org/wiki/List_of_e-book_readers
 
 
 LaTeX writer
@@ -2780,7 +2780,7 @@ but need to find a way to insert it as href argument.
 
 The following fails::
 
-    \href{http://www.w3.org/XML/Schema^^dev}{\fragileURLi}
+    \href{https://www.w3.org/XML/Schema^^dev}{\fragileURLi}
 
 Use %-replacement like http://nowhere/url_with%28parens%29 ?
 
@@ -2790,7 +2790,7 @@ Use %-replacement like http://nowhere/url_with%28parens%29 ?
 add-stylesheet option
 `````````````````````
 
-From http://article.gmane.org/gmane.text.docutils.devel/3429/
+From https://article.gmane.org/gmane.text.docutils.devel/3429/
 
 The problem is that since we have a default value, we have to
 differentiate between adding another stylesheet and replacing the
@@ -2814,7 +2814,7 @@ This run will use the default stylesheet, a custom local stylesheet,
 and an external stylesheet:
 
     rstpep2html.py --add-stylesheet-path custom.css \
-        --add-stylesheet http://www.example.org/external.css ...
+        --add-stylesheet https://www.example.org/external.css ...
 
 This run will use only the second custom stylesheet:
 

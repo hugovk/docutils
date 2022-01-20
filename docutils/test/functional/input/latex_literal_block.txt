@@ -58,7 +58,7 @@ Parsed literal block with inline markup and leading whitespace:
 .. parsed-literal::
 
       *emphasis*, **strong emphasis**, ``inline literals``,
-   standalone hyperlinks (http://www.python.org),
+   standalone hyperlinks (https://www.python.org),
    internal_ and external_ hyperlinks,
    _`internal` hyperlink targets,
    images via substitution references (|example|),
@@ -83,6 +83,6 @@ Parsed literal block with inline markup and leading whitespace:
 
 .. [CIT2002] Sample Citation, 2017.
 
-.. _external: http://www.python.org/
+.. _external: https://www.python.org/
 
 .. |EXAMPLE| image:: ../../../docs/user/rst/images/biohazard.png

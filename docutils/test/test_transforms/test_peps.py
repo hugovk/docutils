@@ -38,7 +38,7 @@ no "References" section should be generated.
 A target exists, here's the reference_.
 A "References" section should be generated.
 
-.. _reference: http://www.example.org
+.. _reference: https://www.example.org
 """,
 """\
 <document source="test data">
@@ -50,14 +50,14 @@ A "References" section should be generated.
         <footnote_reference auto="1" ids="footnote-reference-1" refname="TARGET_NOTE: footnote-1">
         .
         A "References" section should be generated.
-    <target ids="reference" names="reference" refuri="http://www.example.org">
+    <target ids="reference" names="reference" refuri="https://www.example.org">
     <section ids="section-1">
         <title>
             References
         <footnote auto="1" ids="footnote-1" names="TARGET_NOTE:\\ footnote-1">
             <paragraph>
-                <reference refuri="http://www.example.org">
-                    http://www.example.org
+                <reference refuri="https://www.example.org">
+                    https://www.example.org
 """],
 ])
 

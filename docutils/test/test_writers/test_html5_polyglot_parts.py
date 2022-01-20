@@ -87,12 +87,12 @@ Simple String with an even simpler ``inline literal``
 ["""\
 A simple `anonymous reference`__
 
-__ http://www.test.com/test_url
+__ https://www.test.com/test_url
 """,
 """\
-{'fragment': '''<p>A simple <a class="reference external" href="http://www.test.com/test_url">anonymous reference</a></p>\\n''',
+{'fragment': '''<p>A simple <a class="reference external" href="https://www.test.com/test_url">anonymous reference</a></p>\\n''',
  'html_body': '''<main>
-<p>A simple <a class="reference external" href="http://www.test.com/test_url">anonymous reference</a></p>
+<p>A simple <a class="reference external" href="https://www.test.com/test_url">anonymous reference</a></p>
 </main>\\n''',
  'html_head': '''...<title>&lt;string&gt;</title>\\n'''}
 """],
@@ -114,13 +114,13 @@ Two paragraphs.
 A simple `named reference`_ with stuff in between the
 reference and the target.
 
-.. _`named reference`: http://www.test.com/test_url
+.. _`named reference`: https://www.test.com/test_url
 """,
 """\
-{'fragment': '''<p>A simple <a class="reference external" href="http://www.test.com/test_url">named reference</a> with stuff in between the
+{'fragment': '''<p>A simple <a class="reference external" href="https://www.test.com/test_url">named reference</a> with stuff in between the
 reference and the target.</p>\\n''',
  'html_body': '''<main>
-<p>A simple <a class="reference external" href="http://www.test.com/test_url">named reference</a> with stuff in between the
+<p>A simple <a class="reference external" href="https://www.test.com/test_url">named reference</a> with stuff in between the
 reference and the target.</p>
 </main>\\n''',
  'html_head': '''...<title>&lt;string&gt;</title>\\n'''}
@@ -241,12 +241,12 @@ Simple String with an even simpler ``inline literal``
 ["""\
 A simple `anonymous reference`__
 
-__ http://www.test.com/test_url
+__ https://www.test.com/test_url
 """,
 """\
-{'fragment': '''<p>A simple <a class="reference external" href="http://www.test.com/test_url">anonymous reference</a></p>\\n''',
+{'fragment': '''<p>A simple <a class="reference external" href="https://www.test.com/test_url">anonymous reference</a></p>\\n''',
  'html_body': '''<main>
-<p>A simple <a class="reference external" href="http://www.test.com/test_url">anonymous reference</a></p>
+<p>A simple <a class="reference external" href="https://www.test.com/test_url">anonymous reference</a></p>
 </main>\\n''',
  'html_head': '''...<title>&lt;string&gt;</title>\\n'''}
 """],
@@ -254,13 +254,13 @@ __ http://www.test.com/test_url
 A simple `named reference`_ with stuff in between the
 reference and the target.
 
-.. _`named reference`: http://www.test.com/test_url
+.. _`named reference`: https://www.test.com/test_url
 """,
 """\
-{'fragment': '''<p>A simple <a class="reference external" href="http://www.test.com/test_url">named reference</a> with stuff in between the
+{'fragment': '''<p>A simple <a class="reference external" href="https://www.test.com/test_url">named reference</a> with stuff in between the
 reference and the target.</p>\\n''',
  'html_body': '''<main>
-<p>A simple <a class="reference external" href="http://www.test.com/test_url">named reference</a> with stuff in between the
+<p>A simple <a class="reference external" href="https://www.test.com/test_url">named reference</a> with stuff in between the
 reference and the target.</p>
 </main>\\n''',
  'html_head': '''...<title>&lt;string&gt;</title>\\n'''}

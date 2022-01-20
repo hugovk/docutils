@@ -8,8 +8,8 @@ parser_name = "rst"
 writer_name = "pep_html"
 
 # Settings
-settings_overrides['python_home'] = "http://www.python.org"
-settings_overrides['pep_home'] = "http://www.python.org/peps"
+settings_overrides['python_home'] = "https://www.python.org"
+settings_overrides['pep_home'] = "https://www.python.org/peps"
 settings_overrides['no_random'] = 1
 settings_overrides['cloak_email_addresses'] = 1
 # local copy of default stylesheet:

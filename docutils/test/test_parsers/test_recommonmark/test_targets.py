@@ -29,13 +29,13 @@ totest['targets'] = [
 [r"""
 External hyperlink [target]s:
 
-[target]: http://www.python.org/
+[target]: https://www.python.org/
 """,
 """\
 <document source="test data">
     <paragraph>
         External hyperlink \n\
-        <reference refuri="http://www.python.org/">
+        <reference refuri="https://www.python.org/">
             target
         s:
 """],

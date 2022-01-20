@@ -31,7 +31,7 @@ Unicode symbols.
 __ https://docutils.sourceforge.io/docs/ref/rst/directives.html#math
 __ https://docutils.sourceforge.io/docs/ref/rst/roles.html#math
 .. _Short Math Guide:
-   http://mirrors.ctan.org/info/short-math-guide/short-math-guide.pdf
+   https://mirrors.ctan.org/info/short-math-guide/short-math-guide.pdf
 .. _math_output:
    https://docutils.sourceforge.io/docs/user/config.html#math-output
 

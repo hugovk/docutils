@@ -115,7 +115,7 @@ there is no such mechanism (although ZWiki uses '!').  What are the
 candidates?
 
 1. ``!``
-   (http://www.zope.org/DevHome/Members/jim/StructuredTextWiki/NGEscaping)
+   (https://www.zope.org/DevHome/Members/jim/StructuredTextWiki/NGEscaping)
 2. ``\``
 3. ``~``
 4. doubling of characters
@@ -599,7 +599,7 @@ __ alternatives.html
 
 Alternative choices are carets (#10) and TeX-style quotes (#11).  For
 examples of TeX-style quoting, see
-http://www.zope.org/Members/jim/StructuredTextWiki/CustomizingTheDocumentProcessor.
+https://www.zope.org/Members/jim/StructuredTextWiki/CustomizingTheDocumentProcessor.
 
 Some existing uses of backquotes:
 
@@ -649,7 +649,7 @@ There are three forms of hyperlink currently in StructuredText_:
    followed by a colon, a URI, and concluded by punctuation plus white
    space, or just white space, is treated as a hyperlink::
 
-       "Python":http://www.python.org/
+       "Python":https://www.python.org/
 
 2. (Absolute URIs only.)  Text enclosed by double quotes followed by a
    comma, one or more spaces, an absolute URI and concluded by
@@ -666,7 +666,7 @@ There are three forms of hyperlink currently in StructuredText_:
        Please refer to the fine manual [GVR2001].
 
        .. [GVR2001] Python Documentation, Release 2.1, van Rossum,
-          Drake, et al., http://www.python.org/doc/
+          Drake, et al., https://www.python.org/doc/
 
 The problem with forms 1 and 2 is that they are neither intuitive nor
 unobtrusive (they break design goals 5 & 2).  They overload
@@ -683,7 +683,7 @@ Alternatives:
       address) after an alphanumeric word.  To de-emphasize the URI,
       simply enclose it in parentheses:
 
-          Python (http://www.python.org/)
+          Python (https://www.python.org/)
 
    B. Leave special hyperlink markup as a domain-specific extension.
       Hyperlinks in ordinary reStructuredText documents would be
@@ -742,7 +742,7 @@ and Python lists::
     Please refer to the fine manual [GVR2000]_.
 
     .. [GVR2000] Python Documentation, van Rossum, Drake, et al.,
-       http://www.python.org/doc/
+       https://www.python.org/doc/
 
 The two-dots-and-a-space syntax was generalized by Setext for
 comments, which are removed from the (visible) processed output.
@@ -798,25 +798,25 @@ styles, and the reStructuredText hypertext style.  Each example
 contains an indirect link, a direct link, a footnote/endnote, and
 bracketed text.  In HTML, each example should evaluate to::
 
-    <P>A <A HREF="http://spam.org">URI</A>, see <A HREF="#eggs2000">
+    <P>A <A HREF="https://spam.org">URI</A>, see <A HREF="#eggs2000">
     [eggs2000]</A> (in Bacon [Publisher]).  Also see
-    <A HREF="http://eggs.org">http://eggs.org</A>.</P>
+    <A HREF="https://eggs.org">https://eggs.org</A>.</P>
 
     <P><A NAME="eggs2000">[eggs2000]</A> "Spam, Spam, Spam, Eggs,
     Bacon, and Spam"</P>
 
 1. No markup::
 
-       A URI http://spam.org, see eggs2000 (in Bacon [Publisher]).
-       Also see http://eggs.org.
+       A URI https://spam.org, see eggs2000 (in Bacon [Publisher]).
+       Also see https://eggs.org.
 
        eggs2000 "Spam, Spam, Spam, Eggs, Bacon, and Spam"
 
 2. StructuredText absolute/relative URI syntax
-   ("text":http://www.url.org)::
+   ("text":https://www.url.org)::
 
-       A "URI":http://spam.org, see [eggs2000] (in Bacon [Publisher]).
-       Also see "http://eggs.org":http://eggs.org.
+       A "URI":https://spam.org, see [eggs2000] (in Bacon [Publisher]).
+       Also see "https://eggs.org":https://eggs.org.
 
        .. [eggs2000] "Spam, Spam, Spam, Eggs, Bacon, and Spam"
 
@@ -827,17 +827,17 @@ bracketed text.  In HTML, each example should evaluate to::
 3. StructuredText absolute-only URI syntax
    ("text", mailto:you@your.com)::
 
-       A "URI", http://spam.org, see [eggs2000] (in Bacon
-       [Publisher]).  Also see "http://eggs.org", http://eggs.org.
+       A "URI", https://spam.org, see [eggs2000] (in Bacon
+       [Publisher]).  Also see "https://eggs.org", https://eggs.org.
 
        .. [eggs2000] "Spam, Spam, Spam, Eggs, Bacon, and Spam"
 
 4. reStructuredText syntax::
 
     4. A URI_, see [eggs2000]_ (in Bacon [Publisher]).
-       Also see http://eggs.org.
+       Also see https://eggs.org.
 
-       .. _URI: http:/spam.org
+       .. _URI: https:/spam.org
        .. [eggs2000] "Spam, Spam, Spam, Eggs, Bacon, and Spam"
 
 The bracketed text '[Publisher]' may be problematic with
@@ -848,14 +848,14 @@ text is separated from the link URI and the footnote, resulting in
 cleanly readable text.
 
 .. _StructuredText:
-   http://www.zope.org/DevHome/Members/jim/StructuredTextWiki/FrontPage
+   https://www.zope.org/DevHome/Members/jim/StructuredTextWiki/FrontPage
 .. _Setext: https://docutils.sourceforge.io/mirror/setext.html
 .. _reStructuredText: https://docutils.sourceforge.io/rst.html
 .. _detailed description:
-   http://homepage.ntlworld.com/tibsnjoan/docutils/STNG-format.html
-.. _STMinus: http://www.cis.upenn.edu/~edloper/pydoc/stminus.html
+   https://www.tibsnjoan.co.uk/docutils/STNG-format.html
+.. _STMinus: https://web.archive.org/web/20060426045747/http://www.cis.upenn.edu:80/~edloper/pydoc/stminus.html
 .. _StructuredTextNG:
-   http://www.zope.org/DevHome/Members/jim/StructuredTextWiki/StructuredTextNG
+   https://www.zope.org/DevHome/Members/jim/StructuredTextWiki/StructuredTextNG
 .. _README: http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/~checkout~/
    python/python/dist/src/README
 .. _Emacs table mode: http://table.sourceforge.net/

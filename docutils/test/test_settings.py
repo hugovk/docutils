@@ -36,7 +36,7 @@ class ConfigFileTests(unittest.TestCase):
         'old': {u'datestamp': u'%Y-%m-%d %H:%M UTC',
                 u'generator': True,
                 u'no_random': True,
-                u'python_home': u'http://www.python.org',
+                u'python_home': u'https://www.python.org',
                 u'source_link': True,
                 'stylesheet': None,
                 u'stylesheet_path': [u'stylesheets/pep.css'],
@@ -44,7 +44,7 @@ class ConfigFileTests(unittest.TestCase):
         'one': {u'datestamp': u'%Y-%m-%d %H:%M UTC',
                 u'generator': True,
                 u'no_random': True,
-                u'python_home': u'http://www.python.org',
+                u'python_home': u'https://www.python.org',
                 u'raw_enabled': False,
                 'record_dependencies': utils.DependencyList(),
                 u'source_link': True,
@@ -262,8 +262,8 @@ class HelperFunctionsTests(unittest.TestCase):
         tests = (
                     ('', './' ),
                     (None, './' ),
-                    (u'http://example.org', u'http://example.org/' ),
-                    ('http://example.org/', 'http://example.org/' ),
+                    (u'https://example.org', u'https://example.org/' ),
+                    ('https://example.org/', 'https://example.org/' ),
                 )
         for t in tests:
             self.assertEqual(

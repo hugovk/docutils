@@ -11,7 +11,7 @@
 
 .. footer:: |valid-xhtml10| |valid-CSS2|
 
-.. |valid-xhtml10| image:: http://www.w3.org/Icons/valid-xhtml10
+.. |valid-xhtml10| image:: https://www.w3.org/Icons/valid-xhtml10
    :height: 31
    :width: 88
    :alt: Valid XHTML 1.0!
