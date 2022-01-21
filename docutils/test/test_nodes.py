@@ -31,7 +31,7 @@ class TextTests(unittest.TestCase):
         self.assertEqual(repr(self.text), r"<#text: 'Line 1.\nLine 2.'>")
         self.assertEqual(self.text.shortrepr(),
                           r"<#text: 'Line 1.\nLine 2.'>")
-        self.assertEqual(repr(self.unicode_text), u"<#text: 'Möhren'>")
+        self.assertEqual(repr(self.unicode_text), "<#text: 'Möhren'>")
 
     def test_str(self):
         self.assertEqual(str(self.text), 'Line 1.\nLine 2.')
@@ -106,7 +106,7 @@ class ElementTests(unittest.TestCase):
         element = nodes.Element('text\nmore', nodes.Text('text\nmore'))
         uelement = nodes.Element(u'grün', nodes.Text(u'grün'))
         self.assertEqual(repr(element), r"<Element: <#text: 'text\nmore'>>")
-        self.assertEqual(repr(uelement), u"<Element: <#text: 'grün'>>")
+        self.assertEqual(repr(uelement), "<Element: <#text: 'grün'>>")
         self.assertTrue(isinstance(repr(uelement), str))
         self.assertEqual(str(element), '<Element>text\nmore</Element>')
         self.assertEqual(str(uelement), '<Element>gr\xfcn</Element>')

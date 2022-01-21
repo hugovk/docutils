@@ -978,12 +978,12 @@ if __name__ == "__main__":
         class TestSmartypantsAllAttributes(unittest.TestCase):
             # the default attribute is "1", which means "all".
             def test_dates(self):
-                self.assertEqual(smartyPants("1440-80's"), u"1440-80’s")
-                self.assertEqual(smartyPants("1440-'80s"), u"1440-’80s")
-                self.assertEqual(smartyPants("1440---'80s"), u"1440–’80s")
-                self.assertEqual(smartyPants("1960's"), u"1960’s")
-                self.assertEqual(smartyPants("one two '60s"), u"one two ’60s")
-                self.assertEqual(smartyPants("'60s"), u"’60s")
+                self.assertEqual(smartyPants("1440-80's"), "1440-80’s")
+                self.assertEqual(smartyPants("1440-'80s"), "1440-’80s")
+                self.assertEqual(smartyPants("1440---'80s"), "1440–’80s")
+                self.assertEqual(smartyPants("1960's"), "1960’s")
+                self.assertEqual(smartyPants("one two '60s"), "one two ’60s")
+                self.assertEqual(smartyPants("'60s"), "’60s")
 
             def test_educated_quotes(self):
                 self.assertEqual(smartyPants('"Isn\'t this fun?"'), u'“Isn’t this fun?”')

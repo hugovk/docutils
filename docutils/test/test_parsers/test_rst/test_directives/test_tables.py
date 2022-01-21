@@ -939,7 +939,7 @@ totest['csv-table'] = [
                :widths: 0 0 0
             \n\
                some, csv, data
-""" % DocutilsTestSupport.exception_data(int, u"y")[1][0]],
+""" % DocutilsTestSupport.exception_data(int, "y")[1][0]],
 ["""\
 .. csv-table:: good delimiter
    :delim: /

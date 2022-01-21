@@ -109,7 +109,7 @@ class EscapeConfig(object):
 
   chars = {
       u'\n': u'',
-      u"'": u'’',
+      "'": u'’',
       u'`': u'‘',
       }
 
@@ -176,7 +176,7 @@ class FormulaConfig(object):
       }
 
   combiningfunctions = {
-      u"\\'": u'́',
+      "\\'": u'́',
       u'\\"': u'̈',
       u'\\^': u'̂',
       u'\\`': u'̀',

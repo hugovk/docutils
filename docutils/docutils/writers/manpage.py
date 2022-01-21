@@ -284,7 +284,7 @@ class Translator(nodes.NodeVisitor):
         replace_pairs = [
             (u'-', u'\\-'),
             (u'\'', u'\\(aq'),
-            (u'´', u"\\'"),
+            (u'´', "\\'"),
             (u'`', u'\\(ga'),
             (u'"', u'\\(dq'),  # double quotes are a problem on macro lines
             ]
