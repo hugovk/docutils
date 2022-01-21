@@ -41,7 +41,7 @@ import unicodedata
 #
 # Problem: ``ur`` prefix fails with Py 3.5 ::
 
-module_template = u'''#!/usr/bin/env python3
+module_template = '''#!/usr/bin/env python3
 # :Id: $Id$
 # :Copyright: © 2011, 2017 Günter Milde.
 # :License: Released under the terms of the `2-Clause BSD license`_, in short:
