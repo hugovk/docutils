@@ -38,10 +38,8 @@ import unicodedata
 
 # Template for utils.punctuation_chars
 # ------------------------------------
-#
-# Problem: ``ur`` prefix fails with Py 3.5 ::
 
-module_template = '''#!/usr/bin/env python3
+module_template = r'''#!/usr/bin/env python3
 # :Id: $Id$
 # :Copyright: © 2011, 2017 Günter Milde.
 # :License: Released under the terms of the `2-Clause BSD license`_, in short:
@@ -90,21 +88,21 @@ import unicodedata
 %(delimiters)s
 if sys.maxunicode >= 0x10FFFF: # "wide" build
 %(delimiters_wide)s
-closing_delimiters = '\\\\\\\\.,;!?'
+closing_delimiters = '\\\\.,;!?'
 
 
 # Matching open/close quotes
 # --------------------------
 
 quote_pairs = {# open char: matching closing characters # usage example
-               '\\xbb':   '\\xbb',         # » » Swedish
-               '\\u2018': '\\u201a',       # ‘ ‚ Albanian/Greek/Turkish
-               '\\u2019': '\\u2019',       # ’ ’ Swedish
-               '\\u201a': '\\u2018\\u2019', # ‚ ‘ German ‚ ’ Polish
-               '\\u201c': '\\u201e',       # “ „ Albanian/Greek/Turkish
-               '\\u201e': '\\u201c\\u201d', # „ “ German „ ” Polish
-               '\\u201d': '\\u201d',       # ” ” Swedish
-               '\\u203a': '\\u203a',       # › › Swedish
+               '\xbb':   '\xbb',         # » » Swedish
+               '\u2018': '\u201a',       # ‘ ‚ Albanian/Greek/Turkish
+               '\u2019': '\u2019',       # ’ ’ Swedish
+               '\u201a': '\u2018\u2019', # ‚ ‘ German ‚ ’ Polish
+               '\u201c': '\u201e',       # “ „ Albanian/Greek/Turkish
+               '\u201e': '\u201c\u201d', # „ “ German „ ” Polish
+               '\u201d': '\u201d',       # ” ” Swedish
+               '\u203a': '\u203a',       # › › Swedish
               }
 """Additional open/close quote pairs."""
 
