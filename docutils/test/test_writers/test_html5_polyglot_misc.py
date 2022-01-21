@@ -202,7 +202,7 @@ class MathTestCase(DocutilsTestSupport.StandardTestCase):
                       'embed_stylesheet': False}
         styles = core.publish_parts(self.data, writer_name='html5_polyglot',
             settings_overrides=mysettings)['stylesheet']
-        self.assertEqual(u"""\
+        self.assertEqual("""\
 <link rel="stylesheet" href="functional/input/data/minimal.css" type="text/css" />
 <link rel="stylesheet" href="functional/input/data/plain.css" type="text/css" />
 <link rel="stylesheet" href="functional/input/data/math.css" type="text/css" />

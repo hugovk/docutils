@@ -65,11 +65,11 @@ nonexistent_rel = DocutilsTestSupport.utils.relative_path(
 try:
     open(u'\u043c\u0438\u0440.txt')
 except UnicodeEncodeError:
-    errstr_8bit_path = u"""\
+    errstr_8bit_path = """\
 Cannot encode input file path "\u043c\u0438\u0440.txt" (wrong locale?).\
 """
 except:
-    errstr_8bit_path = u"""\
+    errstr_8bit_path = """\
 InputError: [Errno 2] No such file or directory: '\u043c\u0438\u0440.txt'.\
 """
 
@@ -525,12 +525,12 @@ Include file is UTF-16-encoded, and is not valid ASCII.
             .. include:: %s
                :encoding: ascii
 """ % (utf_16_error_str, reldir(utf_16_file))],
-[u"""\
+["""\
 cyrillic filename:
 
 .. include:: \u043c\u0438\u0440.txt
 """,
-u"""\
+"""\
 <document source="test data">
     <paragraph>
         cyrillic filename:

@@ -40,7 +40,7 @@ totest['grid_tables'] = [
  [[(0, 0, 1, ['A table with']),
    (0, 0, 1, ['two columns.'])]])],
 # Combining chars in grid tables still fail
-# [u"""\
+# ["""\
 # +--------------+------------------+
 # | A tāble w̅ith | comb̲ining chars. |
 # +--------------+------------------+

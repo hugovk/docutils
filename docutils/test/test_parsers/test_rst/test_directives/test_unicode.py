@@ -40,7 +40,7 @@ space (|nbsp|), a backwards-not-equals (|bne|), and a captial omega (|Omega|).
 .. |bne| unicode:: U0003D U020E5
 .. |Omega| unicode:: U+003A9
 """,
-u"""\
+"""\
 <document source="test data">
     <paragraph>
         Insert an em-dash (
@@ -120,7 +120,7 @@ Copyright |copy| 2003, |BogusMegaCorp (TM)|.
 .. |BogusMegaCorp (TM)| unicode:: BogusMegaCorp U+2122
    .. with trademark sign
 """,
-u"""\
+"""\
 <document source="test data">
     <paragraph>
         Testing comments and extra text.

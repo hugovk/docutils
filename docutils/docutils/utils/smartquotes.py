@@ -664,7 +664,7 @@ def educateQuotes(text, language='en'):
         text = re.sub(r"'(?=\d{2}s)", smart.apostrophe, text)
 
     # Get most opening secondary quotes:
-    opening_secondary_quotes_regex = re.compile(u"""
+    opening_secondary_quotes_regex = re.compile("""
                     (# ?<=  # look behind fails: requires fixed-width pattern
                       %(sep)s     |  # a whitespace char, or
                       %(open)s    |  # opening brace, or
@@ -690,7 +690,7 @@ def educateQuotes(text, language='en'):
     text = re.sub(r"""'""", smart.osquote, text)
 
     # Get most opening primary quotes:
-    opening_primary_quotes_regex = re.compile(u"""
+    opening_primary_quotes_regex = re.compile("""
                     (
                       %(sep)s     |  # a whitespace char, or
                       %(open)s    |  # zero width separating char, or

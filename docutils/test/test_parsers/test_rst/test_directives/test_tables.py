@@ -702,12 +702,12 @@ totest['csv-table'] = [
                     <entry>
                     <entry>
 """],
-[u"""\
+["""\
 .. csv-table:: non-ASCII characters
 
    Heiz\xf6lr\xfccksto\xdfabd\xe4mpfung
 """,
-u"""\
+"""\
 <document source="test data">
     <table>
         <title>
@@ -1111,7 +1111,7 @@ bad_encoding_result
    :encoding: utf-16
    :header-rows: 1
 """ % utf_16_csv,
-u"""\
+"""\
 <document source="test data">
     <table>
         <title>

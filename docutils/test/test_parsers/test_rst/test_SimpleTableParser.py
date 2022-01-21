@@ -28,7 +28,7 @@ A table with  two columns.
  [],
  [[[0, 0, 1, ['A table with']],
    [0, 0, 1, ['two columns.']]]])],
-[u"""\
+["""\
 ============  ===============
 A tāble w̅ith  comb̲ining chars
 ============  ===============

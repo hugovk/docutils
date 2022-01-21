@@ -75,7 +75,7 @@ class ReporterTests(unittest.TestCase):
 
     def test_unicode_message(self):
         sw = self.reporter.system_message(0, u'mesidʒ')
-        self.assertEqual(sw.pformat(), u"""\
+        self.assertEqual(sw.pformat(), """\
 <system_message level="0" source="test data" type="DEBUG">
     <paragraph>
         mesidʒ
@@ -89,7 +89,7 @@ class ReporterTests(unittest.TestCase):
             raise Exception(u'mesidʒ')
         except Exception as err:
             sw = self.reporter.system_message(0, err)
-            self.assertEqual(sw.pformat(), u"""\
+            self.assertEqual(sw.pformat(), """\
 <system_message level="0" source="test data" type="DEBUG">
     <paragraph>
         mesidʒ

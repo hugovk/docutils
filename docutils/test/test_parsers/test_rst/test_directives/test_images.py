@@ -406,11 +406,11 @@ totest['images'] = [
             .. |img| image:: picture.png
                :align: left
 """],
-[u"""\
+["""\
 .. image:: picture.png
    :align: \xe4
 """,
-u"""\
+"""\
 <document source="test data">
     <system_message level="3" line="1" source="test data" type="ERROR">
         <paragraph>

@@ -187,7 +187,7 @@ class MathTestCase(DocutilsTestSupport.StandardTestCase):
                       'embed_stylesheet': False}
         styles = core.publish_parts(self.data, writer_name='html4css1',
             settings_overrides=mysettings)['stylesheet']
-        self.assertEqual(u"""\
+        self.assertEqual("""\
 <link rel="stylesheet" href="functional/input/data/html4css1.css" type="text/css" />
 <link rel="stylesheet" href="functional/input/data/math.css" type="text/css" />
 <link rel="stylesheet" href="custom/style.css" type="text/css" />
