@@ -473,13 +473,13 @@ class Inliner(object):
     def init_customizations(self, settings):
         # lookahead and look-behind expressions for inline markup rules
         if getattr(settings, 'character_level_inline_markup', False):
-            start_string_prefix = u'(^|(?<!\x00))'
-            end_string_suffix = u''
+            start_string_prefix = '(^|(?<!\x00))'
+            end_string_suffix = ''
         else:
-            start_string_prefix = (u'(^|(?<=\\s|[%s%s]))' %
+            start_string_prefix = ('(^|(?<=\\s|[%s%s]))' %
                                    (punctuation_chars.openers,
                                     punctuation_chars.delimiters))
-            end_string_suffix = (u'($|(?=\\s|[\x00%s%s%s]))' %
+            end_string_suffix = ('($|(?=\\s|[\x00%s%s%s]))' %
                                  (punctuation_chars.closing_delimiters,
                                   punctuation_chars.delimiters,
                                   punctuation_chars.closers))
@@ -1135,7 +1135,7 @@ class Body(RSTState):
               pats['enum'], re.escape(enum.formatinfo[format].suffix))
 
     patterns = {
-          'bullet': u'[-+*\u2022\u2023\u2043]( +|$)',
+          'bullet': '[-+*\u2022\u2023\u2043]( +|$)',
           'enumerator': r'(%(parens)s|%(rparen)s|%(period)s)( +|$)' % pats,
           'field_marker': r':(?![: ])([^:\\]|\\.|:(?!([ `]|$)))*(?<! ):( +|$)',
           'option_marker': r'%(option)s(, %(option)s)*(  +| ?$)' % pats,
@@ -1196,7 +1196,7 @@ class Body(RSTState):
         return elements
 
     # U+2014 is an em-dash:
-    attribution_pattern = re.compile(u'(---?(?!-)|\u2014) *(?=[^ \\n])',
+    attribution_pattern = re.compile('(---?(?!-)|\u2014) *(?=[^ \\n])',
                                      re.UNICODE)
 
     def split_attribution(self, indented, line_offset):
@@ -1502,7 +1502,7 @@ class Body(RSTState):
             listitem, blank_finish = self.option_list_item(match)
         except MarkupError as error:
             # This shouldn't happen; pattern won't match.
-            msg = self.reporter.error(u'Invalid option list marker: %s' %
+            msg = self.reporter.error('Invalid option list marker: %s' %
                                       error)
             self.parent += msg
             indented, indent, line_offset, blank_finish = \
@@ -1622,7 +1622,7 @@ class Body(RSTState):
         indented, indent, line_offset, blank_finish = \
             self.state_machine.get_first_known_indented(match.end(),
                                                         until_blank=True)
-        text = u'\n'.join(indented)
+        text = '\n'.join(indented)
         text_nodes, messages = self.inline_text(text, lineno)
         line = nodes.line(text, '', *text_nodes)
         if match.string.rstrip() != '|': # not empty

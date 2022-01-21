@@ -54,7 +54,7 @@ class CliSettingsSpec(docutils.SettingsSpec):
     config_section = 'docutils-cli application'
     config_section_dependencies = ('applications',)
 
-# Get default components from configuration files 
+# Get default components from configuration files
 # default to "html5" writer for backwards compatibility
 default_settings = Publisher().get_settings(settings_spec=CliSettingsSpec,
                         writer='html5')
@@ -65,14 +65,32 @@ argparser = argparse.ArgumentParser(
                 formatter_class=argparse.ArgumentDefaultsHelpFormatter,
                 add_help=False,)
 
-argparser.add_argument('--reader', help='reader name',
-                       default=default_settings.reader)
-argparser.add_argument('--parser', help='parser name',
-                       default=default_settings.parser)
-argparser.add_argument('--writer', help='writer name',
-                       default=default_settings.writer)
+description = 'Generate documents from reStructuredText or Markdown sources.'
 
-(args, remainder) = argparser.parse_known_args()
+epilog = ('Further optional arguments are added by the selected '
+          'components, the list below adapts to your selection.'
+         )
+
+parser = argparse.ArgumentParser(add_help=False,
+                description=description, epilog=epilog,
+                formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
+parser.add_argument('source', nargs='?')
+parser.add_argument('destination', nargs='?')
+parser.add_argument('--reader', help='reader name',
+                    default=default_settings['reader'])
+parser.add_argument('--parser', help='parser name',
+                    default=default_settings['parser'])
+parser.add_argument('--writer', help='writer name',
+                    default=default_settings['writer'])
+
+(args, remainder) = parser.parse_known_args()
+
+# push back positional arguments
+if args.destination:
+    remainder.insert(0, args.destination)
+if args.source:
+    remainder.insert(0, args.source)
 
 if '-h' in sys.argv or '--help' in sys.argv:
     print(argparser.format_help())

@@ -26,7 +26,7 @@ Deprecated module to handle Exceptions across Python versions.
 Error reporting should be safe from encoding/decoding errors.
 However, implicit conversions of strings and exceptions like
 
->>> u'%s world: %s' % ('H\xe4llo', Exception(u'H\xe4llo'))
+>>> '%s world: %s' % ('H\xe4llo', Exception('H\xe4llo'))
 
 fail in some Python versions:
 
@@ -131,7 +131,7 @@ class SafeString(object):
         try:
             u = unicode(self.data)
             if isinstance(self.data, EnvironmentError):
-                u = u.replace(": u'", ": '") # normalize filename quoting
+                u = u.replace(": '", ": '") # normalize filename quoting
             return u
         except UnicodeError as error: # catch ..Encode.. and ..Decode.. errors
             if isinstance(self.data, EnvironmentError):
@@ -144,7 +144,7 @@ class SafeString(object):
                 args = [unicode(SafeString(arg, self.encoding,
                             decoding_errors=self.decoding_errors))
                         for arg in self.data.args]
-                return u', '.join(args)
+                return ', '.join(args)
             if isinstance(error, UnicodeDecodeError):
                 return unicode(self.data, self.encoding, self.decoding_errors)
             raise
@@ -158,7 +158,7 @@ class ErrorString(SafeString):
                             super(ErrorString, self).__str__())
 
     def __unicode__(self):
-        return u'%s: %s' % (self.data.__class__.__name__,
+        return '%s: %s' % (self.data.__class__.__name__,
                             super(ErrorString, self).__unicode__())
 
 

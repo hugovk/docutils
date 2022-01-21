@@ -35,8 +35,8 @@ A tāble w̅ith  comb̲ining chars
 """,
 ([12, 15],
  [],
- [[[0, 0, 1, [u'A ta\u0304ble w\u0305ith']],
-   [0, 0, 1, [u'comb\u0332ining chars']]]])],
+ [[[0, 0, 1, ['A ta\u0304ble w\u0305ith']],
+   [0, 0, 1, ['comb\u0332ining chars']]]])],
 ["""\
 ============  ============
 A table with  two columns

@@ -597,13 +597,13 @@ def split_escaped_whitespace(text):
     return list(itertools.chain(*strings))
 
 def strip_combining_chars(text):
-    return u''.join([c for c in text if not unicodedata.combining(c)])
+    return ''.join([c for c in text if not unicodedata.combining(c)])
 
 def find_combining_chars(text):
     """Return indices of all combining chars in  Unicode string `text`.
 
     >>> from docutils.utils import find_combining_chars
-    >>> find_combining_chars(u'A t̆ab̆lĕ')
+    >>> find_combining_chars('A t̆ab̆lĕ')
     [3, 6, 9]
 
     """
@@ -613,7 +613,7 @@ def column_indices(text):
     """Indices of Unicode string `text` when skipping combining characters.
 
     >>> from docutils.utils import column_indices
-    >>> column_indices(u'A t̆ab̆lĕ')
+    >>> column_indices('A t̆ab̆lĕ')
     [0, 1, 2, 4, 5, 7, 8]
 
     """

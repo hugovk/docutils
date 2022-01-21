@@ -63,7 +63,7 @@ nonexistent_rel = DocutilsTestSupport.utils.relative_path(
 
 # Different error for path with 8bit chars with locale == C or None:
 try:
-    open(u'\u043c\u0438\u0440.txt')
+    open('\u043c\u0438\u0440.txt')
 except UnicodeEncodeError:
     errstr_8bit_path = """\
 Cannot encode input file path "\u043c\u0438\u0440.txt" (wrong locale?).\

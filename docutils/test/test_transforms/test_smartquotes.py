@@ -35,7 +35,7 @@ def suite():
     settings['smart_quotes'] = 'alternative'
     s.generateTests(totest_de_alt)
     settings['smart_quotes'] = True
-    settings['smartquotes_locales'] = [('de', u'«»()'), ('nl', u'„”’’')]
+    settings['smartquotes_locales'] = [('de', '«»()'), ('nl', '„”’’')]
     s.generateTests(totest_locales)
     return s
 

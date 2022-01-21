@@ -41,7 +41,7 @@ class SafeStringTests(unittest.TestCase):
 
     # test data:
     bs = b'\xc3\xbc'   # str(bs) returns repr(bs)
-    us = u'\xfc'       # bytes(us) fails (requires encoding argument)
+    us = '\xfc'       # bytes(us) fails (requires encoding argument)
     be = Exception(bs)
     ue = Exception(us) # bytes(ue) fails
     # wrapped test data:
@@ -54,7 +54,7 @@ class SafeStringTests(unittest.TestCase):
         # wrapping (not required with 7-bit chars) must not change the
         # result of conversions:
         bs7 = b'foo'
-        us7 = u'foo'
+        us7 = 'foo'
         be7 = Exception(bs7)
         ue7 = Exception(us7)
         self.assertEqual(str(bs7), str(SafeString(bs7)))
@@ -83,7 +83,7 @@ class SafeStringTests(unittest.TestCase):
 
 class ErrorStringTests(unittest.TestCase):
     bs = b'\xc3\xbc' # unicode(bs) fails, str(bs) in Python 3 return repr()
-    us = u'\xfc'     # bytes(us) fails; str(us) fails in Python 2
+    us = '\xfc'     # bytes(us) fails; str(us) fails in Python 2
 
     def test_str(self):
         self.assertEqual('Exception: spam',
@@ -94,11 +94,11 @@ class ErrorStringTests(unittest.TestCase):
                          str(ErrorString(ImportError(self.us))))
 
     def test_unicode(self):
-        self.assertEqual(u'Exception: spam',
-                         str(ErrorString(Exception(u'spam'))))
-        self.assertEqual(u'IndexError: '+self.us,
+        self.assertEqual('Exception: spam',
+                         str(ErrorString(Exception('spam'))))
+        self.assertEqual('IndexError: '+self.us,
                          str(ErrorString(IndexError(self.us))))
-        self.assertEqual(u'ImportError: %s' % SafeString(self.bs),
+        self.assertEqual('ImportError: %s' % SafeString(self.bs),
                          str(ErrorString(ImportError(self.bs))))
 
 
@@ -132,15 +132,15 @@ class ErrorOutputTests(unittest.TestCase):
         e.write(b'b\xfc')
         self.assertEqual(buf.getvalue(), b'b\xfc')
         # encode unicode data with backslashescape fallback replacement:
-        e.write(u' u\xfc')
+        e.write(' u\xfc')
         self.assertEqual(buf.getvalue(), b'b\xfc u\\xfc')
         # handle Exceptions with Unicode string args
-        # unicode(Exception(u'e\xfc')) # fails in Python < 2.6
-        e.write(AttributeError(u' e\xfc'))
+        # unicode(Exception('e\xfc')) # fails in Python < 2.6
+        e.write(AttributeError(' e\xfc'))
         self.assertEqual(buf.getvalue(), b'b\xfc u\\xfc e\\xfc')
         # encode with `encoding` attribute
         e.encoding = 'utf8'
-        e.write(u' u\xfc')
+        e.write(' u\xfc')
         self.assertEqual(buf.getvalue(), b'b\xfc u\\xfc e\\xfc u\xc3\xbc')
 
     def test_ubuf(self):
@@ -148,16 +148,16 @@ class ErrorOutputTests(unittest.TestCase):
         # decode of binary strings
         e = ErrorOutput(buf, encoding='ascii')
         e.write(b'b\xfc')
-        self.assertEqual(buf.getvalue(), u'b\ufffd') # use REPLACEMENT CHARACTER
+        self.assertEqual(buf.getvalue(), 'b\ufffd') # use REPLACEMENT CHARACTER
         # write Unicode string and Exceptions with Unicode args
-        e.write(u' u\xfc')
-        self.assertEqual(buf.getvalue(), u'b\ufffd u\xfc')
-        e.write(AttributeError(u' e\xfc'))
-        self.assertEqual(buf.getvalue(), u'b\ufffd u\xfc e\xfc')
+        e.write(' u\xfc')
+        self.assertEqual(buf.getvalue(), 'b\ufffd u\xfc')
+        e.write(AttributeError(' e\xfc'))
+        self.assertEqual(buf.getvalue(), 'b\ufffd u\xfc e\xfc')
         # decode with `encoding` attribute
         e.encoding = 'latin1'
         e.write(b' b\xfc')
-        self.assertEqual(buf.getvalue(), u'b\ufffd u\xfc e\xfc b\xfc')
+        self.assertEqual(buf.getvalue(), 'b\ufffd u\xfc e\xfc b\xfc')
 
 
 class SafeStringTests_locale(unittest.TestCase):
@@ -169,18 +169,18 @@ class SafeStringTests_locale(unittest.TestCase):
     """
     # test data:
     bs = b'\xc3\xbc'
-    us = u'\xfc'
+    us = '\xfc'
     try:
         open(b'\xc3\xbc')
     except IOError as e: # in Python 3 the name for the exception instance
         bioe = e       # is local to the except clause
     try:
-        open(u'\xfc')
+        open('\xfc')
     except IOError as e:
         uioe = e
     except UnicodeEncodeError:
         try:
-            open(u'\xfc'.encode(sys.getfilesystemencoding(), 'replace'))
+            open('\xfc'.encode(sys.getfilesystemencoding(), 'replace'))
         except IOError as e:
             uioe = e
     try:
@@ -188,12 +188,12 @@ class SafeStringTests_locale(unittest.TestCase):
     except OSError as e:
         bose = e
     try:
-        os.chdir(u'\xfc')
+        os.chdir('\xfc')
     except OSError as e:
         uose = e
     except UnicodeEncodeError:
         try:
-            os.chdir(u'\xfc'.encode(sys.getfilesystemencoding(), 'replace'))
+            os.chdir('\xfc'.encode(sys.getfilesystemencoding(), 'replace'))
         except OSError as e:
             uose = e
     # wrapped test data:

@@ -45,12 +45,12 @@ totest['grid_tables'] = [
 # | A tāble w̅ith | comb̲ining chars. |
 # +--------------+------------------+
 # """,
-# [(0, 0, 2, 15, [u'A table with']),
-#  (0, 15, 2, 30, [u'combining chars.'])],
+# [(0, 0, 2, 15, ['A table with']),
+#  (0, 15, 2, 30, ['combining chars.'])],
 # ([14, 14],
 #  [],
-#  [[(0, 0, 1, [u'A table with']),
-#    (0, 0, 1, [u'combining chars.'])]])],
+#  [[(0, 0, 1, ['A table with']),
+#    (0, 0, 1, ['combining chars.'])]])],
 ["""\
 +--------------+-------------+
 | A table with | two columns |
