@@ -37,12 +37,12 @@ class Writer(latex2e.Writer):
     """Formats this writer supports."""
 
     default_template = 'xelatex.tex'
-    default_preamble = '\n'.join([
-      r'% Linux Libertine (free, wide coverage, not only for Linux)',
-      r'\setmainfont{Linux Libertine O}',
-      r'\setsansfont{Linux Biolinum O}',
-      r'\setmonofont[HyphenChar=None,Scale=MatchLowercase]{DejaVu Sans Mono}',
-    ])
+    default_preamble = (
+      '% Linux Libertine (free, wide coverage, not only for Linux)\n'
+      r'\setmainfont{Linux Libertine O}' '\n'
+      r'\setsansfont{Linux Biolinum O}' '\n'
+      r'\setmonofont[HyphenChar=None,Scale=MatchLowercase]{DejaVu Sans Mono}'
+    )
 
     config_section = 'xetex writer'
     config_section_dependencies = ('writers', 'latex writers',

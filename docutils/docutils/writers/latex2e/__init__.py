@@ -37,10 +37,10 @@ class Writer(writers.Writer):
 
     default_template = 'default.tex'
     default_template_path = os.path.dirname(os.path.abspath(__file__))
-    default_preamble = '\n'.join([r'% PDF Standard Fonts',
-                                  r'\usepackage{mathptmx} % Times',
-                                  r'\usepackage[scaled=.90]{helvet}',
-                                  r'\usepackage{courier}'])
+    default_preamble = ('% PDF Standard Fonts\n'
+                        r'\usepackage{mathptmx} % Times' '\n'
+                        r'\usepackage[scaled=.90]{helvet}' '\n'
+                        r'\usepackage{courier}')
     table_style_values = [# TODO: align-left, align-center, align-right, ??
                           'booktabs', 'borderless', 'colwidths-auto',
                           'nolines', 'standard']
@@ -1399,9 +1399,9 @@ class LaTeXTranslator(nodes.NodeVisitor):
                 self.document.reporter.error(msg)
                 return '% ' + msg.replace('\n', '\n% ')
             if is_package:
-                content = '\n'.join([r'\makeatletter',
-                                     content,
-                                     r'\makeatother'])
+                content = (r'\makeatletter' '\n'
+                           + content + '\n'
+                           r'\makeatother')
             return '%% embedded stylesheet: %s\n%s' % (path, content)
         # Link to style file:
         if is_package:
@@ -2561,10 +2561,10 @@ class LaTeXTranslator(nodes.NodeVisitor):
         if _in_table and _use_env and not _autowidth_table:
             # Wrap in minipage to prevent extra vertical space
             # with alltt and verbatim-like environments:
-            self.fallbacks['ttem'] = '\n'.join(['',
-                r'% character width in monospaced font',
-                r'\newlength{\ttemwidth}',
-                r'\settowidth{\ttemwidth}{\ttfamily M}'])
+            self.fallbacks['ttem'] = (
+                '\n% character width in monospaced font\n'
+                r'\newlength{\ttemwidth}' '\n'
+                r'\settowidth{\ttemwidth}{\ttfamily M}')
             self.out.append('\\begin{minipage}{%d\\ttemwidth}\n' %
                 (max(len(line) for line in node.astext().split('\n'))))
             self.context.append('\n\\end{minipage}\n')
