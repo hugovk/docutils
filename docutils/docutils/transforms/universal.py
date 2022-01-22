@@ -279,6 +279,7 @@ class SmartQuotes(Transform):
         document_language = self.document.settings.language_code
         lc_smartquotes = self.document.settings.smartquotes_locales
         if lc_smartquotes:
+            # TODO this modifies global state, perhaps refactor
             smartquotes.smartchars.quotes.update(dict(lc_smartquotes))
 
         # "Educate" quotes in normal text. Handle each block of text
