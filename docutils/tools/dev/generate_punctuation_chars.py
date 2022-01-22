@@ -280,7 +280,7 @@ def wrap_string(s, startstring= "('",
                     endstring = "')", wrap=67):
     """Line-wrap a unicode string literal definition."""
     c = len(startstring)
-    contstring = "'\n" + ' ' * (len(startstring)-2) + "u'"
+    contstring = "'\n" + ' ' * (len(startstring)-2) + "'"
     l = [startstring]
     for ch in s.replace("'", r"\'"):
         c += 1
