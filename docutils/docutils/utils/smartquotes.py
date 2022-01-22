@@ -878,16 +878,6 @@ def tokenize(text):
     Based on the _tokenize() subroutine from Brad Choate's MTRegex plugin.
         <http://www.bradchoate.com/past/mtregex.php>
     """
-
-    pos = 0
-    length = len(text)
-    # tokens = []
-
-    depth = 6
-    nested_tags = "|".join(['(?:<(?:[^<>]',] * depth) + (')*>)' * depth)
-    #match = r"""(?: <! ( -- .*? -- \s* )+ > ) |  # comments
-    #               (?: <\? .*? \?> ) |  # directives
-    #               %s  # nested tags       """ % (nested_tags,)
     tag_soup = re.compile(r"""([^<]*)(<[^>]*>)""")
 
     token_match = tag_soup.search(text)

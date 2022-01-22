@@ -603,9 +603,9 @@ class Element(Node):
         return '</%s>' % self.tagname
 
     def emptytag(self):
-        return '<%s/>' % ' '.join([self.tagname] +
-                                    ['%s="%s"' % (n, v)
-                                     for n, v in self.attlist()])
+        return '<%s/>' % ' '.join((self.tagname,
+                                  *('%s="%s"' % (n, v)
+                                    for n, v in self.attlist())))
 
     def __len__(self):
         return len(self.children)
@@ -1045,9 +1045,9 @@ class Element(Node):
         return None
 
     def pformat(self, indent='    ', level=0):
-        return ''.join(['%s%s\n' % (indent * level, self.starttag())] +
-                       [child.pformat(indent, level+1)
-                        for child in self.children])
+        return ''.join(('%s%s\n' % (indent * level, self.starttag()),
+                       *(child.pformat(indent, level+1)
+                         for child in self.children)))
 
     def copy(self):
         obj = self.__class__(rawsource=self.rawsource, **self.attributes)
