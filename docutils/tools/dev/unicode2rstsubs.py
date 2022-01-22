@@ -170,7 +170,7 @@ class CharacterEntitySetExtractor(object):
         print('writing file "%s"' % outname)
         outfile.write(self.header + '\n')
         set = self.sets[set_name]
-        entities = sorted([(e.lower(), e) for e in set.keys()])
+        entities = sorted((e.lower(), e) for e in set.keys())
         longest = 0
         for _, entity_name in entities:
             longest = max(longest, len(entity_name))

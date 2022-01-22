@@ -639,8 +639,8 @@ def column_width(text):
 
     Correct ``len(text)`` for wide East Asian and combining Unicode chars.
     """
-    width = sum([east_asian_widths[unicodedata.east_asian_width(c)]
-                 for c in text])
+    width = sum(east_asian_widths[unicodedata.east_asian_width(c)]
+                 for c in text)
     # correction for combining chars:
     width -= len(find_combining_chars(text))
     return width

@@ -995,9 +995,8 @@ class Table(object):
     def get_multicolumn_width(self, start, len_):
         """Return sum of columnwidths for multicell."""
         try:
-            multicol_width = sum([width
-                                  for width in ([self._colwidths[start + co]
-                                                 for co in range(len_)])])
+            multicol_width = sum(self._colwidths[start + co]
+                                 for co in range(len_))
             if self.legacy_column_widths:
                 return 'p{%.2f\\DUtablewidth}' % multicol_width
             return 'p{\\DUcolumnwidth{%.3f}}' % multicol_width
@@ -1038,7 +1037,7 @@ class Table(object):
                 n_c = len(self._col_specs)
                 a.append('\\endhead\n')
                 # footer on all but last page (if it fits):
-                twidth = sum([node['colwidth']+2 for node in self._col_specs])
+                twidth = sum(node['colwidth']+2 for node in self._col_specs)
                 if twidth > 30 or (twidth > 12 and not self.colwidths_auto):
                     a.append(r'\multicolumn{%d}{%s}'
                              % (n_c, self.get_multicolumn_width(0, n_c))
