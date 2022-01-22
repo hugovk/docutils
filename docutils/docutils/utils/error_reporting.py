@@ -130,11 +130,11 @@ class SafeString(object):
         """
         try:
             u = unicode(self.data)
-            if isinstance(self.data, EnvironmentError):
+            if isinstance(self.data, OSError):
                 u = u.replace(": '", ": '") # normalize filename quoting
             return u
         except UnicodeError as error: # catch ..Encode.. and ..Decode.. errors
-            if isinstance(self.data, EnvironmentError):
+            if isinstance(self.data, OSError):
                 return  "[Errno %s] %s: '%s'" % (self.data.errno,
                     SafeString(self.data.strerror, self.encoding,
                                self.decoding_errors),

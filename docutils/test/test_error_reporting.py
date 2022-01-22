@@ -4,7 +4,7 @@
 # Copyright: This module has been placed in the public domain.
 
 """
-Test `EnvironmentError` reporting.
+Test `OSError` reporting.
 
 In some locales, the `errstr` argument of OSError contains
 non-ASCII chars.
@@ -164,7 +164,7 @@ class SafeStringTests_locale(unittest.TestCase):
     """
     Test docutils.SafeString with 'problematic' locales.
 
-    The error message in `EnvironmentError` instances comes from the OS
+    The error message in `OSError` instances comes from the OS
     and in some locales (e.g. ru_RU), contains high bit chars.
     """
     # test data:
