@@ -177,8 +177,8 @@ class Include(Directive):
                                 (None, None, None, None)))
         if (path, clip_options) in include_log:
             raise self.warning('circular inclusion in "%s" directive: %s'
-                % (self.name, ' < '.join([path] + [pth for (pth, opt)
-                                                   in include_log[::-1]])))
+                % (self.name, ' < '.join((path, *(pth for pth, opt
+                                                  in reversed(include_log))))))
 
         if 'parser' in self.options:
             # parse into a dummy document and return created nodes

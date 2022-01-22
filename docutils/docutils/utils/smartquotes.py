@@ -502,8 +502,8 @@ class smartchars(object):
 def smartyPants(text, attr=default_smartypants_attr, language='en'):
     """Main function for "traditional" use."""
 
-    return "".join([t for t in educate_tokens(tokenize(text),
-                                              attr, language)])
+    return "".join(t for t in educate_tokens(tokenize(text),
+                                             attr, language))
 
 
 def educate_tokens(text_tokens, attr=default_smartypants_attr, language='en'):
@@ -878,16 +878,6 @@ def tokenize(text):
     Based on the _tokenize() subroutine from Brad Choate's MTRegex plugin.
         <http://www.bradchoate.com/past/mtregex.php>
     """
-
-    pos = 0
-    length = len(text)
-    # tokens = []
-
-    depth = 6
-    nested_tags = "|".join(['(?:<(?:[^<>]',] * depth) + (')*>)' * depth)
-    #match = r"""(?: <! ( -- .*? -- \s* )+ > ) |  # comments
-    #               (?: <\? .*? \?> ) |  # directives
-    #               %s  # nested tags       """ % (nested_tags,)
     tag_soup = re.compile(r"""([^<]*)(<[^>]*>)""")
 
     token_match = tag_soup.search(text)
@@ -926,7 +916,7 @@ if __name__ == "__main__":
     # find all combinations of subtags
     for n in range(len(_subtags), 0, -1):
         for tags in itertools.combinations(_subtags, n):
-            _tag = '-'.join((_basetag,)+tags)
+            _tag = '-'.join((_basetag, *tags))
             if _tag in smartchars.quotes:
                 defaultlanguage = _tag
                 break

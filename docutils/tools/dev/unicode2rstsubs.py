@@ -188,7 +188,7 @@ class CharacterEntitySetExtractor(object):
             for code in charid[1:].split('-'):
                 if int(code, 16) > 0xFFFF:
                     return 1            # wide-Unicode character
-        codes = ' '.join(['U+%s' % code for code in charid[1:].split('-')])
+        codes = ' '.join('U+%s' % code for code in charid[1:].split('-'))
         outfile.write('.. %-*s unicode:: %s .. %s\n'
                       % (longest + 2, '|' + entity_name + '|',
                          codes, self.descriptions[charid]))

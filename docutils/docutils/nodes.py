@@ -553,7 +553,7 @@ class Element(Node):
         element = domroot.createElement(self.tagname)
         for attribute, value in self.attlist():
             if isinstance(value, list):
-                value = ' '.join([serial_escape('%s' % (v,)) for v in value])
+                value = ' '.join(serial_escape('%s' % (v,)) for v in value)
             element.setAttribute(attribute, '%s' % value)
         for child in self.children:
             element.appendChild(child._dom_node(domroot))
@@ -582,7 +582,7 @@ class Element(Node):
     def __str__(self):
         if self.children:
             return '%s%s%s' % (self.starttag(),
-                                ''.join([str(c) for c in self.children]),
+                                ''.join(str(c) for c in self.children),
                                 self.endtag())
         else:
             return self.emptytag()
@@ -609,9 +609,9 @@ class Element(Node):
         return '</%s>' % self.tagname
 
     def emptytag(self):
-        return '<%s/>' % ' '.join([self.tagname] +
-                                    ['%s="%s"' % (n, v)
-                                     for n, v in self.attlist()])
+        return '<%s/>' % ' '.join((self.tagname,
+                                  *('%s="%s"' % (n, v)
+                                    for n, v in self.attlist())))
 
     def __len__(self):
         return len(self.children)
@@ -1052,9 +1052,9 @@ class Element(Node):
         return None
 
     def pformat(self, indent='    ', level=0):
-        return ''.join(['%s%s\n' % (indent * level, self.starttag())] +
-                       [child.pformat(indent, level+1)
-                        for child in self.children])
+        return ''.join(('%s%s\n' % (indent * level, self.starttag()),
+                       *(child.pformat(indent, level+1)
+                         for child in self.children)))
 
     def copy(self):
         obj = self.__class__(rawsource=self.rawsource, **self.attributes)
@@ -1867,8 +1867,8 @@ class pending(Special, Invisible, Element):
             else:
                 internals.append('%7s%s: %r' % ('', key, value))
         return (Element.pformat(self, indent, level)
-                + ''.join([('    %s%s\n' % (indent * level, line))
-                           for line in internals]))
+                + ''.join(('    %s%s\n' % (indent * level, line))
+                          for line in internals))
 
     def copy(self):
         obj = self.__class__(self.transform, self.details, self.rawsource,

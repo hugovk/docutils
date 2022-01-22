@@ -597,7 +597,7 @@ def split_escaped_whitespace(text):
     return list(itertools.chain(*strings))
 
 def strip_combining_chars(text):
-    return ''.join([c for c in text if not unicodedata.combining(c)])
+    return ''.join(c for c in text if not unicodedata.combining(c))
 
 def find_combining_chars(text):
     """Return indices of all combining chars in  Unicode string `text`.
