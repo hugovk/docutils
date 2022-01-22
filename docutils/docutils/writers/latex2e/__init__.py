@@ -274,7 +274,7 @@ class Writer(writers.Writer):
         try:
             with open(templatepath, encoding='utf8') as fp:
                 template = fp.read()
-        except IOError:
+        except OSError:
             templatepath = os.path.join(self.default_template_path,
                                         templatepath)
             with open(templatepath, encoding= 'utf8') as fp:
@@ -1394,7 +1394,7 @@ class LaTeXTranslator(nodes.NodeVisitor):
                 content = docutils.io.FileInput(source_path=path,
                                        encoding='utf-8').read()
                 self.settings.record_dependencies.add(path)
-            except IOError as err:
+            except OSError as err:
                 msg = f'Cannot embed stylesheet:\n {err}'
                 self.document.reporter.error(msg)
                 return '% ' + msg.replace('\n', '\n% ')

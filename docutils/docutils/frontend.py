@@ -189,7 +189,7 @@ def validate_dependency_file(setting, value, option_parser,
                              config_parser=None, config_section=None):
     try:
         return docutils.utils.DependencyList(value)
-    except IOError:
+    except OSError:
         return docutils.utils.DependencyList(None)
 
 def validate_strip_class(setting, value, option_parser,
@@ -780,7 +780,7 @@ Skipping "%s" configuration file.
                         self._stderr.write(self.not_utf8_error
                                            % (filename, filename))
                         continue
-            except IOError:
+            except OSError:
                 continue
             self._files.append(filename)
             if self.has_section('options'):

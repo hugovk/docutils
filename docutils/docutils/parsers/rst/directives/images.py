@@ -131,7 +131,7 @@ class Figure(Image):
                 try:
                     with PIL.Image.open(imagepath) as img:
                         figure_node['width'] = '%dpx' % img.size[0]
-                except (IOError, UnicodeEncodeError):
+                except (OSError, UnicodeEncodeError):
                     pass # TODO: warn?
                 else:
                     self.state.document.settings.record_dependencies.add(

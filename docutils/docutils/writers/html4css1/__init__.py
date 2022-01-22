@@ -566,7 +566,7 @@ class HTMLTranslator(writers._html_base.HTMLTranslator):
                 try:
                     with PIL.Image.open(imagepath) as img:
                         img_size = img.size
-                except (IOError, UnicodeEncodeError):
+                except (OSError, UnicodeEncodeError):
                     pass # TODO: warn?
                 else:
                     self.settings.record_dependencies.add(

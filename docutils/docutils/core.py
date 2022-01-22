@@ -165,7 +165,7 @@ class Publisher(object):
             source_path = self.settings._source
         else:
             self.settings._source = source_path
-        # Raise IOError instead of system exit with `tracback == True`
+        # Raise OSError instead of system exit with `tracback == True`
         # TODO: change io.FileInput's default behaviour and remove this hack
         try:
             self.source = self.source_class(

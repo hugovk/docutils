@@ -36,7 +36,7 @@ fail in some Python versions:
 
 * In Python 2, unicode(<exception instance>) fails, with non-ASCII
   chars in arguments. (Use case: in some locales, the errstr
-  argument of IOError contains non-ASCII chars.)
+  argument of OSError contains non-ASCII chars.)
 
 * In Python 2, str(<exception instance>) fails, with non-ASCII chars
   in `unicode` arguments.

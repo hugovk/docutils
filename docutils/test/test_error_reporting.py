@@ -6,7 +6,7 @@
 """
 Test `EnvironmentError` reporting.
 
-In some locales, the `errstr` argument of IOError and OSError contains
+In some locales, the `errstr` argument of OSError contains
 non-ASCII chars.
 
 In Python 2, converting an exception instance to `str` or `unicode`
@@ -18,7 +18,7 @@ instances like, e.g., ::
 
   try:
     something
-  except IOError as error:
+  except OSError as error:
     print('Found %s' % error)
 
 unless the minimal required Python version has this problem fixed.
@@ -172,16 +172,16 @@ class SafeStringTests_locale(unittest.TestCase):
     us = '\xfc'
     try:
         open(b'\xc3\xbc')
-    except IOError as e: # in Python 3 the name for the exception instance
+    except OSError as e: # in Python 3 the name for the exception instance
         bioe = e       # is local to the except clause
     try:
         open('\xfc')
-    except IOError as e:
+    except OSError as e:
         uioe = e
     except UnicodeEncodeError:
         try:
             open('\xfc'.encode(sys.getfilesystemencoding(), 'replace'))
-        except IOError as e:
+        except OSError as e:
             uioe = e
     try:
         os.chdir(b'\xc3\xbc')
