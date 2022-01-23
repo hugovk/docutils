@@ -24,7 +24,6 @@ the API is not settled and may change with any minor Docutils version.
 #
 # >>> from latex2mathml import *
 
-import collections
 import copy
 import re
 import sys
@@ -340,7 +339,7 @@ class math:
         self.children = []
         self.extend(children)
 
-        self.attributes = collections.OrderedDict()
+        self.attributes = {}
         # sort attributes for predictable functional tests
         # as self.attributes.update(attributes) does not keep order in Python < 3.6
         for key in sorted(attributes.keys()):
