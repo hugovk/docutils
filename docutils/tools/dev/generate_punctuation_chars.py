@@ -379,7 +379,7 @@ if __name__ == '__main__':
 # Replacements::
 
     substitutions = {
-        'python_version': '.'.join(str(s) for s in sys.version_info[:3]),
+        'python_version': sys.version.split()[0],
         'unidata_version': unicodedata.unidata_version,
         'openers': wrap_string(o.encode('unicode-escape').decode(),
                                startstring="openers = ('"),
