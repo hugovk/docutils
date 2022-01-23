@@ -1,4 +1,4 @@
- # $Id$
+# $Id$
 # Author: David Goodger <goodger@python.org>
 # Copyright: This module has been placed in the public domain.
 
@@ -720,11 +720,10 @@ class State:
         name string, or a 1- or 2-tuple (transition name, optional next state
         name).
         """
-        stringtype = type('')
         names = []
         transitions = {}
         for namestate in name_list:
-            if isinstance(namestate, stringtype):
+            if isinstance(namestate, str):
                 transitions[namestate] = self.make_transition(namestate)
                 names.append(namestate)
             else:
