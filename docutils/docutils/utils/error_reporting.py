@@ -155,11 +155,11 @@ class ErrorString(SafeString):
     """
     def __str__(self):
         return '%s: %s' % (self.data.__class__.__name__,
-                            super(ErrorString, self).__str__())
+                            super().__str__())
 
     def __unicode__(self):
         return '%s: %s' % (self.data.__class__.__name__,
-                            super(ErrorString, self).__unicode__())
+                            super().__unicode__())
 
 
 class ErrorOutput:

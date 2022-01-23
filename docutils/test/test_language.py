@@ -32,7 +32,7 @@ class LanguageTestSuite(DocutilsTestSupport.CustomTestSuite):
     language_module_pattern = re.compile(r'^([a-z]{2,3}(_[a-z]{2,8})*)\.py$')
 
     def __init__(self, languages=None):
-        DocutilsTestSupport.CustomTestSuite.__init__(self)
+        super().__init__()
         if languages:
             self.languages = languages
         else:
