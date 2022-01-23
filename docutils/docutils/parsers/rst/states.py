@@ -126,7 +126,7 @@ class ParserError(ApplicationError): pass
 class MarkupMismatch(Exception): pass
 
 
-class Struct(object):
+class Struct:
 
     """Stores data attributes for dotted-attribute access."""
 
@@ -459,7 +459,7 @@ def build_regexp(definition, compile=True):
         return regexp
 
 
-class Inliner(object):
+class Inliner:
 
     """
     Parse inline markup; call the `parse()` method.
