@@ -1247,11 +1247,11 @@ class HTMLTranslator(nodes.NodeVisitor):
                                                     self.document.reporter)
                 elif converter == 'blahtexml':
                     math_code = tex2mathml_extern.blahtexml(math_code,
-                        inline=not(math_env),
-                        reporter=self.document.reporter)
+                                                            inline=not math_env,
+                                                            reporter=self.document.reporter)
                 elif not converter:
                     math_code = latex2mathml.tex2mathml(math_code,
-                                                        inline=not(math_env))
+                                                        inline=not math_env)
                 else:
                     self.document.reporter.error('option "%s" not supported '
                     'with math-output "MathML"')
