@@ -728,8 +728,7 @@ def educateBackticks(text, language='en'):
     smart = smartchars(language)
 
     text = re.sub(r"""``""", smart.opquote, text)
-    text = re.sub(r"""''""", smart.cpquote, text)
-    return text
+    return re.sub(r"""''""", smart.cpquote, text)
 
 
 def educateSingleBackticks(text, language='en'):
@@ -744,8 +743,7 @@ def educateSingleBackticks(text, language='en'):
     smart = smartchars(language)
 
     text = re.sub(r"""`""", smart.osquote, text)
-    text = re.sub(r"""'""", smart.csquote, text)
-    return text
+    return re.sub(r"""'""", smart.csquote, text)
 
 
 def educateDashes(text):
@@ -756,8 +754,7 @@ def educateDashes(text):
     """
 
     text = re.sub(r"""---""", smartchars.endash, text) # en  (yes, backwards)
-    text = re.sub(r"""--""", smartchars.emdash, text) # em (yes, backwards)
-    return text
+    return re.sub(r"""--""", smartchars.emdash, text) # em (yes, backwards)
 
 
 def educateDashesOldSchool(text):
@@ -769,8 +766,7 @@ def educateDashesOldSchool(text):
     """
 
     text = re.sub(r"""---""", smartchars.emdash, text)
-    text = re.sub(r"""--""", smartchars.endash, text)
-    return text
+    return re.sub(r"""--""", smartchars.endash, text)
 
 
 def educateDashesOldSchoolInverted(text):
@@ -788,8 +784,7 @@ def educateDashesOldSchoolInverted(text):
                 Swartz for the idea.)
     """
     text = re.sub(r"""---""", smartchars.endash, text)    # em
-    text = re.sub(r"""--""", smartchars.emdash, text)    # en
-    return text
+    return re.sub(r"""--""", smartchars.emdash, text)    # en
 
 
 
@@ -804,8 +799,7 @@ def educateEllipses(text):
     """
 
     text = re.sub(r"""\.\.\.""", smartchars.ellipsis, text)
-    text = re.sub(r"""\. \. \.""", smartchars.ellipsis, text)
-    return text
+    return re.sub(r"""\. \. \.""", smartchars.ellipsis, text)
 
 
 def stupefyEntities(text, language='en'):

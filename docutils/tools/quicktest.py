@@ -104,8 +104,7 @@ def escape(text):
     """
     text = text.replace('\\', '\\\\')   # escape backslashes
     text = text.replace('"""', '""\\"') # break up triple-double-quotes
-    text = text.replace(' \n', ' \\n\\\n') # protect trailing whitespace
-    return text
+    return text.replace(' \n', ' \\n\\\n') # protect trailing whitespace
 
 _outputFormatters = {
     'rawxml': _rawxml,

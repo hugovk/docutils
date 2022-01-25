@@ -1487,8 +1487,7 @@ class Body(RSTState):
     def parse_field_marker(self, match):
         """Extract & return field name from a field marker match."""
         field = match.group()[1:]        # strip off leading ':'
-        field = field[:field.rfind(':')] # strip off trailing ':' etc.
-        return field
+        return field[:field.rfind(':')] # strip off trailing ':' etc.
 
     def parse_field_body(self, indented, offset, node):
         self.nested_parse(indented, input_offset=offset, node=node)
