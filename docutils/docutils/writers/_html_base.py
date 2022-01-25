@@ -769,7 +769,7 @@ class HTMLTranslator(nodes.NodeVisitor):
     def visit_docinfo(self, node):
         self.context.append(len(self.body))
         classes = ['docinfo']
-        if (self.is_compactable(node)):
+        if self.is_compactable(node):
             classes.append('simple')
         self.body.append(self.starttag(node, 'dl', classes=classes))
 
@@ -885,7 +885,7 @@ class HTMLTranslator(nodes.NodeVisitor):
                 classes.pop(i)
                 break
         classes.append('field-list')
-        if (self.is_compactable(node)):
+        if self.is_compactable(node):
             classes.append('simple')
         self.body.append(self.starttag(node, 'dl', **atts))
 
@@ -1249,11 +1249,11 @@ class HTMLTranslator(nodes.NodeVisitor):
                                                     self.document.reporter)
                 elif converter == 'blahtexml':
                     math_code = tex2mathml_extern.blahtexml(math_code,
-                        inline=not(math_env),
-                        reporter=self.document.reporter)
+                                                            inline=not math_env,
+                                                            reporter=self.document.reporter)
                 elif not converter:
                     math_code = latex2mathml.tex2mathml(math_code,
-                                                        inline=not(math_env))
+                                                        inline=not math_env)
                 else:
                     self.document.reporter.error('option "%s" not supported '
                     'with math-output "MathML"')
