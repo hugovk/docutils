@@ -210,8 +210,8 @@ class CustomTestCase(StandardTestCase):
             print('\n%s\ninput:' % (self,), file=sys.stderr)
             print(input, file=sys.stderr)
             try:
-                comparison = ''.join(self.compare(expected.splitlines(1),
-                                                  output.splitlines(1)))
+                comparison = ''.join(self.compare(expected.splitlines(True),
+                                                  output.splitlines(True)))
                 print('-: expected\n+: output', file=sys.stderr)
                 print(comparison, file=sys.stderr)
             except AttributeError:      # expected or output not a string
