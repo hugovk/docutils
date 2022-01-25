@@ -85,7 +85,6 @@ roles = {
     'abreviatura': 'abbreviation',
     'ab': 'abbreviation',
     'acronimo': 'acronym',
-    'acronimo': 'acronym',
     'ac': 'acronym',
     'code (translation required)': 'code',
     'indice': 'index',

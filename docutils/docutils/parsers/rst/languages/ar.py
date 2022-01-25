@@ -20,8 +20,6 @@ directives = {
       'تنبيه': 'attention',
       'احتیاط': 'caution',
       'كود': 'code',
-      'كود': 'code',
-      'كود': 'code',
       'خطر': 'danger',
       'خطأ': 'error',
       'تلميح': 'hint',
