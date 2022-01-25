@@ -175,11 +175,10 @@ class LanguageTestCase(DocutilsTestSupport.CustomTestCase):
                 self.language)
             if not module:
                 raise ImportError
-            module.roles
         except ImportError:
             self.fail('No docutils.parsers.rst.languages.%s module.'
                       % self.language)
-        except AttributeError:
+        if not hasattr(module, "roles"):
             self.fail('No "roles" mapping in docutils.parsers.rst.languages.'
                       '%s module.' % self.language)
         failures = []
