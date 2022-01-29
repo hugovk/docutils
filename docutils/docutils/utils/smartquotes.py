@@ -318,8 +318,6 @@ Version History
 """
 
 import re
-import sys
-
 
 options = r"""
 Options
@@ -982,6 +980,8 @@ if __name__ == "__main__":
         unittest.TextTestRunner().run(suite)
 
     else:
+        import sys
+
         if args.alternative_quotes:
             if '-x-altquot' in args.language:
                 args.language = args.language.replace('-x-altquot', '')

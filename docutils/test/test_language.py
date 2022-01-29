@@ -20,8 +20,8 @@ import DocutilsTestSupport              # must be imported before docutils
 import docutils.languages
 import docutils.parsers.rst.languages
 from docutils.parsers.rst import directives, roles
-import docutils.utils
 import docutils.frontend
+import docutils.utils
 
 _settings = docutils.frontend.get_default_settings()
 _reporter = docutils.utils.new_reporter('', _settings)
