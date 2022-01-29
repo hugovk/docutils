@@ -57,7 +57,7 @@ warnings.warn('The `docutils.utils.error_reporting` module is deprecated '
 # Guess the locale's encoding.
 # If no valid guess can be made, locale_encoding is set to `None`:
 try:
-    import locale # module missing in Jython
+    import locale  # module missing in Jython
 except ImportError:
     locale_encoding = None
 else:
@@ -65,17 +65,17 @@ else:
         locale_encoding = locale.getlocale()[1] or locale.getdefaultlocale()[1]
         # locale.getpreferredencoding([do_setlocale=True|False])
         # has side-effects | might return a wrong guess.
-    except ValueError as error: # OS X may set UTF-8 without language code
+    except ValueError as error:  # OS X may set UTF-8 without language code
         # see http://bugs.python.org/issue18378
         # and https://sourceforge.net/p/docutils/bugs/298/
         if "unknown locale: UTF-8" in error.args:
             locale_encoding = "UTF-8"
         else:
             locale_encoding = None
-    except: # noqa  any other problems determining the locale -> use None
+    except:  # noqa  any other problems determining the locale -> use None
         locale_encoding = None
     try:
-        codecs.lookup(locale_encoding or '') # None -> ''
+        codecs.lookup(locale_encoding or '')  # None -> ''
     except LookupError:
         locale_encoding = None
 
@@ -129,9 +129,9 @@ class SafeString:
         try:
             u = unicode(self.data)
             if isinstance(self.data, EnvironmentError):
-                u = u.replace(": u'", ": '") # normalize filename quoting
+                u = u.replace(": u'", ": '")  # normalize filename quoting
             return u
-        except UnicodeError as error: # catch ..Encode.. and ..Decode.. errors
+        except UnicodeError as error:  # catch ..Encode.. and ..Decode.. errors
             if isinstance(self.data, EnvironmentError):
                 return "[Errno %s] %s: '%s'" % (
                     self.data.errno,
@@ -222,12 +222,12 @@ class ErrorOutput:
         except UnicodeEncodeError:
             self.stream.write(data.encode(self.encoding, self.encoding_errors))
         except TypeError:
-            if isinstance(data, unicode): # passed stream may expect bytes
+            if isinstance(data, unicode):  # passed stream may expect bytes
                 self.stream.write(data.encode(self.encoding,
                                               self.encoding_errors))
                 return
             if self.stream in (sys.stderr, sys.stdout):
-                self.stream.buffer.write(data) # write bytes to raw stream
+                self.stream.buffer.write(data)  # write bytes to raw stream
             else:
                 self.stream.write(unicode(data, self.encoding,
                                           self.decoding_errors))

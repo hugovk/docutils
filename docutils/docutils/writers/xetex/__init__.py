@@ -73,24 +73,24 @@ class Babel(latex2e.Babel):
     language_codes = latex2e.Babel.language_codes.copy()
     # Additionally supported or differently named languages:
     language_codes.update({
-        # code        Polyglossia-name  comment
-        'cop':        'coptic',
-        'de':         'german',         # new spelling (de_1996)
-        'de-1901':    'ogerman',        # old spelling
-        'dv':         'divehi',         # Maldivian
-        'dsb':        'lsorbian',
-        'el-polyton': 'polygreek',
-        'fa':         'farsi',
-        'grc':        'ancientgreek',
-        'ko':         'korean',
-        'hsb':        'usorbian',
-        'sh-Cyrl':    'serbian',        # Serbo-Croatian, Cyrillic script
-        'sh-Latn':    'croatian',       # Serbo-Croatian, Latin script
-        'sq':         'albanian',
-        'sr':         'serbian',        # Cyrillic script (sr-Cyrl)
-        'th':         'thai',
-        'vi':         'vietnamese',
-        # zh-Latn:    ???               # Chinese Pinyin
+        # code          Polyglossia-name  comment
+        'cop':          'coptic',
+        'de':           'german',         # new spelling (de_1996)
+        'de-1901':      'ogerman',        # old spelling
+        'dv':           'divehi',         # Maldivian
+        'dsb':          'lsorbian',
+        'el-polyton':   'polygreek',
+        'fa':           'farsi',
+        'grc':          'ancientgreek',
+        'ko':           'korean',
+        'hsb':          'usorbian',
+        'sh-Cyrl':      'serbian',        # Serbo-Croatian, Cyrillic script
+        'sh-Latn':      'croatian',       # Serbo-Croatian, Latin script
+        'sq':           'albanian',
+        'sr':           'serbian',        # Cyrillic script (sr-Cyrl)
+        'th':           'thai',
+        'vi':           'vietnamese',
+        # zh-Latn:      ???               # Chinese Pinyin
         })
     # normalize (downcase) keys
     language_codes = {k.lower(): v for k, v in language_codes.items()}

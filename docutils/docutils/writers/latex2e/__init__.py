@@ -657,7 +657,7 @@ class CharMaps:
         0x2001: '\\quad',                          # EM QUAD
         0x2002: '\\enskip',                        # EN SPACE
         0x2003: '\\quad',                          # EM SPACE
-        0x2008: '\\,',                             # PUNCTUATION SPACE   
+        0x2008: '\\,',                             # PUNCTUATION SPACE
         0x200b: '\\hspace{0pt}',                   # ZERO WIDTH SPACE
         0x202F: '\\,',                             # NARROW NO-BREAK SPACE
         # 0x02d8: '\\\u{ }',                       # BREVE
@@ -679,23 +679,23 @@ class CharMaps:
     }
     # Unicode chars that are recognized by LaTeX's utf8 encoding
     utf8_supported_unicode = {
-        0x00A0: '~',                   # NO-BREAK SPACE
-        0x00AB: '\\guillemotleft{}',   # LEFT-POINTING DOUBLE ANGLE QUOTATION
-        0x00bb: '\\guillemotright{}',  # RIGHT-POINTING DOUBLE ANGLE QUOTATION
-        0x200C: '\\textcompwordmark{}',  # ZERO WIDTH NON-JOINER
+        0x00A0: '~',                       # NO-BREAK SPACE
+        0x00AB: '\\guillemotleft{}',       # LEFT-POINTING DOUBLE ANGLE QUOTATION
+        0x00bb: '\\guillemotright{}',      # RIGHT-POINTING DOUBLE ANGLE QUOTATION
+        0x200C: '\\textcompwordmark{}',    # ZERO WIDTH NON-JOINER
         0x2013: '\\textendash{}',
         0x2014: '\\textemdash{}',
         0x2018: '\\textquoteleft{}',
         0x2019: '\\textquoteright{}',
-        0x201A: '\\quotesinglbase{}',    # SINGLE LOW-9 QUOTATION MARK
+        0x201A: '\\quotesinglbase{}',      # SINGLE LOW-9 QUOTATION MARK
         0x201C: '\\textquotedblleft{}',
         0x201D: '\\textquotedblright{}',
-        0x201E: '\\quotedblbase{}',      # DOUBLE LOW-9 QUOTATION MARK
-        0x2030: '\\textperthousand{}',   # PER MILLE SIGN
+        0x201E: '\\quotedblbase{}',        # DOUBLE LOW-9 QUOTATION MARK
+        0x2030: '\\textperthousand{}',     # PER MILLE SIGN
         0x2031: '\\textpertenthousand{}',  # PER TEN THOUSAND SIGN
         0x2039: '\\guilsinglleft{}',
         0x203A: '\\guilsinglright{}',
-        0x2423: '\\textvisiblespace{}',  # OPEN BOX
+        0x2423: '\\textvisiblespace{}',    # OPEN BOX
         0x2020: '\\dag{}',
         0x2021: '\\ddag{}',
         0x2026: '\\dots{}',

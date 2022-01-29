@@ -43,7 +43,7 @@ class SafeStringTests(unittest.TestCase):
     bs = b'\xc3\xbc'   # str(bs) returns repr(bs)
     us = u'\xfc'       # bytes(us) fails (requires encoding argument)
     be = Exception(bs)
-    ue = Exception(us) # bytes(ue) fails
+    ue = Exception(us)  # bytes(ue) fails
     # wrapped test data:
     wbs = SafeString(bs)
     wus = SafeString(us)
@@ -85,7 +85,7 @@ class SafeStringTests(unittest.TestCase):
 
 
 class ErrorStringTests(unittest.TestCase):
-    bs = b'\xc3\xbc' # unicode(bs) fails, str(bs) in Python 3 return repr()
+    bs = b'\xc3\xbc'  # unicode(bs) fails, str(bs) in Python 3 return repr()
     us = u'\xfc'     # bytes(us) fails; str(us) fails in Python 2
 
     def test_str(self):
@@ -131,7 +131,7 @@ class ErrorOutputTests(unittest.TestCase):
         self.assertEqual(e.stream, sys.stderr)
 
     def test_bbuf(self):
-        buf = BBuf() # buffer storing byte string
+        buf = BBuf()  # buffer storing byte string
         e = ErrorOutput(buf, encoding='ascii')
         # write byte-string as-is
         e.write(b'b\xfc')
@@ -149,11 +149,11 @@ class ErrorOutputTests(unittest.TestCase):
         self.assertEqual(buf.getvalue(), b'b\xfc u\\xfc e\\xfc u\xc3\xbc')
 
     def test_ubuf(self):
-        buf = UBuf() # buffer only accepting unicode string
+        buf = UBuf()  # buffer only accepting unicode string
         # decode of binary strings
         e = ErrorOutput(buf, encoding='ascii')
         e.write(b'b\xfc')
-        self.assertEqual(buf.getvalue(), u'b\ufffd') # REPLACEMENT CHARACTER
+        self.assertEqual(buf.getvalue(), u'b\ufffd')  # REPLACEMENT CHARACTER
         # write Unicode string and Exceptions with Unicode args
         e.write(u' u\xfc')
         self.assertEqual(buf.getvalue(), u'b\ufffd u\xfc')
@@ -177,7 +177,7 @@ class SafeStringTests_locale(unittest.TestCase):
     us = u'\xfc'
     try:
         open(b'\xc3\xbc')
-    except IOError as e: # in Python 3 the name for the exception instance
+    except IOError as e:  # in Python 3 the name for the exception instance
         bioe = e       # is local to the except clause
     try:
         open(u'\xfc')

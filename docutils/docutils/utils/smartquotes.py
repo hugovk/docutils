@@ -428,9 +428,9 @@ class smartchars:
         'eu':           '«»‹›',
         'fi':           '””’’',
         'fi-x-altquot': '»»››',
-        'fr':           ('« ', ' »', '“', '”'),  # full no-break space
+        'fr':           ('« ', ' »', '“', '”'),    # full no-break space
         'fr-x-altquot': ('« ', ' »', '“', '”'),  # narrow no-break space
-        'fr-ch':        '«»‹›',                  # http://typoguide.ch/
+        'fr-ch':        '«»‹›',                          # http://typoguide.ch/
         'fr-ch-x-altquot': ('« ',  ' »', '‹ ', ' ›'),  # narrow no-break space  # noqa:E501
         'gl':           '«»“”',
         'he':           '”“»«',  # Hebrew is RTL, test position:
@@ -489,7 +489,7 @@ class smartchars:
         'uk-x-altquot': '„“‚‘',
         'zh-cn':        '“”‘’',
         'zh-tw':        '「」『』',
-        }
+    }
 
     def __init__(self, language='en'):
         self.language = language
