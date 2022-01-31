@@ -9,17 +9,17 @@
 test get_reader_class
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_readers import DocutilsTestSupport
+import unittest
+
 from docutils.readers import get_reader_class
 
 
-class GetReaderClassTestCase(DocutilsTestSupport.StandardTestCase):
-
+class TestGetReaderClass(unittest.TestCase):
     def test_registered_reader(self):
-        get_reader_class('pep')
-        # raises ImportError on failure
+        try:
+            get_reader_class('pep')
+        except ImportError:
+            self.fail("get_reader_class('pep') raised an unexpected ImportError!")
 
     def test_bogus_reader(self):
         with self.assertRaises(ImportError):
@@ -27,10 +27,11 @@ class GetReaderClassTestCase(DocutilsTestSupport.StandardTestCase):
 
     def test_local_reader(self):
         # requires local-reader.py in test directory (testroot)
-        get_reader_class('local-reader')
-        # raises ImportError on failure
+        try:
+            get_reader_class('local-reader')
+        except ImportError:
+            self.fail("get_reader_class('local-reader') raised an unexpected ImportError!")
 
 
 if __name__ == '__main__':
-    import unittest
     unittest.main()

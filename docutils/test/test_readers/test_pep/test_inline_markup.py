@@ -8,20 +8,45 @@
 Tests for inline markup in PEPs (readers/pep.py).
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_readers import DocutilsTestSupport
+import unittest
+
+from docutils import frontend
+from docutils import utils
+from docutils.parsers import rst
+from docutils.readers import pep
 
 
-def suite():
-    s = DocutilsTestSupport.PEPParserTestSuite()
-    s.generateTests(totest)
-    return s
+class TestPEPReaderInlineMarkup(unittest.TestCase):
+    def test_standalone_references(self):
+        parser = rst.Parser(rfc2822=True, inliner=rst.states.Inliner())
+
+        settings = frontend.get_default_settings(rst.Parser, pep.Reader)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+
+        for casenum, (case_input, case_expected) in enumerate(standalone_references):
+            with self.subTest(id=f'standalone_references[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                self.assertEqual(document.pformat(), case_expected)
+
+    def test_miscellaneous(self):
+        parser = rst.Parser(rfc2822=True, inliner=rst.states.Inliner())
+
+        settings = frontend.get_default_settings(rst.Parser, pep.Reader)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+
+        for casenum, (case_input, case_expected) in enumerate(miscellaneous):
+            with self.subTest(id=f'miscellaneous[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                self.assertEqual(document.pformat(), case_expected)
 
 
-totest = {}
-
-totest['standalone_references'] = [
+standalone_references = [
 ["""\
 See PEP 287 (pep-0287.txt),
 and RFC 2822 (which obsoletes RFC822 and RFC-733).
@@ -91,7 +116,7 @@ PEP 287 (https://peps.python.org/pep-0287), RFC 2822.
 """],
 ]
 
-totest['miscellaneous'] = [
+miscellaneous = [
 ["""\
 For *completeness*, _`let's` ``test`` **other** forms_
 |of| `inline markup` [*]_.
@@ -136,5 +161,4 @@ For *completeness*, _`let's` ``test`` **other** forms_
 
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

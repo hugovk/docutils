@@ -8,20 +8,31 @@
 Tests for RFC-2822 headers in PEPs (readers/pep.py).
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_readers import DocutilsTestSupport
+import unittest
+
+from docutils import frontend
+from docutils import utils
+from docutils.parsers import rst
+from docutils.readers import pep
 
 
-def suite():
-    s = DocutilsTestSupport.PEPParserTestSuite()
-    s.generateTests(totest)
-    return s
+class TestPEPReaderRFC2822(unittest.TestCase):
+    def test_rfc2822(self):
+        parser = rst.Parser(rfc2822=True, inliner=rst.states.Inliner())
+
+        settings = frontend.get_default_settings(rst.Parser, pep.Reader)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+
+        for casenum, (case_input, case_expected) in enumerate(rfc2822):
+            with self.subTest(id=f'rfc2822[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                self.assertEqual(document.pformat(), case_expected)
 
 
-totest = {}
-
-totest['rfc2822'] = [
+rfc2822 = [
 ["""\
 Author: Me
 Version: 1
@@ -289,5 +300,4 @@ Version:
 ]
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()
