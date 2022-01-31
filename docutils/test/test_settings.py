@@ -7,32 +7,33 @@
 Tests of runtime settings.
 """
 
-import sys
 import os
-import difflib
 import pprint
-import warnings
 import unittest
+import warnings
 
-from docutils import frontend, utils
-from docutils.writers import pep_html, html5_polyglot
+from docutils import frontend
+from docutils import utils
 from docutils.parsers import rst
+from docutils.writers import html5_polyglot
+from docutils.writers import pep_html
 
 
-def fixpath(path):
-    return os.path.abspath(os.path.join(*(path.split('/'))))
+
+def get_path(file_name):
+    return os.path.abspath(os.path.join('data', file_name))
 
 
 class ConfigFileTests(unittest.TestCase):
 
-    config_files = {'old': fixpath('data/config_old.txt'),
-                    'one': fixpath('data/config_1.txt'),
-                    'two': fixpath('data/config_2.txt'),
-                    'list': fixpath('data/config_list.txt'),
-                    'list2': fixpath('data/config_list_2.txt'),
-                    'error': fixpath('data/config_encoding.txt'),
-                    'error2': fixpath('data/config_encoding_2.txt'),
-                    'syntax_error': fixpath('data/config_syntax_error.txt'),
+    config_files = {'old': get_path('config_old.txt'),
+                    'one': get_path('config_1.txt'),
+                    'two': get_path('config_2.txt'),
+                    'list': get_path('config_list.txt'),
+                    'list2': get_path('config_list_2.txt'),
+                    'error': get_path('config_encoding.txt'),
+                    'error2': get_path('config_encoding_2.txt'),
+                    'syntax_error': get_path('config_syntax_error.txt'),
                     }
 
     # expected settings after parsing the equally named config_file:
@@ -40,23 +41,23 @@ class ConfigFileTests(unittest.TestCase):
         'old': {'datestamp': '%Y-%m-%d %H:%M UTC',
                 'generator': True,
                 'no_random': True,
-                'python_home': 'http://www.python.org',
+                'python_home': 'https://www.python.org',
                 'source_link': True,
                 'stylesheet': None,
                 'stylesheet_path': ['stylesheets/pep.css'],
-                'template': fixpath('data/pep-html-template'),
+                'template': get_path('pep-html-template'),
                 },
         'one': {'datestamp': '%Y-%m-%d %H:%M UTC',
                 'generator': True,
                 'no_random': True,
-                'python_home': 'http://www.python.org',
+                'python_home': 'https://www.python.org',
                 'raw_enabled': False,
                 'record_dependencies': utils.DependencyList(),
                 'source_link': True,
                 'stylesheet': None,
                 'stylesheet_path': ['stylesheets/pep.css'],
                 'tab_width': 8,
-                'template': fixpath('data/pep-html-template'),
+                'template': get_path('pep-html-template'),
                 'trim_footnote_reference_space': True,
                 'output_encoding': 'ascii',
                 'output_encoding_error_handler': 'xmlcharrefreplace',
@@ -104,18 +105,16 @@ class ConfigFileTests(unittest.TestCase):
         'error2': {'error_encoding': 'latin1'},
         }
 
-    compare = difflib.Differ().compare
-    """Comparison method shared by all tests."""
-
     def setUp(self):
-        warnings.filterwarnings('ignore',
-                                category=frontend.ConfigDeprecationWarning)
-        warnings.filterwarnings('ignore', category=DeprecationWarning)
-        self.option_parser = frontend.OptionParser(
-            components=(pep_html.Writer, rst.Parser), read_config_files=None)
+        with warnings.catch_warnings():
+            warnings.filterwarnings('ignore', category=DeprecationWarning)
+            self.option_parser = frontend.OptionParser(
+                components=(pep_html.Writer, rst.Parser), read_config_files=None)
 
     def files_settings(self, *names):
-        settings = frontend.Values()
+        with warnings.catch_warnings():
+            warnings.filterwarnings('ignore', category=DeprecationWarning)
+            settings = frontend.Values()
         for name in names:
             cfs = self.option_parser.get_config_file_settings(
                                                     self.config_files[name])
@@ -134,17 +133,7 @@ class ConfigFileTests(unittest.TestCase):
         if 'record_dependencies' not in expected:
             # Delete it if we don't want to test it.
             del result['record_dependencies']
-        result = pprint.pformat(result) + '\n'
-        expected = pprint.pformat(expected) + '\n'
-        try:
-            self.assertEqual(result, expected)
-        except AssertionError:
-            print('\n%s\n' % (self,), file=sys.stderr)
-            print('-: expected\n+: result', file=sys.stderr)
-            print(''.join(self.compare(
-                      expected.splitlines(True),
-                      result.splitlines(True))), file=sys.stderr)
-            raise
+        self.assertEqual(pprint.pformat(result), pprint.pformat(expected))
 
     def test_nofiles(self):
         self.compare_output(self.files_settings(),
@@ -153,7 +142,8 @@ class ConfigFileTests(unittest.TestCase):
     def test_old(self):
         with self.assertWarnsRegex(FutureWarning,
                                    r'The "\[option\]" section is deprecated.'):
-            self.files_settings('old')
+            self.compare_output(self.files_settings('old'),
+                                self.expected_settings('old'))
 
     def test_syntax_error(self):
         with self.assertRaisesRegex(
@@ -172,16 +162,21 @@ class ConfigFileTests(unittest.TestCase):
 
     def test_multiple_with_html5_writer(self):
         # initialize option parser with different component set
-        self.option_parser = frontend.OptionParser(
-            components=(html5_polyglot.Writer, rst.Parser),
-            read_config_files=None)
+        with warnings.catch_warnings():
+            warnings.filterwarnings('ignore', category=DeprecationWarning)
+            self.option_parser = frontend.OptionParser(
+                components=(html5_polyglot.Writer, rst.Parser),
+                read_config_files=None)
         # generator setting not changed by "config_2.txt":
         self.compare_output(self.files_settings('one', 'two'),
                             self.expected_settings('two (html5)'))
 
     def test_old_and_new(self):
-        self.compare_output(self.files_settings('old', 'two'),
-                            self.expected_settings('old', 'two'))
+        with warnings.catch_warnings():
+            warnings.filterwarnings('ignore',
+                                    category=frontend.ConfigDeprecationWarning)
+            self.compare_output(self.files_settings('old', 'two'),
+                                self.expected_settings('old', 'two'))
 
     def test_list(self):
         self.compare_output(self.files_settings('list'),
@@ -251,8 +246,10 @@ class HelperFunctionsTests(unittest.TestCase):
     keys = ['foo', 'ham']
 
     def setUp(self):
-        self.option_parser = frontend.OptionParser(
-            components=(rst.Parser,), read_config_files=None)
+        with warnings.catch_warnings():
+            warnings.filterwarnings('ignore', category=DeprecationWarning)
+            self.option_parser = frontend.OptionParser(
+                components=(rst.Parser,), read_config_files=None)
 
     def test_make_paths_absolute(self):
         pathdict = self.pathdict.copy()
@@ -329,8 +326,8 @@ class HelperFunctionsTests(unittest.TestCase):
         tests = (
                     ('', './'),
                     (None, './'),
-                    ('http://example.org', 'http://example.org/'),
-                    ('http://example.org/', 'http://example.org/'),
+                    ('https://example.org', 'https://example.org/'),
+                    ('https://example.org/', 'https://example.org/'),
                 )
         for t in tests:
             self.assertEqual(
@@ -354,7 +351,6 @@ class HelperFunctionsTests(unittest.TestCase):
         with self.assertWarnsRegex(DeprecationWarning,
                                    'Set attributes via configuration '):
             reporter.set_conditions('foo', 1, 4)  # trigger warning
-
 
 
 if __name__ == '__main__':

@@ -8,13 +8,13 @@
 Test module for statemachine.py.
 """
 
-import unittest
-import sys
 import re
-from DocutilsTestSupport import statemachine
+import sys
+import unittest
 
+from docutils import statemachine
 
-debug = False
+DEBUG = False
 testtext = statemachine.string2lines("""\
 First paragraph.
 
@@ -57,62 +57,61 @@ class MockState(statemachine.StateWS):
         self.levelholder[0] += 1
         self.level = self.levelholder[0]
         if self.debug:
-            print('StateMachine%s' % self.level, file=sys.stderr)
-        return [], ['StateMachine%s' % self.level]
+            print(f'StateMachine{self.level}', file=sys.stderr)
+        return [], [f'StateMachine{self.level}']
 
     def blank(self, match, context, next_state):
-        result = ['blank%s' % self.level]
+        result = [f'blank{self.level}']
         if self.debug:
-            print('blank%s' % self.level, file=sys.stderr)
+            print(f'blank{self.level}', file=sys.stderr)
         if context and context[-1] and context[-1][-2:] == '::':
             result.extend(self.literalblock())
         return [], None, result
 
     def indent(self, match, context, next_state):
         if self.debug:
-            print('indent%s' % self.level, file=sys.stderr)
+            print(f'indent{self.level}', file=sys.stderr)
         context, next_state, result = statemachine.StateWS.indent(
               self, match, context, next_state)
         return context, next_state, ['indent%s' % self.level] + result
 
     def known_indent(self, match, context, next_state):
         if self.debug:
-            print('known_indent%s' % self.level, file=sys.stderr)
+            print(f'known_indent{self.level}', file=sys.stderr)
         context, next_state, result = statemachine.StateWS.known_indent(
               self, match, context, next_state)
         return context, next_state, ['known_indent%s' % self.level] + result
 
     def bullet(self, match, context, next_state):
         if self.debug:
-            print('bullet%s' % self.level, file=sys.stderr)
+            print(f'bullet{self.level}', file=sys.stderr)
         context, next_state, result \
             = self.known_indent(match, context, next_state)
-        return [], next_state, ['bullet%s' % self.level] + result
+        return [], next_state, [f'bullet{self.level}'] + result
 
     def text(self, match, context, next_state):
         if self.debug:
-            print('text%s' % self.level, file=sys.stderr)
+            print(f'text{self.level}', file=sys.stderr)
         return [match.string], next_state, ['text%s' % self.level]
 
     def literalblock(self):
         indented, indent, offset, good = self.state_machine.get_indented()
         if self.debug:
-            print('literalblock%s(%s)' % (self.level, indent), file=sys.stderr)
+            print(f'literalblock{self.level}({indent})', file=sys.stderr)
         return ['literalblock%s(%s)' % (self.level, indent)]
 
     def eof(self, context):
         self.levelholder[0] -= 1
         if self.debug:
-            print('finished%s' % self.level, file=sys.stderr)
-        return ['finished%s' % self.level]
+            print(f'finished{self.level}', file=sys.stderr)
+        return [f'finished{self.level}']
 
 
 class EmptySMTests(unittest.TestCase):
-
     def setUp(self):
         self.sm = statemachine.StateMachine(
               state_classes=[], initial_state='State')
-        self.sm.debug = debug
+        self.sm.debug = DEBUG
 
     def test_add_state(self):
         self.sm.add_state(statemachine.State)
@@ -127,7 +126,8 @@ class EmptySMTests(unittest.TestCase):
         self.assertEqual(len(self.sm.states), 2)
 
     def test_get_state(self):
-        self.assertRaises(statemachine.UnknownStateError, self.sm.get_state)
+        with self.assertRaises(statemachine.UnknownStateError):
+            self.sm.get_state()
         self.sm.add_states((statemachine.State, statemachine.StateWS))
         with self.assertRaises(statemachine.UnknownStateError):
             self.sm.get_state('unknownState')
@@ -143,15 +143,15 @@ class EmptySMWSTests(EmptySMTests):
     def setUp(self):
         self.sm = statemachine.StateMachineWS(
               state_classes=[], initial_state='State')
-        self.sm.debug = debug
+        self.sm.debug = DEBUG
 
 
 class SMWSTests(unittest.TestCase):
 
     def setUp(self):
         self.sm = statemachine.StateMachineWS([MockState], 'MockState',
-                                              debug=debug)
-        self.sm.debug = debug
+                                              debug=DEBUG)
+        self.sm.debug = DEBUG
         self.sm.states['MockState'].levelholder[0] = 0
 
     def tearDown(self):
@@ -217,7 +217,7 @@ class EmptyClass:
 class EmptyStateTests(unittest.TestCase):
 
     def setUp(self):
-        self.state = statemachine.State(EmptyClass(), debug=debug)
+        self.state = statemachine.State(EmptyClass(), debug=DEBUG)
         self.state.patterns = {'nop': 'dummy',
                                'nop2': 'dummy',
                                'nop3': 'dummy',
@@ -274,7 +274,6 @@ class EmptyStateTests(unittest.TestCase):
 
 
 class MiscTests(unittest.TestCase):
-
     s2l_string = "hello\tthere\thow are\tyou?\n\tI'm fine\tthanks.\n"
     s2l_expected = ['hello   there   how are you?',
                     "        I'm fine        thanks."]

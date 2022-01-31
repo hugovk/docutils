@@ -25,7 +25,7 @@ datestamp: %Y-%m-%d %H:%M UTC
 
 template: pep-html-template
 stylesheet-path: stylesheets/pep.css
-python-home: http://www.python.org
+python-home: https://www.python.org
 no-random: yes
 
 

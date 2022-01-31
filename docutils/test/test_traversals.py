@@ -11,10 +11,12 @@ Test module for traversals.
 import unittest
 
 import docutils
-from docutils import core, nodes, writers
+from docutils import core
+from docutils import io
+from docutils import nodes
+from docutils import writers
 
-
-stop_traversal_input = '''
+stop_traversal_input = """
 ==================
    Train Travel
 ==================
@@ -28,31 +30,30 @@ KaZoom! Train crashes.
 
 - Told ya!!!  Get off the train next time.
 
-'''
+"""
+
 
 
 class AttentiveVisitor(nodes.SparseNodeVisitor):
-
     def visit_attention(self, node):
         raise nodes.StopTraversal
 
     def visit_bullet_list(self, node):
-        raise RuntimeError("It's too late for attention, "
-                           "more discipline is needed!.")
+        raise RuntimeError(
+            "It's too late for attention, more discipline is needed!.")
+
 
 
 class AttentiveWriter(writers.Writer):
-
     def translate(self):
-        self.visitor = visitor = AttentiveVisitor(self.document)
+        visitor = AttentiveVisitor(self.document)
 
         # Test both kinds of traversals.
         self.document.walkabout(visitor)
         self.document.walk(visitor)
 
 
-class StopTraversalTests(unittest.TestCase, docutils.SettingsSpec):
-
+class StopTraversalTests(unittest.TestCase):
     """
     Test interrupting the visitor during traversal.  In this test we stop it
     when we reach an attention node.
@@ -63,13 +64,16 @@ class StopTraversalTests(unittest.TestCase, docutils.SettingsSpec):
             source=stop_traversal_input,
             reader_name='standalone',
             parser_name='restructuredtext',
-            settings_spec=self)
-        self.assertTrue(isinstance(doctree, nodes.document))
+            settings_spec=docutils.SettingsSpec())
+        self.assertIsInstance(doctree, nodes.document)
 
-        core.publish_parts(
-            reader_name='doctree', source_class=docutils.io.DocTreeInput,
-            source=doctree, source_path='test',
-            writer=AttentiveWriter())
+        try:
+            core.publish_parts(
+                reader_name='doctree', source_class=io.DocTreeInput,
+                source=doctree, source_path='test',
+                writer=AttentiveWriter())
+        except RuntimeError:
+            self.fail("Unexpected RuntimeError!")
 
 
 if __name__ == '__main__':

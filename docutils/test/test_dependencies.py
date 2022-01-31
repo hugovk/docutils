@@ -10,11 +10,18 @@ Test module for the --record-dependencies option.
 
 import os.path
 import unittest
-import DocutilsTestSupport              # must be imported before docutils
+
 import docutils.core
-import docutils.utils
 import docutils.io
 from docutils.parsers.rst.directives.images import PIL
+import docutils.utils
+
+
+class DevNull:
+    """Output sink."""
+    def write(self, string): pass
+    def close(self): pass
+
 
 # docutils.utils.DependencyList records POSIX paths,
 # i.e. "/" as a path separator even on Windows (not os.path.join).
@@ -30,25 +37,23 @@ latex_settings_overwrites = {'legacy_column_widths': False,
                              'use_latex_citations': True}
 
 
+def get_record(**settings):
+    record_file = 'record.txt'
+    recorder = docutils.utils.DependencyList(record_file)
+    # (Re) create the record file by running a conversion:
+    settings.setdefault('source_path',
+                        os.path.join('data', 'dependencies.txt'))
+    settings.setdefault('settings_overrides', {})
+    settings['settings_overrides'].update(_disable_config=True,
+                                          record_dependencies=recorder)
+    docutils.core.publish_file(destination=DevNull(), **settings)
+    recorder.close()
+    # Read the record file:
+    record = docutils.io.FileInput(source_path=record_file, encoding='utf8')
+    return record.read().splitlines()
+
+
 class RecordDependenciesTests(unittest.TestCase):
-
-    def get_record(self, **settings):
-        recordfile = 'record.txt'
-        recorder = docutils.utils.DependencyList(recordfile)
-        # (Re) create the record file by running a conversion:
-        settings.setdefault('source_path',
-                            os.path.join('data', 'dependencies.txt'))
-        settings.setdefault('settings_overrides', {})
-        settings['settings_overrides'].update(_disable_config=True,
-                                              record_dependencies=recorder)
-        docutils.core.publish_file(destination=DocutilsTestSupport.DevNull(),
-                                   **settings)
-        recorder.close()
-        # Read the record file:
-        record = docutils.io.FileInput(source_path=recordfile,
-                                       encoding='utf8')
-        return record.read().splitlines()
-
     def test_dependencies_xml(self):
         # Note: currently, raw input files are read (and hence recorded) while
         # parsing even if not used in the chosen output format.
@@ -56,23 +61,19 @@ class RecordDependenciesTests(unittest.TestCase):
         keys = ['include', 'raw']
         if PIL:
             keys += ['figure-image']
-        expected = [paths[key] for key in keys]
-        record = sorted(self.get_record(writer_name='xml'))
-        # the order of the files is arbitrary
-        expected.sort()
+        expected = sorted(paths[key] for key in keys)
+        record = sorted(get_record(writer_name='xml'))
         self.assertEqual(record, expected)
 
     def test_dependencies_html(self):
         keys = ['include', 'raw']
         if PIL:
             keys += ['figure-image', 'scaled-image']
-        expected = [paths[key] for key in keys]
+        expected = sorted(paths[key] for key in keys)
         # stylesheets are tested separately in test_stylesheet_dependencies():
         so = {'stylesheet_path': None, 'stylesheet': None}
-        record = sorted(self.get_record(writer_name='html',
+        record = sorted(get_record(writer_name='html',
                                         settings_overrides=so))
-        # the order of the files is arbitrary
-        expected.sort()
         self.assertEqual(record, expected)
 
     def test_dependencies_latex(self):
@@ -83,17 +84,14 @@ class RecordDependenciesTests(unittest.TestCase):
         keys = ['include', 'raw']
         if PIL:
             keys += ['figure-image']
-        expected = [paths[key] for key in keys]
-        record = sorted(self.get_record(
-                            writer_name='latex',
-                            settings_overrides=latex_settings_overwrites))
-        # the order of the files is arbitrary
-        expected.sort()
+        expected = sorted(paths[key] for key in keys)
+        record = sorted(get_record(writer_name='latex',
+                                   settings_overrides=latex_settings_overwrites))
         self.assertEqual(record, expected)
 
     def test_csv_dependencies(self):
         csvsource = os.path.join('data', 'csv_dep.txt')
-        self.assertEqual(self.get_record(source_path=csvsource),
+        self.assertEqual(get_record(source_path=csvsource),
                          ['data/csv_data.txt'])
 
     def test_stylesheet_dependencies(self):
@@ -102,21 +100,24 @@ class RecordDependenciesTests(unittest.TestCase):
               'stylesheet': None}
         so.update(latex_settings_overwrites)
         so['embed_stylesheet'] = False
-        record = self.get_record(writer_name='html', settings_overrides=so)
+        record = get_record(writer_name='html', settings_overrides=so)
         self.assertTrue(stylesheet not in record,
-                        '%r should not be in %r' % (stylesheet, record))
-        record = self.get_record(writer_name='latex', settings_overrides=so)
+                        f'{stylesheet!r} should not be in {record!r}')
+        record = get_record(writer_name='latex', settings_overrides=so)
         self.assertTrue(stylesheet not in record,
-                        '%r should not be in %r' % (stylesheet, record))
+                        f'{stylesheet!r} should not be in {record!r}')
 
         so['embed_stylesheet'] = True
-        record = self.get_record(writer_name='html', settings_overrides=so)
+        record = get_record(writer_name='html', settings_overrides=so)
         self.assertTrue(stylesheet in record,
-                        '%r should be in %r' % (stylesheet, record))
+                        f'{stylesheet!r} should be in {record!r}')
         so['embed_stylesheet'] = True
-        record = self.get_record(writer_name='latex', settings_overrides=so)
+        record = get_record(writer_name='latex', settings_overrides=so)
         self.assertTrue(stylesheet in record,
-                        '%r should be in %r' % (stylesheet, record))
+                        f'{stylesheet!r} should be in {record!r}')
+
+    def tearDown(self) -> None:
+        os.unlink("record.txt")
 
 
 if __name__ == '__main__':

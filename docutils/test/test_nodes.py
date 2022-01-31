@@ -9,13 +9,13 @@ Test module for nodes.py.
 
 import unittest
 
-from DocutilsTestSupport import nodes, utils
+from docutils import nodes
+from docutils import utils
 
 debug = False
 
 
 class TextTests(unittest.TestCase):
-
     def setUp(self):
         self.text = nodes.Text('Line 1.\nLine 2.')
         self.unicode_text = nodes.Text('Möhren')
@@ -38,12 +38,12 @@ class TextTests(unittest.TestCase):
         self.assertEqual(str(self.unicode_text), 'M\xf6hren')
 
     def test_astext(self):
-        self.assertTrue(isinstance(self.text.astext(), str))
+        self.assertIsInstance(self.text.astext(), str)
         self.assertEqual(self.text.astext(), 'Line 1.\nLine 2.')
         self.assertEqual(self.unicode_text.astext(), 'Möhren')
 
     def test_pformat(self):
-        self.assertTrue(isinstance(self.text.pformat(), str))
+        self.assertIsInstance(self.text.pformat(), str)
         self.assertEqual(self.text.pformat(), 'Line 1.\nLine 2.\n')
 
     def test_strip(self):
@@ -55,7 +55,8 @@ class TextTests(unittest.TestCase):
 
     def test_asciirestriction(self):
         # no bytes at all allowed
-        self.assertRaises(TypeError, nodes.Text, b'hol')
+        with self.assertRaises(TypeError):
+            nodes.Text(b'hol')
 
     def test_longrepr(self):
         self.assertEqual(repr(self.longtext), r"<#text: 'Mary had a "
@@ -71,7 +72,6 @@ class TextTests(unittest.TestCase):
 
 
 class ElementTests(unittest.TestCase):
-
     def test_empty(self):
         element = nodes.Element()
         self.assertEqual(repr(element), '<Element: >')
@@ -95,14 +95,14 @@ class ElementTests(unittest.TestCase):
         dom.unlink()
         element['names'] = ['nobody', 'имя', 'näs']
         self.assertEqual(repr(element), '<Element "nobody; имя; näs": >')
-        self.assertTrue(isinstance(repr(element), str))
+        self.assertIsInstance(repr(element), str)
 
     def test_withtext(self):
         element = nodes.Element('text\nmore', nodes.Text('text\nmore'))
         uelement = nodes.Element('grün', nodes.Text('grün'))
         self.assertEqual(repr(element), r"<Element: <#text: 'text\nmore'>>")
         self.assertEqual(repr(uelement), "<Element: <#text: 'grün'>>")
-        self.assertTrue(isinstance(repr(uelement), str))
+        self.assertIsInstance(repr(uelement), str)
         self.assertEqual(str(element), '<Element>text\nmore</Element>')
         self.assertEqual(str(uelement), '<Element>gr\xfcn</Element>')
         dom = element.asdom()
@@ -129,11 +129,13 @@ class ElementTests(unittest.TestCase):
     def test_normal_attributes(self):
         element = nodes.Element()
         self.assertTrue('foo' not in element)
-        self.assertRaises(KeyError, element.__getitem__, 'foo')
+        with self.assertRaises(KeyError):
+            element['foo']
         element['foo'] = 'sometext'
         self.assertEqual(element['foo'], 'sometext')
         del element['foo']
-        self.assertRaises(KeyError, element.__getitem__, 'foo')
+        with self.assertRaises(KeyError):
+            element['foo']
 
     def test_default_attributes(self):
         element = nodes.Element()
@@ -316,14 +318,13 @@ class ElementTests(unittest.TestCase):
 
 
 class MiscTests(unittest.TestCase):
-
     def test_node_class_names(self):
         node_class_names = []
         for x in dir(nodes):
             c = getattr(nodes, x)
             if (isinstance(c, type)
-                and issubclass(c, nodes.Node)
-                and len(c.__bases__) > 1):
+                    and issubclass(c, nodes.Node)
+                    and len(c.__bases__) > 1):
                 node_class_names.append(x)
         node_class_names.sort()
         nodes.node_class_names.sort()
@@ -501,8 +502,8 @@ class MiscTests(unittest.TestCase):
     def test_make_id(self):
         failures = []
         tests = self.ids + self.ids_unicode_all
-        for input, expect in tests:
-            output = nodes.make_id(input)
+        for input_, expect in tests:
+            output = nodes.make_id(input_)
             if expect != output:
                 failures.append("'%s' != '%s'" % (expect, output))
         if failures:
@@ -607,7 +608,6 @@ class MiscTests(unittest.TestCase):
 
 
 class TreeCopyVisitorTests(unittest.TestCase):
-
     def setUp(self):
         document = utils.new_document('test data')
         document += nodes.paragraph('', 'Paragraph 1.')
@@ -636,7 +636,6 @@ class TreeCopyVisitorTests(unittest.TestCase):
 
 
 class SetIdTests(unittest.TestCase):
-
     def setUp(self):
         self.document = utils.new_document('test')
         self.elements = [nodes.Element(names=['test']),
@@ -716,14 +715,13 @@ class NodeVisitorTests(unittest.TestCase):
 
 
 class MiscFunctionTests(unittest.TestCase):
-
     names = [('a', 'a'), ('A', 'a'), ('A a A', 'a a a'),
              ('A  a  A  a', 'a a a a'),
              ('  AaA\n\r\naAa\tAaA\t\t', 'aaa aaa aaa')]
 
     def test_normalize_name(self):
-        for input, output in self.names:
-            normed = nodes.fully_normalize_name(input)
+        for input_, output in self.names:
+            normed = nodes.fully_normalize_name(input_)
             self.assertEqual(normed, output)
 
 

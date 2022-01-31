@@ -7,8 +7,9 @@
 Tests of document tree pickling.
 """
 
-import unittest
 import pickle
+import unittest
+
 from docutils import core
 
 

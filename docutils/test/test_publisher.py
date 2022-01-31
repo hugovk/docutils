@@ -9,11 +9,12 @@ Test the `Publisher` facade and the ``publish_*`` convenience functions.
 """
 
 import pickle
+import unittest
 
-import DocutilsTestSupport              # must be imported before docutils
 import docutils
-from docutils import core, nodes, io
-
+from docutils import core
+from docutils import io
+from docutils import nodes
 
 test_document = """\
 Test Document
@@ -21,7 +22,7 @@ Test Document
 
 This is a test document with a broken reference: nonexistent_
 """
-pseudoxml_output = b"""\
+pseudoxml_output = """\
 <document ids="test-document" names="test\\ document" source="<string>" title="Test Document">
     <title>
         Test Document
@@ -36,8 +37,8 @@ pseudoxml_output = b"""\
             <paragraph>
                 Unknown target name: "nonexistent".
 """
-exposed_pseudoxml_output = b"""\
-<document ids="test-document" internal:refnames="{'nonexistent': [<reference: <#text: 'nonexistent'>>]}" names="test\\ document" source="<string>" title="Test Document">
+exposed_pseudoxml_output = ("""\
+<document ids="test-document" internal:refnames="{\'nonexistent\': [<reference: <#text: \'nonexistent\'>>]}" names="test\\ document" source="<string>" title="Test Document">
     <title>
         Test Document
     <paragraph>
@@ -50,17 +51,16 @@ exposed_pseudoxml_output = b"""\
         <system_message backrefs="problematic-1" ids="system-message-1" level="3" line="4" source="<string>" type="ERROR">
             <paragraph>
                 Unknown target name: "nonexistent".
-"""
+""")
 
 
-class PublisherTests(DocutilsTestSupport.StandardTestCase):
-
+class TestPublisher(unittest.TestCase):
     def test_input_error_handling(self):
         # core.publish_cmdline(argv=['nonexisting/path'])
         # exits with a short message, if `traceback` is False,
 
         # pass IOErrors to calling application if `traceback` is True
-        with self.assertRaises(IOError):
+        with self.assertRaises(io.InputError):
             core.publish_cmdline(argv=['nonexisting/path'],
                                  settings_overrides={'traceback': True})
 
@@ -71,11 +71,10 @@ class PublisherTests(DocutilsTestSupport.StandardTestCase):
                                  settings_overrides={'traceback': True})
 
 
-class PublishDoctreeTestCase(DocutilsTestSupport.StandardTestCase, docutils.SettingsSpec):
-
+class TestPublishDoctree(unittest.TestCase, docutils.SettingsSpec):
     settings_default_overrides = {
         '_disable_config': True,
-        'warning_stream': io.NullOutput()}
+        'warning_stream': False}
 
     def test_publish_doctree(self):
         # Test `publish_doctree` and `publish_from_doctree`.
@@ -87,12 +86,12 @@ class PublishDoctreeTestCase(DocutilsTestSupport.StandardTestCase, docutils.Sett
             settings_overrides={'expose_internals':
                                 ['refnames', 'do_not_expose'],
                                 'report_level': 5})
-        self.assertTrue(isinstance(doctree, nodes.document))
+        self.assertIsInstance(doctree, nodes.document)
 
         # Confirm that transforms have been applied (in this case, the
         # DocTitle transform):
-        self.assertTrue(isinstance(doctree[0], nodes.title))
-        self.assertTrue(isinstance(doctree[1], nodes.paragraph))
+        self.assertIsInstance(doctree[0], nodes.title)
+        self.assertIsInstance(doctree[1], nodes.paragraph)
         # Confirm that the Messages transform has not yet been applied:
         self.assertEqual(len(doctree), 2)
 
@@ -114,7 +113,7 @@ class PublishDoctreeTestCase(DocutilsTestSupport.StandardTestCase, docutils.Sett
             reader_name='doctree', source_class=io.DocTreeInput,
             source=doctree, source_path='test', writer_name='html',
             settings_spec=self)
-        self.assertTrue(isinstance(parts, dict))
+        self.assertIsInstance(parts, dict)
 
     def test_publish_pickle(self):
         # Test publishing a document tree with pickling and unpickling.
@@ -125,7 +124,7 @@ class PublishDoctreeTestCase(DocutilsTestSupport.StandardTestCase, docutils.Sett
             reader_name='standalone',
             parser_name='restructuredtext',
             settings_spec=self)
-        self.assertTrue(isinstance(doctree, nodes.document))
+        self.assertIsInstance(doctree, nodes.document)
 
         # Pickle the document.  Note: if this fails, some unpickleable
         # reference has been added somewhere within the document tree.
@@ -140,12 +139,12 @@ class PublishDoctreeTestCase(DocutilsTestSupport.StandardTestCase, docutils.Sett
         doctree.transformer = None
 
         doctree_pickled = pickle.dumps(doctree)
-        self.assertTrue(isinstance(doctree_pickled, bytes))
+        self.assertIsInstance(doctree_pickled, bytes)
         del doctree
 
         # Unpickle the document.
         doctree_zombie = pickle.loads(doctree_pickled)
-        self.assertTrue(isinstance(doctree_zombie, nodes.document))
+        self.assertIsInstance(doctree_zombie, nodes.document)
 
         # Write out the document:
         output = core.publish_from_doctree(
@@ -155,5 +154,4 @@ class PublishDoctreeTestCase(DocutilsTestSupport.StandardTestCase, docutils.Sett
 
 
 if __name__ == '__main__':
-    import unittest
     unittest.main()

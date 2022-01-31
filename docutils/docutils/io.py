@@ -218,16 +218,10 @@ class Output(TransformSpec):
         raise NotImplementedError
 
     def encode(self, data):
-        if self.encoding and self.encoding.lower() == 'unicode':
-            assert isinstance(data, str), (
-                'the encoding given is "unicode" but the output is not '
-                'a Unicode string')
-            return data
-        if not isinstance(data, str):
-            # Non-unicode (e.g. bytes) output.
-            return data
-        else:
+        if (self.encoding is not None
+                and self.encoding.lower() not in {'unicode', "utf-8", "utf8"}):
             return data.encode(self.encoding, self.error_handler)
+        return data
 
 
 class ErrorOutput:

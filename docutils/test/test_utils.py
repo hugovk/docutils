@@ -8,17 +8,17 @@
 Test module for utils/__init__.py.
 """
 
+from io import StringIO
 import os
 import sys
 import unittest
 
-from DocutilsTestSupport import docutils, utils, nodes
-
-from io import StringIO
+import docutils
+from docutils import nodes
+from docutils import utils
 
 
 class ReporterTests(unittest.TestCase):
-
     stream = StringIO()
     reporter = utils.Reporter('test data', 2, 4, stream, 1)
 
@@ -67,8 +67,7 @@ class ReporterTests(unittest.TestCase):
 
     def test_level4(self):
         with self.assertRaises(utils.SystemMessage):
-            self.reporter.system_message(
-                4, 'a severe error, raises an exception')
+            self.reporter.system_message(4, 'a severe error, raises an exception')
         self.assertEqual(self.stream.getvalue(), 'test data:: (SEVERE/4) '
                          'a severe error, raises an exception\n')
 
@@ -81,9 +80,6 @@ class ReporterTests(unittest.TestCase):
 """)
 
     def test_unicode_message_from_exception(self):
-        """Workaround for Python < 2.6 bug:
-        unicode(<exception instance>) uses __str__
-        and hence fails with unicode message"""
         try:
             raise Exception('mesidʒ')
         except Exception as err:
@@ -175,16 +171,16 @@ class ExtensionOptionTests(unittest.TestCase):
                   'empty': (lambda x: x)}
 
     def test_assemble_option_dict(self):
-        input = utils.extract_name_value('a=1 bbb=2.0 cdef=hol%s' % chr(224))
+        input_ = utils.extract_name_value(f'a=1 bbb=2.0 cdef=hol{chr(224)}')
         self.assertEqual(
-              utils.assemble_option_dict(input, self.optionspec),
-              {'a': 1, 'bbb': 2.0, 'cdef': ('hol%s' % chr(224))})
-        input = utils.extract_name_value('a=1 b=2.0 c=hol%s' % chr(224))
+              utils.assemble_option_dict(input_, self.optionspec),
+              {'a': 1, 'bbb': 2.0, 'cdef': f'hol{chr(224)}'})
+        input_ = utils.extract_name_value(f'a=1 b=2.0 c=hol{chr(224)}')
         with self.assertRaises(KeyError):
-            utils.assemble_option_dict(input, self.optionspec)
-        input = utils.extract_name_value('a=1 bbb=two cdef=hol%s' % chr(224))
+            utils.assemble_option_dict(input_, self.optionspec)
+        input_ = utils.extract_name_value(f'a=1 bbb=two cdef=hol{chr(224)}')
         with self.assertRaises(ValueError):
-            utils.assemble_option_dict(input, self.optionspec)
+            utils.assemble_option_dict(input_, self.optionspec)
 
     def test_extract_extension_options(self):
         field_list = nodes.field_list()
@@ -283,10 +279,11 @@ class HelperFunctionTests(unittest.TestCase):
             self.assertEqual(bytespath, 'späm')
         self.assertEqual(unipath, 'späm')
         self.assertEqual(defaultpath, '')
-        self.assertTrue(isinstance(bytespath, str))
-        self.assertTrue(isinstance(unipath, str))
-        self.assertTrue(isinstance(defaultpath, str))
-        self.assertRaises(ValueError, utils.decode_path, 13)
+        self.assertIsInstance(bytespath, str)
+        self.assertIsInstance(unipath, str)
+        self.assertIsInstance(defaultpath, str)
+        with self.assertRaises(ValueError):
+            utils.decode_path(13)
 
     def test_relative_path(self):
         # Build and return a path to `target`, relative to `source`:

@@ -9,7 +9,8 @@ Test module for the ViewList class from statemachine.py.
 """
 
 import unittest
-from DocutilsTestSupport import statemachine
+
+from docutils import statemachine
 
 
 class ViewListTests(unittest.TestCase):
@@ -37,7 +38,7 @@ class ViewListTests(unittest.TestCase):
         self.assertEqual(self.b, self.b_list)
         self.assertEqual(self.c, self.c_list)
         self.assertEqual(len(self.a), len(self.a_list))
-        self.assertTrue('d' in self.a)  # __contains__
+        self.assertIn('d', self.a)  # __contains__
         self.assertEqual([value for value in self.a], self.a_list)
         # get and set values
         self.assertEqual(self.a[2], self.a_list[2])
@@ -100,7 +101,7 @@ class ViewListTests(unittest.TestCase):
         a_list.insert(2, 'Q')
         a_list[4:4] = self.b_list
         a = self.a[:]
-        self.assertTrue(isinstance(a, statemachine.ViewList))
+        self.assertIsInstance(a, statemachine.ViewList)
         a.insert(2, 'Q', 'runtime')
         a.insert(4, self.b)
         self.assertEqual(a, a_list)

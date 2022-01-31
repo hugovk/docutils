@@ -8,7 +8,8 @@
 Test module for io.py.
 """
 
-from io import StringIO, BytesIO
+from io import BytesIO
+from io import StringIO
 import sys
 import unittest
 
@@ -70,9 +71,9 @@ class HelperTests(unittest.TestCase):
 
         self.assertEqual('Exception: spam',
                          io.error_string(Exception('spam')))
-        self.assertEqual('IndexError: ' + str(bs),
+        self.assertEqual(f'IndexError: {bs}',
                          io.error_string(IndexError(bs)))
-        self.assertEqual('ImportError: %s' % us,
+        self.assertEqual(f'ImportError: {us}',
                          io.error_string(ImportError(us)))
 
 
@@ -83,6 +84,7 @@ class InputTests(unittest.TestCase):
                                encoding='utf8')
         # Assert BOMs are gone.
         self.assertEqual(input.read(), ' foo  bar')
+
         # With unicode input:
         input = io.StringInput(source='\ufeff foo \ufeff bar')
         # Assert BOMs are still there.
@@ -94,33 +96,39 @@ class InputTests(unittest.TestCase):
 data
 blah
 """)
-        data = input.read()  # noqa: F841
+        input.read()  # noqa: F841
         self.assertEqual(input.successful_encoding, 'ascii')
+
         input = io.StringInput(source=b"""\
 #! python
 # -*- coding: ascii -*-
 print("hello world")
 """)
-        data = input.read()  # noqa: F841
+        input.read()  # noqa: F841
         self.assertEqual(input.successful_encoding, 'ascii')
+
         input = io.StringInput(source=b"""\
 #! python
 # extraneous comment; prevents coding slug from being read
 # -*- coding: ascii -*-
 print("hello world")
 """)
+        input.read()
         self.assertNotEqual(input.successful_encoding, 'ascii')
 
     def test_bom_detection(self):
         source = '\ufeffdata\nblah\n'
+
         input = io.StringInput(source=source.encode('utf-16-be'))
-        data = input.read()
+        input.read()
         self.assertEqual(input.successful_encoding, 'utf-16-be')
+
         input = io.StringInput(source=source.encode('utf-16-le'))
-        data = input.read()
+        input.read()
         self.assertEqual(input.successful_encoding, 'utf-16-le')
+
         input = io.StringInput(source=source.encode('utf-8'))
-        data = input.read()  # noqa: F841
+        input.read()  # noqa: F841
         self.assertEqual(input.successful_encoding, 'utf-8')
 
     def test_readlines(self):
@@ -140,8 +148,8 @@ print("hello world")
         data = input.read()
         if input.successful_encoding not in probed_encodings:
             raise AssertionError(
-                "guessed encoding '%s' differs from probed encodings %r"
-                % (input.successful_encoding, probed_encodings))
+                f"guessed encoding '{input.successful_encoding}' "
+                f"differs from probed encodings {probed_encodings!r}")
         if input.successful_encoding == 'latin-1':
             self.assertEqual(data, 'Gr\xfc\xdfe\n')
 
@@ -151,7 +159,8 @@ print("hello world")
         # keep unicode instances as-is
         self.assertEqual(uniinput.decode('ja'), 'ja')
         # raise AssertionError if data is not an unicode string
-        self.assertRaises(AssertionError, uniinput.decode, b'ja')
+        with self.assertRaises(AssertionError):
+            uniinput.decode(b'ja')
 
 
 class OutputTests(unittest.TestCase):
@@ -211,7 +220,8 @@ class OutputTests(unittest.TestCase):
         del self.mock_stdout.buffer
         fo = io.FileOutput(destination=self.mock_stdout,
                            encoding='latin1', autoclose=False)
-        self.assertRaises(ValueError, fo.write, self.udata)
+        with self.assertRaises(ValueError):
+            fo.write(self.udata)
 
 
 class ErrorOutputTests(unittest.TestCase):

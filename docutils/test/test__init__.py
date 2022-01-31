@@ -9,13 +9,13 @@ Test module for the docutils' __init__.py.
 """
 
 import unittest
+
 import docutils
-import docutils.utils
 from docutils import VersionInfo
+import docutils.utils
 
 
 class ApplicationErrorTests(unittest.TestCase):
-
     def test_message(self):
         err = docutils.ApplicationError('the message')
         self.assertEqual(str(err), 'the message')
@@ -51,14 +51,13 @@ class VersionInfoTests(unittest.TestCase):
 
     def test__version_info__(self):
         """Ensure that the current __version_info__ is valid."""
-        releaselevels = ('alpha', 'beta', 'candidate', 'final')
+        releaselevels = {'alpha', 'beta', 'candidate', 'final'}
 
         self.assertEqual(len(docutils.__version_info__), 6)
         self.assertEqual(type(docutils.__version_info__.major), int)
         self.assertEqual(type(docutils.__version_info__.minor), int)
         self.assertEqual(type(docutils.__version_info__.micro), int)
-        self.assertTrue(
-            docutils.__version_info__.releaselevel in releaselevels)
+        self.assertIn(docutils.__version_info__.releaselevel, releaselevels)
         self.assertEqual(type(docutils.__version_info__.serial), int)
         self.assertEqual(type(docutils.__version_info__.release), bool)
 

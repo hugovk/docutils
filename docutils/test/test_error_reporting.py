@@ -23,18 +23,23 @@ instances like, e.g., ::
 
 unless the minimal required Python version has this problem fixed.
 """
+import warnings
 
-from io import StringIO, BytesIO
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        module='.*error_reporting')
+
+from io import BytesIO
+from io import StringIO
 import os
 import sys
 import unittest
-import warnings
 
-from docutils import frontend, utils
-import docutils.parsers.rst
-warnings.filterwarnings('ignore', category=DeprecationWarning,
-                        module='.*error_reporting')
-from docutils.utils.error_reporting import SafeString, ErrorString, ErrorOutput  # noqa: E402, E501
+from docutils import frontend
+from docutils.parsers import rst
+from docutils import utils
+from docutils.utils.error_reporting import ErrorOutput
+from docutils.utils.error_reporting import ErrorString
+from docutils.utils.error_reporting import SafeString
 
 
 class SafeStringTests(unittest.TestCase):
@@ -234,34 +239,39 @@ class ErrorReportingTests(unittest.TestCase):
     ensure that the correct exception is thrown.
     """
 
-    # These tests fail with a 'problematic locale',
-    # Docutils revision < 7035, and Python 2:
-
-    parser = docutils.parsers.rst.Parser()
-    """Parser shared by all ParserTestCases."""
-
-    settings = frontend.get_default_settings(parser)
-    settings.report_level = 1
-    settings.halt_level = 1
-    settings.warning_stream = ''
-    document = utils.new_document('test data', settings)
-
     def test_include(self):
-        source = '.. include:: bogus.txt'
-        self.assertRaises(utils.SystemMessage,
-                          self.parser.parse, source, self.document)
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 1
+        settings.halt_level = 1
+        settings.warning_stream = False
+        document = utils.new_document('test data', settings)
+
+        with self.assertRaises(utils.SystemMessage):
+            rst.Parser().parse('.. include:: bogus.txt', document)
 
     def test_raw_file(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 1
+        settings.halt_level = 1
+        settings.warning_stream = False
+        document = utils.new_document('test data', settings)
+
         source = ('.. raw:: html\n'
                   '   :file: bogus.html\n')
-        self.assertRaises(utils.SystemMessage,
-                          self.parser.parse, source, self.document)
+        with self.assertRaises(utils.SystemMessage):
+            rst.Parser().parse(source, document)
 
     def test_csv_table(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 1
+        settings.halt_level = 1
+        settings.warning_stream = False
+        document = utils.new_document('test data', settings)
+
         source = ('.. csv-table:: external file\n'
                   '   :file: bogus.csv\n')
-        self.assertRaises(utils.SystemMessage,
-                          self.parser.parse, source, self.document)
+        with self.assertRaises(utils.SystemMessage):
+            rst.Parser().parse(source, document)
 
 
 if __name__ == '__main__':

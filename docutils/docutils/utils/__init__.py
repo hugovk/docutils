@@ -158,10 +158,6 @@ class Reporter:
 
         Raise an exception or generate a warning if appropriate.
         """
-        # `message` can be a `str` or `Exception` instance.
-        if isinstance(message, Exception):
-            message = str(message)
-
         attributes = kwargs.copy()
         if 'base_node' in kwargs:
             source, line = get_source_line(kwargs['base_node'])
@@ -185,7 +181,7 @@ class Reporter:
         # assert attributes['source'] is not None, (message, kwargs)
         attributes.setdefault('source', self.source)
 
-        msg = nodes.system_message(message, level=level,
+        msg = nodes.system_message(str(message), level=level,
                                    type=self.levels[level],
                                    *children, **attributes)
         if self.stream and (level >= self.report_level
