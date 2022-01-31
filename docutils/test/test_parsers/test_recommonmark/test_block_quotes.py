@@ -14,20 +14,33 @@ Test for block quotes in CommonMark parsers
 Cf. the `CommonMark Specification <https://spec.commonmark.org/>`__
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_parsers import DocutilsTestSupport
+import unittest
+
+from docutils import frontend
+from docutils import utils
+import docutils.parsers
+
+md_parser_class = docutils.parsers.get_parser_class('recommonmark')
 
 
-def suite():
-    s = DocutilsTestSupport.RecommonmarkParserTestSuite()
-    s.generateTests(totest)
-    return s
+
+class TestRecommonmarkBlockQuotes(unittest.TestCase):
+    def test_block_quotes(self):
+        parser = md_parser_class()
+        settings = frontend.get_default_settings(md_parser_class)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+
+        for casenum, (case_input, case_expected) in enumerate(block_quotes):
+            with self.subTest(id=f'block_quotes[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
 
 
-totest = {}
-
-totest['block_quotes'] = [
+block_quotes = [
 ["""\
 > block quote
 > line 2
@@ -105,5 +118,4 @@ Here is a paragraph.
 
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

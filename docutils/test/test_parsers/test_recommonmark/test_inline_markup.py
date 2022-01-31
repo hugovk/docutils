@@ -13,20 +13,130 @@ Tests for inline markup in CommonMark parsers
 Cf. the `CommonMark Specification <https://spec.commonmark.org/>`__
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_parsers import DocutilsTestSupport
+import unittest
+
+from docutils import frontend
+from docutils import utils
+import docutils.parsers
+
+md_parser_class = docutils.parsers.get_parser_class('recommonmark')
 
 
-def suite():
-    s = DocutilsTestSupport.RecommonmarkParserTestSuite()
-    s.generateTests(totest)
-    return s
+class TestRecommonmarkInlineMarkup(unittest.TestCase):
+    def test_emphasis(self):
+        parser = md_parser_class()
+        settings = frontend.get_default_settings(md_parser_class)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+
+        for casenum, (case_input, case_expected) in enumerate(emphasis):
+            with self.subTest(id=f'emphasis[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
+
+    def test_strong(self):
+        parser = md_parser_class()
+        settings = frontend.get_default_settings(md_parser_class)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+
+        for casenum, (case_input, case_expected) in enumerate(strong):
+            with self.subTest(id=f'strong[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
+
+    def test_literal(self):
+        parser = md_parser_class()
+        settings = frontend.get_default_settings(md_parser_class)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+
+        for casenum, (case_input, case_expected) in enumerate(literal):
+            with self.subTest(id=f'literal[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
+
+    def test_references(self):
+        parser = md_parser_class()
+        settings = frontend.get_default_settings(md_parser_class)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+
+        for casenum, (case_input, case_expected) in enumerate(references):
+            with self.subTest(id=f'references[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
+
+    def test_appended_uris(self):
+        parser = md_parser_class()
+        settings = frontend.get_default_settings(md_parser_class)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+
+        for casenum, (case_input, case_expected) in enumerate(appended_uris):
+            with self.subTest(id=f'appended_uris[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
+
+    def test_standalone_hyperlink(self):
+        parser = md_parser_class()
+        settings = frontend.get_default_settings(md_parser_class)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+
+        for casenum, (case_input, case_expected) in enumerate(standalone_hyperlink):
+            with self.subTest(id=f'standalone_hyperlink[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
+
+    def test_raw_html(self):
+        parser = md_parser_class()
+        settings = frontend.get_default_settings(md_parser_class)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+
+        for casenum, (case_input, case_expected) in enumerate(raw_html):
+            with self.subTest(id=f'raw_html[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
+
+    def test_markup_recognition_rules(self):
+        parser = md_parser_class()
+        settings = frontend.get_default_settings(md_parser_class)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+
+        for casenum, (case_input, case_expected) in enumerate(markup_recognition_rules):
+            with self.subTest(id=f'markup_recognition_rules[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
 
 
-totest = {}
-
-totest['emphasis'] = [
+emphasis = [
 ["""\
 *emphasis*
 _also emphasis_
@@ -108,7 +218,7 @@ Emphasized double asterisk: *\*\**
 """],
 ]
 
-totest['strong'] = [
+strong = [
 ["""\
 **strong**
 __also strong__
@@ -148,7 +258,7 @@ Strong double asterisk: **\\*\\***
 """],
 ]
 
-totest['literal'] = [
+literal = [
 ["""\
 Inline `literals` are called `code spans` in CommonMark.
 """,
@@ -312,7 +422,7 @@ no blank ``after closing``still ends a literal.
 """],
 ]
 
-totest['references'] = [
+references = [
 ["""\
 [ref]
 
@@ -378,7 +488,7 @@ across lines]
 """],
 ]
 
-totest['appended_URIs'] = [
+appended_uris = [
 ["""\
 [anonymous reference](http://example.com)
 """,
@@ -434,7 +544,7 @@ Relative URIs' reference text can't be omitted:
 """],
 ]
 
-totest['standalone hyperlink'] = [
+standalone_hyperlink = [
 ["""\
 CommonMark calls standalone hyperlinks
 like <http://example.com> "autolinks".
@@ -450,7 +560,7 @@ like <http://example.com> "autolinks".
 """],
 ]
 
-totest['raw HTML'] = [
+raw_html = [
 ["""\
 foo <a href="uri"> bar
 """,
@@ -499,7 +609,7 @@ Hard line breaks are not supported by Docutils.
 """],
 ]
 
-totest['markup recognition rules'] = [
+markup_recognition_rules = [
 [r"""
 Character-level m*a***r**`k`_u_p
 works except for underline.
@@ -521,5 +631,4 @@ works except for underline.
 
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

@@ -8,22 +8,33 @@
 Tests for transitions (`thematic breaks`).
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_parsers import DocutilsTestSupport
+import unittest
+
+from docutils import frontend
+from docutils import utils
+import docutils.parsers
+
+md_parser_class = docutils.parsers.get_parser_class('recommonmark')
 
 
-def suite():
-    s = DocutilsTestSupport.RecommonmarkParserTestSuite()
-    s.generateTests(totest)
-    return s
+
+class TestRecommonmarkTransitions(unittest.TestCase):
+    def test_transitions(self):
+        parser = md_parser_class()
+        settings = frontend.get_default_settings(md_parser_class)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+
+        for casenum, (case_input, case_expected) in enumerate(transitions):
+            with self.subTest(id=f'transitions[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
 
 
-totest = {}
-
-# See DocutilsTestSupport.RecommonmarkParserTestSuite.generateTests for a
-# description of the 'totest' data structure.
-totest['transitions'] = [
+transitions = [
 ["""\
 Test transition markers.
 
@@ -314,5 +325,4 @@ A paragraph.
 
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

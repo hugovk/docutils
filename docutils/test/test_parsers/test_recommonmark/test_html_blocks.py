@@ -14,20 +14,32 @@ Tests for HTML blocks in CommonMark parsers
 Cf. the `CommonMark Specification <https://spec.commonmark.org/>`__
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_parsers import DocutilsTestSupport
+import unittest
+
+from docutils import frontend
+from docutils import utils
+import docutils.parsers
+
+md_parser_class = docutils.parsers.get_parser_class('recommonmark')
 
 
-def suite():
-    s = DocutilsTestSupport.RecommonmarkParserTestSuite()
-    s.generateTests(totest)
-    return s
+class TestRecommonmarkHTMLBlocks(unittest.TestCase):
+    def test_html_blocks(self):
+        parser = md_parser_class()
+        settings = frontend.get_default_settings(md_parser_class)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+
+        for casenum, (case_input, case_expected) in enumerate(html_blocks):
+            with self.subTest(id=f'html_blocks[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
 
 
-totest = {}
-
-totest['html_blocks'] = [
+html_blocks = [
 ["""\
 A paragraph:
 
@@ -90,5 +102,4 @@ A paragraph:
 
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

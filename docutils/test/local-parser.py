@@ -4,7 +4,7 @@
 # Copyright: This module is put into the public domain.
 
 """
-mini-reader to test get_reader_class with local reader
+mini-parser to test get_parser_class with local parser
 """
 
 from docutils import parsers

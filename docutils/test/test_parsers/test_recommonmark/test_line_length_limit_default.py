@@ -15,20 +15,32 @@ Tests for inline markup in docutils/parsers/rst/states.py.
 Interpreted text tests are in a separate module, test_interpreted.py.
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_parsers import DocutilsTestSupport
+import unittest
+
+from docutils import frontend
+from docutils import utils
+import docutils.parsers
+
+md_parser_class = docutils.parsers.get_parser_class('recommonmark')
 
 
-def suite():
-    s = DocutilsTestSupport.RecommonmarkParserTestSuite()
-    s.generateTests(totest)
-    return s
+class TestRecommonmarkLineLengthLimitDefault(unittest.TestCase):
+    def test_default(self):
+        parser = md_parser_class()
+        settings = frontend.get_default_settings(md_parser_class)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+
+        for casenum, (case_input, case_expected) in enumerate(default):
+            with self.subTest(id=f'default[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
 
 
-totest = {}
-
-totest['default'] = [
+default = [
 ["""\
 within the limit
 %s
@@ -53,5 +65,4 @@ above the limit
 
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

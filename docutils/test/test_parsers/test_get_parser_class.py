@@ -9,17 +9,17 @@
 test get_parser_class
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_parsers import DocutilsTestSupport
+import unittest
+
 from docutils.parsers import get_parser_class
 
 
-class GetParserClassTestCase(DocutilsTestSupport.StandardTestCase):
-
+class TestGetParserClass(unittest.TestCase):
     def test_registered_parser(self):
-        get_parser_class('rst')
-        # raises ImportError on failure
+        try:
+            get_parser_class('rst')
+        except ImportError:
+            self.fail("get_parser_class('rst') raised an unexpected ImportError!")
 
     def test_bogus_parser(self):
         with self.assertRaises(ImportError):
@@ -27,10 +27,20 @@ class GetParserClassTestCase(DocutilsTestSupport.StandardTestCase):
 
     def test_local_parser(self):
         # requires local-parser.py in test directory (testroot)
-        get_parser_class('local-parser')
-        # raises ImportError on failure
+        try:
+            get_parser_class('local-parser')
+        except ImportError:
+            self.fail("get_parser_class('local-parser') raised an unexpected ImportError!")
 
+    def test_missing_parser_message(self):
+        try:
+            get_parser_class('recommonmark')
+        except ImportError as err:
+            self.assertIn(
+                'requires the package https://pypi.org/project/recommonmark',
+                str(err))
+        else:
+            raise unittest.SkipTest('Optional "recommonmark" module found.')
 
 if __name__ == '__main__':
-    import unittest
     unittest.main()
