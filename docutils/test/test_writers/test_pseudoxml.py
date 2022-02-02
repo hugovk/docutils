@@ -8,28 +8,36 @@
 Test for pseudo-XML writer.
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_writers import DocutilsTestSupport
+import unittest
+
+import docutils
+import docutils.core
 
 
-def suite():
-    # Settings dictionary must not be empty for later changes to work.
-    settings = {'expose_internals': []}  # default
-    s = DocutilsTestSupport.PublishTestSuite('pseudoxml',
-                                             suite_settings=settings)
-    s.generateTests(totest)
-    settings['detailed'] = True
-    s.generateTests(totest_detailed)
-    return s
+class TestPseudoXML(unittest.TestCase, docutils.SettingsSpec):
+    """
+    Test case for publish.
+    """
+
+    settings_default_overrides = {'_disable_config': True,
+                                  'strict_visitor': True}
+
+    def test_publish(self):
+        output = docutils.core.publish_string(
+            source=basic_input, reader_name="standalone",
+            parser_name="restructuredtext", writer_name='pseudoxml',
+            settings_spec=self, settings_overrides={})
+        self.assertEqual(output, basic_output)
+
+    def test_publish_detailed(self):
+        output = docutils.core.publish_string(
+            source=basic_input, reader_name="standalone",
+            parser_name="restructuredtext", writer_name='pseudoxml',
+            settings_spec=self, settings_overrides={'detailed': True})
+        self.assertEqual(output, basic_output_detailed)
 
 
-totest = {}
-totest_detailed = {}
-
-totest['basic'] = [
-# input
-[r"""
+basic_input = r"""
 This is a paragraph.
 
 ----------
@@ -41,9 +49,9 @@ A Section
 ---------
 
 Foo.
-""",
-# output
-"""\
+"""
+
+basic_output = """\
 <document source="<string>">
     <paragraph>
         This is a paragraph.
@@ -56,14 +64,9 @@ Foo.
             A Section
         <paragraph>
             Foo.
-"""]
-]
+"""
 
-totest_detailed['basic'] = [
-# input
-[totest['basic'][0][0],
-# output
-"""\
+basic_output_detailed = """\
 <document source="<string>">
     <paragraph>
         <#text>
@@ -80,9 +83,7 @@ totest_detailed['basic'] = [
         <paragraph>
             <#text>
                 'Foo.'
-"""]
-]
+"""
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

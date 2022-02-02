@@ -9,33 +9,41 @@ Tests for the HTML writer.
 """
 
 import os
-import platform
+from pathlib import Path
+import unittest
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_writers import DocutilsTestSupport
+import docutils
+import docutils.core
 
 
-def suite():
-    settings = {'template': os.path.join(DocutilsTestSupport.testroot,
-                                         'data', 'full-template.txt'),
+class TestHTML4Template(unittest.TestCase, docutils.SettingsSpec):
+
+    """
+    Test case for publish.
+    """
+
+    settings_default_overrides = {"_disable_config": True,
+                                  "strict_visitor": True}
+
+    def test_html4_css1_template(self):
+        output = docutils.core.publish_string(
+            source=case_input,
+            reader_name="standalone",
+            parser_name="restructuredtext",
+            writer_name="html4",
+            settings_spec=self,
+            settings_overrides={
+                'template': os.path.abspath(os.path.join(__file__, "..", "..",
+                                                         'data', 'full-template.txt')),
                 'stylesheet_path': '/test.css',
-                'embed_stylesheet': 0}
-    s = DocutilsTestSupport.PublishTestSuite('html', suite_settings=settings)
-    s.generateTests(totest)
-    return s
+                'embed_stylesheet': False,
+            })
+        self.assertEqual(output, case_expected)
 
 
-if platform.system() == "Windows":
-    drive_prefix = os.path.splitdrive(os.getcwd())[0]
-else:
-    drive_prefix = ""
+drive_prefix = Path.cwd().drive
 
-
-totest = {}
-
-totest['template'] = [
-["""\
+case_input = """\
 ================
  Document Title
 ================
@@ -51,8 +59,9 @@ Section
 =======
 
 Some text.
-""",
-r'''head_prefix = """\
+"""
+
+case_expected = fr'''head_prefix = """\
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -61,13 +70,13 @@ r'''head_prefix = """\
 
 head = """\
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils %(version)s: https://docutils.sourceforge.io/" />
+<meta name="generator" content="Docutils {docutils.__version__}: https://docutils.sourceforge.io/" />
 <title>Document Title</title>
 <meta name="author" content="Me" />"""
 
 
 stylesheet = """\
-<link rel="stylesheet" href="%(drive)s/test.css" type="text/css" />"""
+<link rel="stylesheet" href="{drive_prefix}/test.css" type="text/css" />"""
 
 
 body_prefix = """\
@@ -118,13 +127,13 @@ head_prefix = """\
 
 head = """\
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils %(version)s: https://docutils.sourceforge.io/" />
+<meta name="generator" content="Docutils {docutils.__version__}: https://docutils.sourceforge.io/" />
 <title>Document Title</title>
 <meta name="author" content="Me" />"""
 
 
 stylesheet = """\
-<link rel="stylesheet" href="%(drive)s/test.css" type="text/css" />"""
+<link rel="stylesheet" href="{drive_prefix}/test.css" type="text/css" />"""
 
 
 body_prefix = """\
@@ -187,7 +196,7 @@ footer text
 
 meta = """\
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils %(version)s: https://docutils.sourceforge.io/" />
+<meta name="generator" content="Docutils {docutils.__version__}: https://docutils.sourceforge.io/" />
 <meta name="author" content="Me" />"""
 
 
@@ -199,13 +208,13 @@ fragment = """\
 
 
 html_prolog = """\
-<?xml version="1.0" encoding="%%s" ?>
+<?xml version="1.0" encoding="%s" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">"""
 
 
 html_head = """\
-<meta http-equiv="Content-Type" content="text/html; charset=%%s" />
-<meta name="generator" content="Docutils %(version)s: https://docutils.sourceforge.io/" />
+<meta http-equiv="Content-Type" content="text/html; charset=%s" />
+<meta name="generator" content="Docutils {docutils.__version__}: https://docutils.sourceforge.io/" />
 <title>Document Title</title>
 <meta name="author" content="Me" />"""
 
@@ -239,11 +248,7 @@ html_body = """\
 <hr class="footer" />
 footer text
 </div>"""
-''' % {'version': DocutilsTestSupport.docutils.__version__,
-       'drive': drive_prefix,
-    }]
-]
+'''
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

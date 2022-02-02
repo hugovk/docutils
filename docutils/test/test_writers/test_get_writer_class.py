@@ -9,17 +9,18 @@
 test get_writer_class
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_writers import DocutilsTestSupport
+import unittest
+
 from docutils.writers import get_writer_class
 
 
-class GetWriterClassTestCase(DocutilsTestSupport.StandardTestCase):
+class TestGetWriterClass(unittest.TestCase):
 
     def test_registered_writer(self):
-        get_writer_class('manpage')
-        # raises ImportError on failure
+        try:
+            get_writer_class('manpage')
+        except ImportError:
+            self.fail("get_writer_class('manpage') raised an unexpected ImportError!")
 
     def test_bogus_writer(self):
         with self.assertRaises(ImportError):
@@ -27,10 +28,11 @@ class GetWriterClassTestCase(DocutilsTestSupport.StandardTestCase):
 
     def test_local_writer(self):
         # requires local-writer.py in test directory (testroot)
-        get_writer_class('local-writer')
-        # raises ImportError on failure
+        try:
+            get_writer_class('local-writer')
+        except ImportError:
+            self.fail("get_writer_class('local-writer') raised an unexpected ImportError!")
 
 
 if __name__ == '__main__':
-    import unittest
     unittest.main()

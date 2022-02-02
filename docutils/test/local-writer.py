@@ -6,7 +6,8 @@
 mini-writer to test get_writer_class with local writer
 """
 
-from docutils import nodes, writers
+from docutils import nodes
+from docutils import writers
 
 
 class Writer(writers.Writer):

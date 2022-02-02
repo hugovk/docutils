@@ -8,37 +8,47 @@
 Tests for the S5/HTML writer.
 """
 
-import os
-import platform
+import unittest
+from pathlib import Path
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_writers import DocutilsTestSupport
-
-
-def suite():
-    settings = {'stylesheet_path': '/test.css',
-                'embed_stylesheet': 0}
-    s = DocutilsTestSupport.PublishTestSuite('s5', suite_settings=settings)
-    s.generateTests(totest_1)
-    settings['hidden_controls'] = 0
-    settings['view_mode'] = 'outline'
-    s.generateTests(totest_2)
-    return s
+import docutils
+import docutils.core
 
 
-interpolations = {
-        'version': DocutilsTestSupport.docutils.__version__,
-        'drive': '', }
+class TestS5(unittest.TestCase, docutils.SettingsSpec):
+    """
+    Test case for publish.
+    """
 
-if platform.system() == 'Windows':
-    interpolations['drive'] = os.path.splitdrive(os.getcwd())[0]
+    settings_default_overrides = {"_disable_config": True,
+                                  "strict_visitor": True}
 
-totest_1 = {}
-totest_2 = {}
+    def test_basics(self):
+        case_input, case_expected = basics
+        overrides = {'stylesheet_path': '/test.css',
+                     'embed_stylesheet': False}
+        output = docutils.core.publish_string(
+            source=case_input, reader_name='standalone',
+            parser_name='restructuredtext', writer_name='s5',
+            settings_spec=self, settings_overrides=overrides)
+        self.assertEqual(output, case_expected)
 
-totest_1['basics'] = [
-["""\
+    def test_settings(self):
+        case_input, case_expected = settings
+        overrides = {'stylesheet_path': '/test.css',
+                     'embed_stylesheet': False,
+                     'hidden_controls': False,
+                     'view_mode': 'outline'}
+        output = docutils.core.publish_string(
+            source=case_input, reader_name='standalone',
+            parser_name='restructuredtext', writer_name='s5',
+            settings_spec=self, settings_overrides=overrides)
+        self.assertEqual(output, case_expected)
+
+
+drive_prefix = Path.cwd().drive
+
+basics = ("""\
 ============
  Show Title
 ============
@@ -50,16 +60,16 @@ First Slide
 
 Slide text.
 """,
-"""\
+f"""\
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils %(version)s: https://docutils.sourceforge.io/" />
+<meta name="generator" content="Docutils {docutils.__version__}: https://docutils.sourceforge.io/" />
 <meta name="version" content="S5 1.1" />
 <title>Show Title</title>
-<link rel="stylesheet" href="%(drive)s/test.css" type="text/css" />
+<link rel="stylesheet" href="{drive_prefix}/test.css" type="text/css" />
 <!-- configuration parameters -->
 <meta name="defaultView" content="slideshow" />
 <meta name="controlVis" content="hidden" />
@@ -75,7 +85,7 @@ Slide text.
       type="text/css" media="projection" id="operaFix" />
 
 <style type="text/css">
-#currentSlide {display: none;}
+#currentSlide {{display: none;}}
 </style>
 </head>
 <body>
@@ -104,27 +114,25 @@ Slide text.
 </div>
 </body>
 </html>
-""" % interpolations]
-]
+""")
 
-totest_2['settings'] = [
-["""\
+settings = ("""\
 ==================
  Bogus Slide Show
 ==================
 
 We're just checking the settings
 """,
-"""\
+f"""\
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils %(version)s: https://docutils.sourceforge.io/" />
+<meta name="generator" content="Docutils {docutils.__version__}: https://docutils.sourceforge.io/" />
 <meta name="version" content="S5 1.1" />
 <title>Bogus Slide Show</title>
-<link rel="stylesheet" href="%(drive)s/test.css" type="text/css" />
+<link rel="stylesheet" href="{drive_prefix}/test.css" type="text/css" />
 <!-- configuration parameters -->
 <meta name="defaultView" content="outline" />
 <meta name="controlVis" content="visible" />
@@ -140,7 +148,7 @@ We're just checking the settings
       type="text/css" media="projection" id="operaFix" />
 
 <style type="text/css">
-#currentSlide {display: none;}
+#currentSlide {{display: none;}}
 </style>
 </head>
 <body>
@@ -164,9 +172,7 @@ We're just checking the settings
 </div>
 </body>
 </html>
-""" % interpolations]
-]
+""")
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

@@ -9,7 +9,7 @@ Tests for docutils odtwriter.
 
 Instructions for adding a new test:
 
-1. Add a new method to class DocutilsOdtTestCase (below) named
+1. Add a new method to class TestOpenDocument (below) named
    test_odt_xxxx, where xxxx describes your new feature.  See
    test_odt_basic for an example.
 
@@ -30,43 +30,40 @@ Instructions for adding a new test:
 
 """
 
-import os
-import zipfile
-import xml.etree.ElementTree as etree
 from io import BytesIO
+import os
+import os.path
+from pathlib import Path
+import unittest
+import xml.etree.ElementTree as etree
+import zipfile
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_writers import DocutilsTestSupport
 import docutils
 import docutils.core
 
-#
+os.chdir(os.path.join(__file__, '..', '..'))
+
 # Globals
-TEMP_FILE_PATH = 'functional/output/'
-INPUT_PATH = 'functional/input/'
-EXPECTED_PATH = 'functional/expected/'
+TEMP_FILE_PATH = Path('functional', 'output')
+INPUT_PATH = Path('functional', 'input')
+EXPECTED_PATH = Path('functional', 'expected')
 
 
-class DocutilsOdtTestCase(DocutilsTestSupport.StandardTestCase):
-
+class TestOpenDocument(unittest.TestCase):
     def process_test(self, input_filename, expected_filename,
                      save_output_name=None, settings_overrides=None):
         # Test that xmlcharrefreplace is the default output encoding
         # error handler.
-        input_file = open(INPUT_PATH + input_filename, 'rb')
-        expected_file = open(EXPECTED_PATH + expected_filename, 'rb')
-        input = input_file.read()
-        expected = expected_file.read()
-        input_file.close()
-        expected_file.close()
+        input_ = INPUT_PATH.joinpath(input_filename).read_bytes()
+        expected = EXPECTED_PATH.joinpath(expected_filename).read_bytes()
         if settings_overrides is None:
-            settings_overrides = {}
-            settings_overrides['_disable_config'] = True
-            settings_overrides['language_code'] = 'en-US'
+            settings_overrides = {
+                '_disable_config': True,
+                'language_code': 'en-US'
+            }
 
         result = docutils.core.publish_string(
-            source=input,
+            source=input_,
             reader_name='standalone',
             writer_name='odf_odt',
             settings_overrides=settings_overrides)
@@ -74,20 +71,19 @@ class DocutilsOdtTestCase(DocutilsTestSupport.StandardTestCase):
         #           len(expected), len(result), )
         # self.assertEqual(str(len(result)), str(len(expected)))
         if save_output_name:
-            filename = '%s%s%s' % (TEMP_FILE_PATH, os.sep, save_output_name,)
-            outfile = open(filename, 'wb')
-            outfile.write(result)
-            outfile.close()
+            TEMP_FILE_PATH.joinpath(save_output_name).write_bytes(result)
         content1 = self.extract_file(result, 'content.xml')
         content2 = self.extract_file(expected, 'content.xml')
         msg = 'content.xml not equal: expected len: %d  actual len: %d' % (
             len(content2), len(content1), )
         self.assertEqual(content1, content2, msg)
 
-    def reorder_attributes(self, root):
+    @staticmethod
+    def reorder_attributes(root):
         """
         Make attribute order independent of python version.
         python3.8 is different to previous.
+        Drop with Python 3.7.
         """
         for el in root.iter():
             attrib = el.attrib
@@ -108,7 +104,6 @@ class DocutilsOdtTestCase(DocutilsTestSupport.StandardTestCase):
         # return doc.toprettyxml(indent='  ')
         return etree.tostring(doc)
 
-    #
     # Unit test methods
     #
     # All test methods should be named "test_odt_xxxx", where
@@ -172,12 +167,11 @@ class DocutilsOdtTestCase(DocutilsTestSupport.StandardTestCase):
     #   functional/expected/odt_xxxx.odt
     # Replace all xxxx with name of your test.
     #
-    # def test_odt_xxxx(self):
-    #     self.process_test('odt_xxxx.txt', 'odt_xxxx.odt')
+#     def test_odt_xxxx(self):
+#         self.process_test('odt_xxxx.txt', 'odt_xxxx.odt')
 
 # -----------------------------------------------------------------
 
 
 if __name__ == '__main__':
-    import unittest
     unittest.main()

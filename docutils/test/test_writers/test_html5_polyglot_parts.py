@@ -12,119 +12,201 @@ dictionaries (redundant), along with 'meta' and 'stylesheet' entries with
 standard values, and any entries with empty values.
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from DocutilsTestSupport import (HtmlWriterPublishPartsTestCase,
-                                 HtmlPublishPartsTestSuite)
+import unittest
+
+import docutils
 from docutils import __version__
+import docutils.core
+
+standard_html_meta_value = (
+    '<meta charset="%s"/>\n'
+    '<meta name="viewport"'
+    ' content="width=device-width, initial-scale=1" />\n'
+    '<meta name="generator"'
+    f' content="Docutils {__version__}: https://docutils.sourceforge.io/" />\n')
+standard_html_prolog = '<!DOCTYPE html>\n'
 
 
-class Html5WriterPublishPartsTestCase(HtmlWriterPublishPartsTestCase):
+class TestHtml5WriterPublishParts(unittest.TestCase, docutils.SettingsSpec):
     """Test case for HTML5 writer via the publish_parts interface."""
 
-    writer_name = 'html5'
-    settings_default_overrides = HtmlWriterPublishPartsTestCase.settings_default_overrides.copy()
-    settings_default_overrides['section_self_link'] = True
+    settings_default_overrides = {"_disable_config": True,
+                                  "strict_visitor": True,
+                                  "stylesheet": "",
+                                  "section_self_link": True}
 
-    standard_content_type_template = '<meta charset="%s"/>\n'
-    standard_generator_template = '<meta name="generator"' \
-        ' content="Docutils %s: https://docutils.sourceforge.io/" />\n'
-    standard_viewport_template = '<meta name="viewport"' \
-        ' content="width=device-width, initial-scale=1" />\n'
+    def test_title_promotion(self):
+        for casenum, (case_input, case_expected) in enumerate(title_promotion):
+            with self.subTest(id=f'title_promotion[{casenum}]'):
+                parts = docutils.core.publish_parts(
+                    source=case_input,
+                    reader_name='standalone',
+                    parser_name='restructuredtext',
+                    writer_name='html5',
+                    settings_spec=self,
+                    settings_overrides=title_promotion_overrides)
+                # remove redundant parts & uninteresting parts:
+                assert parts['body'] == parts['fragment']
+                for part in ('whole', 'body', 'body_pre_docinfo',
+                             'body_prefix', 'body_suffix', 'head',
+                             'head_prefix', 'encoding', 'version'):
+                    del parts[part]
 
-    standard_html_meta_value = (standard_content_type_template
-                                + standard_viewport_template
-                                + standard_generator_template % __version__)
-    standard_meta_value = standard_html_meta_value % 'utf-8'
-    standard_html_prolog = '<!DOCTYPE html>\n'
+                # remove standard portions:
+                parts['meta'] = parts['meta'].replace(standard_html_meta_value % 'utf-8', '')
+                parts['html_head'] = parts['html_head'].replace(standard_html_meta_value, '...')
+                parts['html_prolog'] = parts['html_prolog'].replace(standard_html_prolog, '')
+
+                # remove empty values
+                parts = {k: v for k, v in parts.items() if v}
+                self.assertEqual(parts, case_expected)
+
+    def test_no_title_promotion(self):
+        for casenum, (case_input, case_expected) in enumerate(no_title_promotion):
+            with self.subTest(id=f'no_title_promotion[{casenum}]'):
+                parts = docutils.core.publish_parts(
+                    source=case_input,
+                    reader_name='standalone',
+                    parser_name='restructuredtext',
+                    writer_name='html5',
+                    settings_spec=self,
+                    settings_overrides=no_title_promotion_overrides)
+                # remove redundant parts & uninteresting parts:
+                assert parts['body'] == parts['fragment']
+                for part in ('whole', 'body', 'body_pre_docinfo',
+                             'body_prefix', 'body_suffix', 'head',
+                             'head_prefix', 'encoding', 'version'):
+                    del parts[part]
+
+                # remove standard portions:
+                parts['meta'] = parts['meta'].replace(standard_html_meta_value % 'utf-8', '')
+                parts['html_head'] = parts['html_head'].replace(standard_html_meta_value, '...')
+                parts['html_prolog'] = parts['html_prolog'].replace(standard_html_prolog, '')
+
+                # remove empty values
+                parts = {k: v for k, v in parts.items() if v}
+                self.assertEqual(parts, case_expected)
+
+    def test_lazy_loading(self):
+        for casenum, (case_input, case_expected) in enumerate(lazy_loading):
+            with self.subTest(id=f'lazy_loading[{casenum}]'):
+                parts = docutils.core.publish_parts(
+                    source=case_input,
+                    reader_name='standalone',
+                    parser_name='restructuredtext',
+                    writer_name='html5',
+                    settings_spec=self,
+                    settings_overrides=lazy_loading_overrides)
+                # remove redundant parts & uninteresting parts:
+                assert parts['body'] == parts['fragment']
+                for part in ('whole', 'body', 'body_pre_docinfo',
+                             'body_prefix', 'body_suffix', 'head',
+                             'head_prefix', 'encoding', 'version'):
+                    del parts[part]
+
+                # remove standard portions:
+                parts['meta'] = parts['meta'].replace(standard_html_meta_value % 'utf-8', '')
+                parts['html_head'] = parts['html_head'].replace(standard_html_meta_value, '...')
+                parts['html_prolog'] = parts['html_prolog'].replace(standard_html_prolog, '')
+
+                # remove empty values
+                parts = {k: v for k, v in parts.items() if v}
+                self.assertEqual(parts, case_expected)
+
+    def test_no_backlinks(self):
+        for casenum, (case_input, case_expected) in enumerate(no_backlinks):
+            with self.subTest(id=f'no_backlinks[{casenum}]'):
+                parts = docutils.core.publish_parts(
+                    source=case_input,
+                    reader_name='standalone',
+                    parser_name='restructuredtext',
+                    writer_name='html5',
+                    settings_spec=self,
+                    settings_overrides=no_backlinks_overrides)
+                # remove redundant parts & uninteresting parts:
+                assert parts['body'] == parts['fragment']
+                for part in ('whole', 'body', 'body_pre_docinfo',
+                             'body_prefix', 'body_suffix', 'head',
+                             'head_prefix', 'encoding', 'version'):
+                    del parts[part]
+
+                # remove standard portions:
+                parts['meta'] = parts['meta'].replace(standard_html_meta_value % 'utf-8', '')
+                parts['html_head'] = parts['html_head'].replace(standard_html_meta_value, '...')
+                parts['html_prolog'] = parts['html_prolog'].replace(standard_html_prolog, '')
+
+                # remove empty values
+                parts = {k: v for k, v in parts.items() if v}
+                self.assertEqual(parts, case_expected)
 
 
-class Html5PublishPartsTestSuite(HtmlPublishPartsTestSuite):
-
-    testcase_class = Html5WriterPublishPartsTestCase
-
-
-def suite():
-    s = Html5PublishPartsTestSuite()
-    s.generateTests(totest)
-    return s
-
-
-totest = {}
-
-totest['Title promotion'] = ({'stylesheet_path': '',
-                              'embed_stylesheet': 0}, [
+title_promotion_overrides = {'stylesheet_path': '', 'embed_stylesheet': False}
+title_promotion = [
 ["""\
 Simple String
 """,
-"""\
-{'fragment': '''<p>Simple String</p>\\n''',
+{'fragment': '''<p>Simple String</p>\n''',
  'html_body': '''<main>
 <p>Simple String</p>
-</main>\\n''',
- 'html_head': '''...<title>&lt;string&gt;</title>\\n'''}
-"""],
+</main>\n''',
+ 'html_head': '''...<title>&lt;string&gt;</title>\n'''}
+],
 ["""\
 Simple String with *markup*
 """,
-"""\
-{'fragment': '''<p>Simple String with <em>markup</em></p>\\n''',
+{'fragment': '''<p>Simple String with <em>markup</em></p>\n''',
  'html_body': '''<main>
 <p>Simple String with <em>markup</em></p>
-</main>\\n''',
- 'html_head': '''...<title>&lt;string&gt;</title>\\n'''}
-"""],
+</main>\n''',
+ 'html_head': '''...<title>&lt;string&gt;</title>\n'''}
+],
 ["""\
 Simple String with an even simpler ``inline literal``
 """,
-"""\
-{'fragment': '''<p>Simple String with an even simpler <span class="docutils literal">inline literal</span></p>\\n''',
+{'fragment': '''<p>Simple String with an even simpler <span class="docutils literal">inline literal</span></p>\n''',
  'html_body': '''<main>
 <p>Simple String with an even simpler <span class="docutils literal">inline literal</span></p>
-</main>\\n''',
- 'html_head': '''...<title>&lt;string&gt;</title>\\n'''}
-"""],
+</main>\n''',
+ 'html_head': '''...<title>&lt;string&gt;</title>\n'''}
+],
 ["""\
 A simple `anonymous reference`__
 
 __ http://www.test.com/test_url
 """,
-"""\
-{'fragment': '''<p>A simple <a class="reference external" href="http://www.test.com/test_url">anonymous reference</a></p>\\n''',
+{'fragment': '''<p>A simple <a class="reference external" href="http://www.test.com/test_url">anonymous reference</a></p>\n''',
  'html_body': '''<main>
 <p>A simple <a class="reference external" href="http://www.test.com/test_url">anonymous reference</a></p>
-</main>\\n''',
- 'html_head': '''...<title>&lt;string&gt;</title>\\n'''}
-"""],
+</main>\n''',
+ 'html_head': '''...<title>&lt;string&gt;</title>\n'''}
+],
 ["""\
 One paragraph.
 
 Two paragraphs.
 """,
-"""\
 {'fragment': '''<p>One paragraph.</p>
-<p>Two paragraphs.</p>\\n''',
+<p>Two paragraphs.</p>\n''',
  'html_body': '''<main>
 <p>One paragraph.</p>
 <p>Two paragraphs.</p>
-</main>\\n''',
- 'html_head': '''...<title>&lt;string&gt;</title>\\n'''}
-"""],
+</main>\n''',
+ 'html_head': '''...<title>&lt;string&gt;</title>\n'''}
+],
 ["""\
 A simple `named reference`_ with stuff in between the
 reference and the target.
 
 .. _`named reference`: http://www.test.com/test_url
 """,
-"""\
 {'fragment': '''<p>A simple <a class="reference external" href="http://www.test.com/test_url">named reference</a> with stuff in between the
-reference and the target.</p>\\n''',
+reference and the target.</p>\n''',
  'html_body': '''<main>
 <p>A simple <a class="reference external" href="http://www.test.com/test_url">named reference</a> with stuff in between the
 reference and the target.</p>
-</main>\\n''',
- 'html_head': '''...<title>&lt;string&gt;</title>\\n'''}
-"""],
+</main>\n''',
+ 'html_head': '''...<title>&lt;string&gt;</title>\n'''}
+],
 ["""\
 +++++
 Title
@@ -145,7 +227,6 @@ Another Section
 
 And even more stuff
 """,
-"""\
 {'fragment': '''<p>Some stuff</p>
 <section id="section">
 <h2>Section<a class="self-link" title="link to this section" href="#section"></a></h2>
@@ -154,7 +235,7 @@ And even more stuff
 <h3>Another Section<a class="self-link" title="link to this section" href="#another-section"></a></h3>
 <p>And even more stuff</p>
 </section>
-</section>\\n''',
+</section>\n''',
  'html_body': '''<main id="title">
 <h1 class="title">Title</h1>
 <p class="subtitle" id="subtitle">Subtitle</p>
@@ -167,13 +248,13 @@ And even more stuff
 <p>And even more stuff</p>
 </section>
 </section>
-</main>\\n''',
- 'html_head': '''...<title>Title</title>\\n''',
- 'html_subtitle': '''<p class="subtitle" id="subtitle">Subtitle</p>\\n''',
- 'html_title': '''<h1 class="title">Title</h1>\\n''',
+</main>\n''',
+ 'html_head': '''...<title>Title</title>\n''',
+ 'html_subtitle': '''<p class="subtitle" id="subtitle">Subtitle</p>\n''',
+ 'html_title': '''<h1 class="title">Title</h1>\n''',
  'subtitle': '''Subtitle''',
  'title': '''Title'''}
-"""],
+],
 ["""\
 +++++
 Title
@@ -183,12 +264,11 @@ Title
 
 Some stuff
 """,
-"""\
 {'docinfo': '''<dl class="docinfo simple">
 <dt class="author">Author<span class="colon">:</span></dt>
 <dd class="author"><p>me</p></dd>
-</dl>\\n''',
- 'fragment': '''<p>Some stuff</p>\\n''',
+</dl>\n''',
+ 'fragment': '''<p>Some stuff</p>\n''',
  'html_body': '''<main id="title">
 <h1 class="title">Title</h1>
 <dl class="docinfo simple">
@@ -196,75 +276,70 @@ Some stuff
 <dd class="author"><p>me</p></dd>
 </dl>
 <p>Some stuff</p>
-</main>\\n''',
+</main>\n''',
  'html_head': '''...<title>Title</title>
-<meta name="author" content="me" />\\n''',
- 'html_title': '''<h1 class="title">Title</h1>\\n''',
- 'meta': '''<meta name="author" content="me" />\\n''',
+<meta name="author" content="me" />\n''',
+ 'html_title': '''<h1 class="title">Title</h1>\n''',
+ 'meta': '''<meta name="author" content="me" />\n''',
  'title': '''Title'''}
-"""]
-])
+]
+]
 
-totest['No title promotion'] = ({'doctitle_xform': 0,
-                                 'stylesheet_path': '',
-                                 'embed_stylesheet': 0}, [
+no_title_promotion_overrides = {'stylesheet_path': '', 'embed_stylesheet': False,
+                                'doctitle_xform': False}
+no_title_promotion = [
 ["""\
 Simple String
 """,
-"""\
-{'fragment': '''<p>Simple String</p>\\n''',
+{'fragment': '''<p>Simple String</p>\n''',
  'html_body': '''<main>
 <p>Simple String</p>
-</main>\\n''',
- 'html_head': '''...<title>&lt;string&gt;</title>\\n'''}
-"""],
+</main>\n''',
+ 'html_head': '''...<title>&lt;string&gt;</title>\n'''}
+],
 ["""\
 Simple String with *markup*
 """,
-"""\
-{'fragment': '''<p>Simple String with <em>markup</em></p>\\n''',
+{'fragment': '''<p>Simple String with <em>markup</em></p>\n''',
  'html_body': '''<main>
 <p>Simple String with <em>markup</em></p>
-</main>\\n''',
- 'html_head': '''...<title>&lt;string&gt;</title>\\n'''}
-"""],
+</main>\n''',
+ 'html_head': '''...<title>&lt;string&gt;</title>\n'''}
+],
 ["""\
 Simple String with an even simpler ``inline literal``
 """,
-"""\
-{'fragment': '''<p>Simple String with an even simpler <span class="docutils literal">inline literal</span></p>\\n''',
+{'fragment': '''<p>Simple String with an even simpler <span class="docutils literal">inline literal</span></p>\n''',
  'html_body': '''<main>
 <p>Simple String with an even simpler <span class="docutils literal">inline literal</span></p>
-</main>\\n''',
- 'html_head': '''...<title>&lt;string&gt;</title>\\n'''}
-"""],
+</main>\n''',
+ 'html_head': '''...<title>&lt;string&gt;</title>\n'''}
+],
 ["""\
 A simple `anonymous reference`__
 
 __ http://www.test.com/test_url
 """,
-"""\
-{'fragment': '''<p>A simple <a class="reference external" href="http://www.test.com/test_url">anonymous reference</a></p>\\n''',
+{'fragment': '''<p>A simple <a class="reference external" href="http://www.test.com/test_url">anonymous reference</a></p>\n''',
  'html_body': '''<main>
 <p>A simple <a class="reference external" href="http://www.test.com/test_url">anonymous reference</a></p>
-</main>\\n''',
- 'html_head': '''...<title>&lt;string&gt;</title>\\n'''}
-"""],
+</main>\n''',
+ 'html_head': '''...<title>&lt;string&gt;</title>\n'''}
+],
 ["""\
 A simple `named reference`_ with stuff in between the
 reference and the target.
 
 .. _`named reference`: http://www.test.com/test_url
 """,
-"""\
 {'fragment': '''<p>A simple <a class="reference external" href="http://www.test.com/test_url">named reference</a> with stuff in between the
-reference and the target.</p>\\n''',
+reference and the target.</p>\n''',
  'html_body': '''<main>
 <p>A simple <a class="reference external" href="http://www.test.com/test_url">named reference</a> with stuff in between the
 reference and the target.</p>
-</main>\\n''',
- 'html_head': '''...<title>&lt;string&gt;</title>\\n'''}
-"""],
+</main>\n''',
+ 'html_head': '''...<title>&lt;string&gt;</title>\n'''}
+],
 ["""\
 +++++
 Title
@@ -285,7 +360,6 @@ Another Section
 
 And even more stuff
 """,
-"""\
 {'fragment': '''<section id="title">
 <h2>Title<a class="self-link" title="link to this section" href="#title"></a></h2>
 <section id="not-a-subtitle">
@@ -300,7 +374,7 @@ And even more stuff
 </section>
 </section>
 </section>
-</section>\\n''',
+</section>\n''',
  'html_body': '''<main>
 <section id="title">
 <h2>Title<a class="self-link" title="link to this section" href="#title"></a></h2>
@@ -317,26 +391,25 @@ And even more stuff
 </section>
 </section>
 </section>
-</main>\\n''',
- 'html_head': '''...<title>&lt;string&gt;</title>\\n'''}
-"""],
+</main>\n''',
+ 'html_head': '''...<title>&lt;string&gt;</title>\n'''}
+],
 ["""\
 * bullet
 * list
 """,
-"""\
 {'fragment': '''<ul class="simple">
 <li><p>bullet</p></li>
 <li><p>list</p></li>
-</ul>\\n''',
+</ul>\n''',
  'html_body': '''<main>
 <ul class="simple">
 <li><p>bullet</p></li>
 <li><p>list</p></li>
 </ul>
-</main>\\n''',
- 'html_head': '''...<title>&lt;string&gt;</title>\\n'''}
-"""],
+</main>\n''',
+ 'html_head': '''...<title>&lt;string&gt;</title>\n'''}
+],
 ["""\
 .. table::
    :align: right
@@ -347,7 +420,6 @@ And even more stuff
    |  3  |  4  |
    +-----+-----+
 """,
-"""\
 {'fragment': '''<table class="align-right">
 <tbody>
 <tr><td><p>1</p></td>
@@ -357,7 +429,7 @@ And even more stuff
 <td><p>4</p></td>
 </tr>
 </tbody>
-</table>\\n''',
+</table>\n''',
  'html_body': '''<main>
 <table class="align-right">
 <tbody>
@@ -369,9 +441,9 @@ And even more stuff
 </tr>
 </tbody>
 </table>
-</main>\\n''',
- 'html_head': '''...<title>&lt;string&gt;</title>\\n'''}
-"""],
+</main>\n''',
+ 'html_head': '''...<title>&lt;string&gt;</title>\n'''}
+],
 ["""\
 Not a docinfo.
 
@@ -382,7 +454,6 @@ Not a docinfo.
 :simple:
 :field: list
 """,
-"""\
 {'fragment': '''<p>Not a docinfo.</p>
 <dl class="field-list simple">
 <dt>This<span class="colon">:</span></dt>
@@ -395,7 +466,7 @@ Not a docinfo.
 <dt>field<span class="colon">:</span></dt>
 <dd><p>list</p>
 </dd>
-</dl>\\n''',
+</dl>\n''',
  'html_body': '''<main>
 <p>Not a docinfo.</p>
 <dl class="field-list simple">
@@ -410,16 +481,15 @@ Not a docinfo.
 <dd><p>list</p>
 </dd>
 </dl>
-</main>\\n''',
- 'html_head': '''...<title>&lt;string&gt;</title>\\n'''}
-"""],
+</main>\n''',
+ 'html_head': '''...<title>&lt;string&gt;</title>\n'''}
+],
 ["""\
 Not a docinfo.
 
 :This is: a
 :simple field list with loooong field: names
 """,
-"""\
 {'fragment': '''\
 <p>Not a docinfo.</p>
 <dl class="field-list simple">
@@ -429,7 +499,7 @@ Not a docinfo.
 <dt>simple field list with loooong field<span class="colon">:</span></dt>
 <dd><p>names</p>
 </dd>
-</dl>\\n''',
+</dl>\n''',
  'html_body': '''\
 <main>
 <p>Not a docinfo.</p>
@@ -441,9 +511,9 @@ Not a docinfo.
 <dd><p>names</p>
 </dd>
 </dl>
-</main>\\n''',
- 'html_head': '''...<title>&lt;string&gt;</title>\\n'''}
-"""],
+</main>\n''',
+ 'html_head': '''...<title>&lt;string&gt;</title>\n'''}
+],
 ["""\
 Not a docinfo.
 
@@ -452,7 +522,6 @@ Not a docinfo.
 :This: is a
 :simple: field list with custom indent.
 """,
-"""\
 {'fragment': '''<p>Not a docinfo.</p>
 <dl class="field-list simple" style="--field-indent: 200px;">
 <dt>This<span class="colon">:</span></dt>
@@ -461,7 +530,7 @@ Not a docinfo.
 <dt>simple<span class="colon">:</span></dt>
 <dd><p>field list with custom indent.</p>
 </dd>
-</dl>\\n''',
+</dl>\n''',
  'html_body': '''<main>
 <p>Not a docinfo.</p>
 <dl class="field-list simple" style="--field-indent: 200px;">
@@ -472,9 +541,9 @@ Not a docinfo.
 <dd><p>field list with custom indent.</p>
 </dd>
 </dl>
-</main>\\n''',
- 'html_head': '''...<title>&lt;string&gt;</title>\\n'''}
-"""],
+</main>\n''',
+ 'html_head': '''...<title>&lt;string&gt;</title>\n'''}
+],
 ["""\
 Not a docinfo.
 
@@ -484,7 +553,6 @@ Not a docinfo.
 :simple: field list without custom indent,
          because the unit "uf" is invalid.
 """,
-"""\
 {'fragment': '''<p>Not a docinfo.</p>
 <dl class="field-indent-200uf field-list simple">
 <dt>This<span class="colon">:</span></dt>
@@ -494,7 +562,7 @@ Not a docinfo.
 <dd><p>field list without custom indent,
 because the unit &quot;uf&quot; is invalid.</p>
 </dd>
-</dl>\\n''',
+</dl>\n''',
  'html_body': '''<main>
 <p>Not a docinfo.</p>
 <dl class="field-indent-200uf field-list simple">
@@ -506,9 +574,9 @@ because the unit &quot;uf&quot; is invalid.</p>
 because the unit &quot;uf&quot; is invalid.</p>
 </dd>
 </dl>
-</main>\\n''',
- 'html_head': '''...<title>&lt;string&gt;</title>\\n'''}
-"""],
+</main>\n''',
+ 'html_head': '''...<title>&lt;string&gt;</title>\n'''}
+],
 ["""\
 .. figure:: dummy.png
 
@@ -518,7 +586,6 @@ because the unit &quot;uf&quot; is invalid.</p>
 
    The legend's second paragraph.
 """,
-"""\
 {'fragment': '''\
 <figure>
 <img alt="dummy.png" src="dummy.png" />
@@ -529,7 +596,7 @@ because the unit &quot;uf&quot; is invalid.</p>
 <p>The legend's second paragraph.</p>
 </div>
 </figcaption>
-</figure>\\n''',
+</figure>\n''',
  'html_body': '''\
 <main>
 <figure>
@@ -542,22 +609,21 @@ because the unit &quot;uf&quot; is invalid.</p>
 </div>
 </figcaption>
 </figure>
-</main>\\n''',
- 'html_head': '''...<title>&lt;string&gt;</title>\\n'''}
-"""],
+</main>\n''',
+ 'html_head': '''...<title>&lt;string&gt;</title>\n'''}
+],
 ["""\
 .. figure:: dummy.png
 
    The figure's caption, no legend.
 """,
-"""\
 {'fragment': '''\
 <figure>
 <img alt="dummy.png" src="dummy.png" />
 <figcaption>
 <p>The figure's caption, no legend.</p>
 </figcaption>
-</figure>\\n''',
+</figure>\n''',
  'html_body': '''\
 <main>
 <figure>
@@ -566,9 +632,9 @@ because the unit &quot;uf&quot; is invalid.</p>
 <p>The figure's caption, no legend.</p>
 </figcaption>
 </figure>
-</main>\\n''',
- 'html_head': '''...<title>&lt;string&gt;</title>\\n'''}
-"""],
+</main>\n''',
+ 'html_head': '''...<title>&lt;string&gt;</title>\n'''}
+],
 ["""\
 .. figure:: dummy.png
 
@@ -576,7 +642,6 @@ because the unit &quot;uf&quot; is invalid.</p>
 
    A legend without caption.
 """,
-"""\
 {'fragment': '''\
 <figure>
 <img alt="dummy.png" src="dummy.png" />
@@ -585,7 +650,7 @@ because the unit &quot;uf&quot; is invalid.</p>
 <p>A legend without caption.</p>
 </div>
 </figcaption>
-</figure>\\n''',
+</figure>\n''',
  'html_body': '''\
 <main>
 <figure>
@@ -596,71 +661,67 @@ because the unit &quot;uf&quot; is invalid.</p>
 </div>
 </figcaption>
 </figure>
-</main>\\n''',
- 'html_head': '''...<title>&lt;string&gt;</title>\\n'''}
-"""],
+</main>\n''',
+ 'html_head': '''...<title>&lt;string&gt;</title>\n'''}
+],
 ["""\
 .. figure:: dummy.png
 
 No caption nor legend.
 """,
-"""\
 {'fragment': '''\
 <figure>
 <img alt="dummy.png" src="dummy.png" />
 </figure>
-<p>No caption nor legend.</p>\\n''',
+<p>No caption nor legend.</p>\n''',
  'html_body': '''\
 <main>
 <figure>
 <img alt="dummy.png" src="dummy.png" />
 </figure>
 <p>No caption nor legend.</p>
-</main>\\n''',
- 'html_head': '''...<title>&lt;string&gt;</title>\\n'''}
-"""],
-])
+</main>\n''',
+ 'html_head': '''...<title>&lt;string&gt;</title>\n'''}
+],
+]
 
 
-totest['lazy loading'] = ({'image_loading': 'lazy',
-                           'stylesheet_path': '',
-                           'embed_stylesheet': 0}, [
+lazy_loading_overrides = {'stylesheet_path': '', 'embed_stylesheet': False,
+                          'image_loading': 'lazy'}
+lazy_loading = [
 
 ["""\
 .. image:: dummy.png
 """,
-"""\
 {'fragment': '''\
-<img alt="dummy.png" loading="lazy" src="dummy.png" />\\n''',
+<img alt="dummy.png" loading="lazy" src="dummy.png" />\n''',
  'html_body': '''\
 <main>
 <img alt="dummy.png" loading="lazy" src="dummy.png" />
-</main>\\n''',
- 'html_head': '''...<title>&lt;string&gt;</title>\\n'''}
-"""],
+</main>\n''',
+ 'html_head': '''...<title>&lt;string&gt;</title>\n'''}
+],
 ["""\
 .. figure:: dummy.png
 """,
-"""\
 {'fragment': '''\
 <figure>
 <img alt="dummy.png" loading="lazy" src="dummy.png" />
-</figure>\\n''',
+</figure>\n''',
  'html_body': '''\
 <main>
 <figure>
 <img alt="dummy.png" loading="lazy" src="dummy.png" />
 </figure>
-</main>\\n''',
- 'html_head': '''...<title>&lt;string&gt;</title>\\n'''}
-"""],
-])
+</main>\n''',
+ 'html_head': '''...<title>&lt;string&gt;</title>\n'''}
+],
+]
 
 
-totest['no backlinks'] = ({'footnote_backlinks': False,
-                           'stylesheet_path': '',
-                           'embed_stylesheet': 0}, [
-
+no_backlinks_overrides = {'stylesheet_path': '', 'embed_stylesheet': False,
+                          'footnote_backlinks': False}
+no_backlinks = [
 ["""\
 Two footnotes [#f1]_ [#f2]_ and two citations [once]_ [twice]_.
 
@@ -671,7 +732,6 @@ The latter are referenced a second time [#f2]_ [twice]_.
 .. [once] citation referenced once
 .. [twice] citation referenced twice
 """,
-"""\
 {'fragment': '''\
 <p>Two footnotes <a class="footnote-reference brackets" href="#f1" id="footnote-reference-1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> <a class="footnote-reference brackets" href="#f2" id="footnote-reference-2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> and two citations <a class="citation-reference" href="#once" id="citation-reference-1" role="doc-biblioref">[once]</a> <a class="citation-reference" href="#twice" id="citation-reference-2" role="doc-biblioref">[twice]</a>.</p>
 <p>The latter are referenced a second time <a class="footnote-reference brackets" href="#f2" id="footnote-reference-3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> <a class="citation-reference" href="#twice" id="citation-reference-3" role="doc-biblioref">[twice]</a>.</p>
@@ -692,7 +752,7 @@ The latter are referenced a second time [#f2]_ [twice]_.
 <span class="label"><span class="fn-bracket">[</span>twice<span class="fn-bracket">]</span></span>
 <p>citation referenced twice</p>
 </div>
-</div>\\n''',
+</div>\n''',
  'html_body': '''\
 <main>
 <p>Two footnotes <a class="footnote-reference brackets" href="#f1" id="footnote-reference-1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> <a class="footnote-reference brackets" href="#f2" id="footnote-reference-2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> and two citations <a class="citation-reference" href="#once" id="citation-reference-1" role="doc-biblioref">[once]</a> <a class="citation-reference" href="#twice" id="citation-reference-2" role="doc-biblioref">[twice]</a>.</p>
@@ -715,12 +775,11 @@ The latter are referenced a second time [#f2]_ [twice]_.
 <p>citation referenced twice</p>
 </div>
 </div>
-</main>\\n''',
- 'html_head': '''...<title>&lt;string&gt;</title>\\n'''}
-"""],
-])
+</main>\n''',
+ 'html_head': '''...<title>&lt;string&gt;</title>\n'''}
+],
+]
 
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

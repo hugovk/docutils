@@ -1301,6 +1301,8 @@ class LaTeXTranslator(nodes.NodeVisitor):
         self.out = self.body
         self.out_stack = []  # stack of output collectors
 
+        self.preamble_commands = PreambleCmds()
+
         # Process settings
         # ~~~~~~~~~~~~~~~~
         # Encodings:
@@ -1363,7 +1365,7 @@ class LaTeXTranslator(nodes.NodeVisitor):
 
         # Section numbering
         if settings.sectnum_xform:  # section numbering by Docutils
-            PreambleCmds.secnumdepth = r'\setcounter{secnumdepth}{0}'
+            self.preamble_commands.secnumdepth = r'\setcounter{secnumdepth}{0}'
         else:  # section numbering by LaTeX:
             secnumdepth = settings.sectnum_depth
             # Possible values of settings.sectnum_depth:
@@ -1378,7 +1380,7 @@ class LaTeXTranslator(nodes.NodeVisitor):
             #        4  paragraph
             #        5  subparagraph
             if secnumdepth is not None:
-                PreambleCmds.secnumdepth = (
+                self.preamble_commands.secnumdepth = (
                     r'\setcounter{secnumdepth}{%d}'
                     % self.d_class.latex_section_depth(secnumdepth))
             # start with specified number:
@@ -1522,7 +1524,7 @@ class LaTeXTranslator(nodes.NodeVisitor):
             for ch in text:
                 cp = ord(ch)
                 if cp in CharMaps.textcomp and not self.fallback_stylesheet:
-                    self.requirements['textcomp'] = PreambleCmds.textcomp
+                    self.requirements['textcomp'] = self.preamble_commands.textcomp
                 elif cp in CharMaps.pifont:
                     self.requirements['pifont'] = '\\usepackage{pifont}'
                 # preamble-definitions for unsupported Unicode characters
@@ -1631,7 +1633,7 @@ class LaTeXTranslator(nodes.NodeVisitor):
                 pass
             else:
                 if not self.fallback_stylesheet:
-                    self.fallbacks['DUclass'] = PreambleCmds.duclass
+                    self.fallbacks['DUclass'] = self.preamble_commands.duclass
                 self.out.append('\\begin{DUclass}{%s}\n' % cls)
 
     def duclass_close(self, node):
@@ -1646,7 +1648,7 @@ class LaTeXTranslator(nodes.NodeVisitor):
                 pass
             else:
                 if not self.fallback_stylesheet:
-                    self.fallbacks['DUclass'] = PreambleCmds.duclass
+                    self.fallbacks['DUclass'] = self.preamble_commands.duclass
                 self.out.append('\\end{DUclass}\n')
 
     def push_output_collector(self, new_out):
@@ -1713,15 +1715,15 @@ class LaTeXTranslator(nodes.NodeVisitor):
         node['classes'] = [cls for cls in node['classes']
                            if cls != 'admonition']
         if self.settings.legacy_class_functions:
-            self.fallbacks['admonition'] = PreambleCmds.admonition_legacy
+            self.fallbacks['admonition'] = self.preamble_commands.admonition_legacy
             if 'error' in node['classes']:
-                self.fallbacks['error'] = PreambleCmds.error_legacy
+                self.fallbacks['error'] = self.preamble_commands.error_legacy
             self.out.append('\n\\DUadmonition[%s]{'%','.join(node['classes']))
             return
         if not self.fallback_stylesheet:
-            self.fallbacks['admonition'] = PreambleCmds.admonition
+            self.fallbacks['admonition'] = self.preamble_commands.admonition
         if 'error' in node['classes'] and not self.fallback_stylesheet:
-            self.fallbacks['error'] = PreambleCmds.error
+            self.fallbacks['error'] = self.preamble_commands.error
         self.duclass_open(node)
         self.out.append('\\begin{DUadmonition}')
 
@@ -1786,7 +1788,7 @@ class LaTeXTranslator(nodes.NodeVisitor):
 
     def visit_title_reference(self, node):
         if not self.fallback_stylesheet:
-            self.fallbacks['titlereference'] = PreambleCmds.titlereference
+            self.fallbacks['titlereference'] = self.preamble_commands.titlereference
         self.out.append(r'\DUroletitlereference{')
         self.visit_inline(node)
 
@@ -1798,7 +1800,7 @@ class LaTeXTranslator(nodes.NodeVisitor):
         if self.use_latex_citations:
             self.push_output_collector([])
         else:
-            # self.requirements['~fnt_floats'] = PreambleCmds.footnote_floats
+            # self.requirements['~fnt_floats'] = self.preamble_commands.footnote_floats
             self.out.append(r'\begin{figure}[b]')
             self.append_hypertargets(node)
 
@@ -1946,8 +1948,8 @@ class LaTeXTranslator(nodes.NodeVisitor):
             # tabularx: automatic width of columns, no page breaks allowed.
             self.requirements['tabularx'] = r'\usepackage{tabularx}'
             if not self.fallback_stylesheet:
-                self.fallbacks['_providelength'] = PreambleCmds.providelength
-                self.fallbacks['docinfo'] = PreambleCmds.docinfo
+                self.fallbacks['_providelength'] = self.preamble_commands.providelength
+                self.fallbacks['docinfo'] = self.preamble_commands.docinfo
             #
             self.docinfo.insert(0, '\n% Docinfo\n'
                                 '\\begin{center}\n'
@@ -2012,7 +2014,7 @@ class LaTeXTranslator(nodes.NodeVisitor):
         # * coditional fallback definitions (after style sheet)
         self.fallbacks = self.fallbacks.sortedvalues()
         # * PDF properties
-        self.pdfsetup.append(PreambleCmds.linking % self.hyperref_options)
+        self.pdfsetup.append(self.preamble_commands.linking % self.hyperref_options)
         if self.pdfauthor:
             authors = self.author_separator.join(self.pdfauthor)
             self.pdfinfo.append('  pdfauthor={%s}' % authors)
@@ -2228,7 +2230,7 @@ class LaTeXTranslator(nodes.NodeVisitor):
         self.duclass_open(node)
         if self.out is not self.docinfo:
             if not self.fallback_stylesheet:
-                self.fallbacks['fieldlist'] = PreambleCmds.fieldlist
+                self.fallbacks['fieldlist'] = self.preamble_commands.fieldlist
             self.out.append('\\begin{DUfieldlist}')
 
     def depart_field_list(self, node):
@@ -2251,7 +2253,7 @@ class LaTeXTranslator(nodes.NodeVisitor):
             self.out.append(':}]')
 
     def visit_figure(self, node):
-        self.requirements['float'] = PreambleCmds.float
+        self.requirements['float'] = self.preamble_commands.float
         self.duclass_open(node)
         # The 'align' attribute sets the "outer alignment",
         # for "inner alignment" use LaTeX default alignment (similar to HTML)
@@ -2285,7 +2287,7 @@ class LaTeXTranslator(nodes.NodeVisitor):
             backref = node['ids'][0]  # no backref, use self-ref instead
         if self.docutils_footnotes:
             if not self.fallback_stylesheet:
-                self.fallbacks['footnotes'] = PreambleCmds.footnotes
+                self.fallbacks['footnotes'] = self.preamble_commands.footnotes
             num = node[0].astext()
             if self.settings.footnote_references == 'brackets':
                 num = '[%s]' % num
@@ -2323,7 +2325,7 @@ class LaTeXTranslator(nodes.NodeVisitor):
             self.context.append(']}')
         else:
             if not self.fallback_stylesheet:
-                self.fallbacks['footnotes'] = PreambleCmds.footnotes
+                self.fallbacks['footnotes'] = self.preamble_commands.footnotes
             self.out.append(r'\DUfootnotemark{%s}{%s}{' %
                             (node['ids'][0], href))
             self.context.append('}')
@@ -2387,7 +2389,7 @@ class LaTeXTranslator(nodes.NodeVisitor):
             # Use \pdfpxdimen, the macro to set the value of 1 px in pdftex.
             # This way, configuring works the same for pdftex and xetex.
             if not self.fallback_stylesheet:
-                self.fallbacks['_providelength'] = PreambleCmds.providelength
+                self.fallbacks['_providelength'] = self.preamble_commands.providelength
             self.fallbacks['px'] = '\n\\DUprovidelength{\\pdfpxdimen}{1bp}\n'
             length_str = r'%s\pdfpxdimen' % value
         return length_str
@@ -2460,7 +2462,7 @@ class LaTeXTranslator(nodes.NodeVisitor):
                     self.out.append(r'\foreignlanguage{%s}{' % language)
             else:
                 if not self.fallback_stylesheet:
-                    self.fallbacks['inline'] = PreambleCmds.inline
+                    self.fallbacks['inline'] = self.preamble_commands.inline
                 self.out.append(r'\DUrole{%s}{' % cls)
 
     def depart_inline(self, node):
@@ -2468,7 +2470,7 @@ class LaTeXTranslator(nodes.NodeVisitor):
 
     def visit_legend(self, node):
         if not self.fallback_stylesheet:
-            self.fallbacks['legend'] = PreambleCmds.legend
+            self.fallbacks['legend'] = self.preamble_commands.legend
         self.out.append('\\begin{DUlegend}')
 
     def depart_legend(self, node):
@@ -2482,8 +2484,8 @@ class LaTeXTranslator(nodes.NodeVisitor):
 
     def visit_line_block(self, node):
         if not self.fallback_stylesheet:
-            self.fallbacks['_providelength'] = PreambleCmds.providelength
-            self.fallbacks['lineblock'] = PreambleCmds.lineblock
+            self.fallbacks['_providelength'] = self.preamble_commands.providelength
+            self.fallbacks['lineblock'] = self.preamble_commands.lineblock
         self.set_align_from_classes(node)
         if isinstance(node.parent, nodes.line_block):
             self.out.append('\\item[]\n'
@@ -2508,9 +2510,9 @@ class LaTeXTranslator(nodes.NodeVisitor):
         self.literal = True
         if ('code' in node['classes']
             and self.settings.syntax_highlight != 'none'):
-            self.requirements['color'] = PreambleCmds.color
+            self.requirements['color'] = self.preamble_commands.color
             if not self.fallback_stylesheet:
-                self.fallbacks['code'] = PreambleCmds.highlight_rules
+                self.fallbacks['code'] = self.preamble_commands.highlight_rules
         self.out.append('\\texttt{')
         self.visit_inline(node)
 
@@ -2570,14 +2572,14 @@ class LaTeXTranslator(nodes.NodeVisitor):
         if (not _plaintext
             and 'code' in node['classes']
             and self.settings.syntax_highlight != 'none'):
-            self.requirements['color'] = PreambleCmds.color
+            self.requirements['color'] = self.preamble_commands.color
             if not self.fallback_stylesheet:
-                self.fallbacks['code'] = PreambleCmds.highlight_rules
+                self.fallbacks['code'] = self.preamble_commands.highlight_rules
         # Wrap?
         if _in_table and _use_env and not _autowidth_table:
             # Wrap in minipage to prevent extra vertical space
             # with alltt and verbatim-like environments:
-            self.fallbacks['ttem'] = PreambleCmds.ttem
+            self.fallbacks['ttem'] = self.preamble_commands.ttem
             self.out.append(
                 '\\begin{minipage}{%d\\ttemwidth}\n' %
                 (max(len(line) for line in node.astext().split('\n'))))
@@ -2705,8 +2707,8 @@ class LaTeXTranslator(nodes.NodeVisitor):
 
     def visit_option_list(self, node):
         if not self.fallback_stylesheet:
-            self.fallbacks['_providelength'] = PreambleCmds.providelength
-            self.fallbacks['optionlist'] = PreambleCmds.optionlist
+            self.fallbacks['_providelength'] = self.preamble_commands.providelength
+            self.fallbacks['optionlist'] = self.preamble_commands.optionlist
         self.duclass_open(node)
         self.out.append('\\begin{DUoptionlist}')
 
@@ -2766,7 +2768,7 @@ class LaTeXTranslator(nodes.NodeVisitor):
             self.out.append('\n')
 
     def visit_problematic(self, node):
-        self.requirements['color'] = PreambleCmds.color
+        self.requirements['color'] = self.preamble_commands.color
         self.out.append('%\n')
         self.append_hypertargets(node)
         self.out.append(r'\hyperlink{%s}{\textbf{\color{red}' % node['refid'])
@@ -2849,7 +2851,7 @@ class LaTeXTranslator(nodes.NodeVisitor):
 
     def visit_rubric(self, node):
         if not self.fallback_stylesheet:
-            self.fallbacks['rubric'] = PreambleCmds.rubric
+            self.fallbacks['rubric'] = self.preamble_commands.rubric
         # class wrapper would interfere with ``\section*"`` type commands
         # (spacing/indent of first paragraph)
         self.out.append('\n\\DUrubric{')
@@ -2871,9 +2873,9 @@ class LaTeXTranslator(nodes.NodeVisitor):
 
     def visit_sidebar(self, node):
         self.duclass_open(node)
-        self.requirements['color'] = PreambleCmds.color
+        self.requirements['color'] = self.preamble_commands.color
         if not self.fallback_stylesheet:
-            self.fallbacks['sidebar'] = PreambleCmds.sidebar
+            self.fallbacks['sidebar'] = self.preamble_commands.sidebar
         self.out.append('\\DUsidebar{')
 
     def depart_sidebar(self, node):
@@ -2918,7 +2920,7 @@ class LaTeXTranslator(nodes.NodeVisitor):
         if isinstance(node.parent, nodes.document):
             self.push_output_collector(self.subtitle)
             if not self.fallback_stylesheet:
-                self.fallbacks['documentsubtitle'] = PreambleCmds.documentsubtitle  # noqa:E501
+                self.fallbacks['documentsubtitle'] = self.preamble_commands.documentsubtitle  # noqa:E501
             protect = (self.settings.documentclass == 'memoir')
             self.subtitle_labels += self.ids_to_labels(node, set_anchor=False,
                                                        protect=protect)
@@ -2928,7 +2930,7 @@ class LaTeXTranslator(nodes.NodeVisitor):
                             self.d_class.section(self.section_level + 1))
         else:
             if not self.fallback_stylesheet:
-                self.fallbacks['subtitle'] = PreambleCmds.subtitle
+                self.fallbacks['subtitle'] = self.preamble_commands.subtitle
             self.out.append('\n\\DUsubtitle{')
 
     def depart_subtitle(self, node):
@@ -2938,11 +2940,11 @@ class LaTeXTranslator(nodes.NodeVisitor):
             self.out.append('}\n')
 
     def visit_system_message(self, node):
-        self.requirements['color'] = PreambleCmds.color
+        self.requirements['color'] = self.preamble_commands.color
         if not self.fallback_stylesheet:
-            self.fallbacks['title'] = PreambleCmds.title
+            self.fallbacks['title'] = self.preamble_commands.title
         if self.settings.legacy_class_functions:
-            self.fallbacks['title'] = PreambleCmds.title_legacy
+            self.fallbacks['title'] = self.preamble_commands.title_legacy
         node['classes'] = ['system-message']
         self.visit_admonition(node)
         if self.settings.legacy_class_functions:
@@ -2971,9 +2973,9 @@ class LaTeXTranslator(nodes.NodeVisitor):
 
     def visit_table(self, node):
         self.duclass_open(node)
-        self.requirements['table'] = PreambleCmds.table
+        self.requirements['table'] = self.preamble_commands.table
         if not self.settings.legacy_column_widths:
-            self.requirements['table1'] = PreambleCmds.table_columnwidth
+            self.requirements['table1'] = self.preamble_commands.table_columnwidth
         if self.active_table.is_open():
             self.table_stack.append(self.active_table)
             # nesting longtable does not work (e.g. 2007-04-18)
@@ -3096,11 +3098,11 @@ class LaTeXTranslator(nodes.NodeVisitor):
               or isinstance(node.parent, nodes.sidebar)):
             classes = node.parent['classes'] or [node.parent.tagname]
             if self.settings.legacy_class_functions:
-                self.fallbacks['title'] = PreambleCmds.title_legacy
+                self.fallbacks['title'] = self.preamble_commands.title_legacy
                 self.out.append('\n\\DUtitle[%s]{' % ','.join(classes))
             else:
                 if not self.fallback_stylesheet:
-                    self.fallbacks['title'] = PreambleCmds.title
+                    self.fallbacks['title'] = self.preamble_commands.title
                 self.out.append('\n\\DUtitle{')
             self.context.append('}\n')
         # Table caption
@@ -3109,26 +3111,26 @@ class LaTeXTranslator(nodes.NodeVisitor):
             self.context.append('')
         # Section title
         else:
-            if hasattr(PreambleCmds, 'secnumdepth'):
-                self.requirements['secnumdepth'] = PreambleCmds.secnumdepth
+            if hasattr(self.preamble_commands, 'secnumdepth'):
+                self.requirements['secnumdepth'] = self.preamble_commands.secnumdepth
             level = self.section_level
             section_name = self.d_class.section(level)
             self.out.append('\n\n')
             if level > len(self.d_class.sections):
                 # section level not supported by LaTeX
                 if self.settings.legacy_class_functions:
-                    self.fallbacks['title'] = PreambleCmds.title_legacy
+                    self.fallbacks['title'] = self.preamble_commands.title_legacy
                     section_name += '[section%s]' % roman.toRoman(level)
                 else:
                     if not self.fallback_stylesheet:
-                        self.fallbacks['title'] = PreambleCmds.title
-                        self.fallbacks['DUclass'] = PreambleCmds.duclass
+                        self.fallbacks['title'] = self.preamble_commands.title
+                        self.fallbacks['DUclass'] = self.preamble_commands.duclass
                     self.out.append('\\begin{DUclass}{section%s}\n'
                                     % roman.toRoman(level))
 
             # System messages heading in red:
             if 'system-messages' in node.parent['classes']:
-                self.requirements['color'] = PreambleCmds.color
+                self.requirements['color'] = self.preamble_commands.color
                 section_title = self.encode(node.astext())
                 self.out.append(r'\%s[%s]{\color{red}' % (
                                 section_name, section_title))
@@ -3191,7 +3193,7 @@ class LaTeXTranslator(nodes.NodeVisitor):
 
         # Docutils generated contents list (no page numbers)
         if not self.use_latex_toc:
-            self.fallbacks['toc-list'] = PreambleCmds.toc_list
+            self.fallbacks['toc-list'] = self.preamble_commands.toc_list
             self.duclass_open(node)
             return
 
@@ -3204,7 +3206,7 @@ class LaTeXTranslator(nodes.NodeVisitor):
             title = ''
         if 'local' in node['classes']:
             # use the "minitoc" package
-            self.requirements['minitoc'] = PreambleCmds.minitoc
+            self.requirements['minitoc'] = self.preamble_commands.minitoc
             self.requirements['minitoc-'+mtc_name] = r'\do%stoc'%mtc_name
             self.requirements['minitoc-%s-depth' % mtc_name] = (
                 r'\mtcsetdepth{%stoc}{%d}' % (mtc_name, maxdepth))
@@ -3246,13 +3248,13 @@ class LaTeXTranslator(nodes.NodeVisitor):
             # special topics:
             if 'abstract' in node['classes']:
                 if not self.fallback_stylesheet:
-                    self.fallbacks['abstract'] = PreambleCmds.abstract
+                    self.fallbacks['abstract'] = self.preamble_commands.abstract
                 if self.settings.legacy_class_functions:
-                    self.fallbacks['abstract'] = PreambleCmds.abstract_legacy
+                    self.fallbacks['abstract'] = self.preamble_commands.abstract_legacy
                 self.push_output_collector(self.abstract)
             elif 'dedication' in node['classes']:
                 if not self.fallback_stylesheet:
-                    self.fallbacks['dedication'] = PreambleCmds.dedication
+                    self.fallbacks['dedication'] = self.preamble_commands.dedication
                 self.push_output_collector(self.dedication)
             else:
                 node['classes'].insert(0, 'topic')
@@ -3272,7 +3274,7 @@ class LaTeXTranslator(nodes.NodeVisitor):
 
     def visit_transition(self, node):
         if not self.fallback_stylesheet:
-            self.fallbacks['transition'] = PreambleCmds.transition
+            self.fallbacks['transition'] = self.preamble_commands.transition
         self.out.append('\n%' + '_' * 75 + '\n')
         self.out.append('\\DUtransition\n')
 

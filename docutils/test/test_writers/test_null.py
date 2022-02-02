@@ -8,26 +8,30 @@
 Test for Null writer.
 """
 
+import unittest
+
+import docutils
+import docutils.core
+
+
+class TestNull(unittest.TestCase, docutils.SettingsSpec):
+
+    """
+    Test case for publish.
+    """
+
+    settings_default_overrides = {"_disable_config": True,
+                                  "strict_visitor": True}
+
+    def test_null(self):
+        output = docutils.core.publish_string(
+            source="This is a paragraph.",
+            reader_name="standalone",
+            parser_name="restructuredtext",
+            writer_name="null",
+            settings_spec=self)
+        self.assertIsNone(output)
+
+
 if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_writers import DocutilsTestSupport
-
-
-def suite():
-    s = DocutilsTestSupport.PublishTestSuite('null')
-    s.generateTests(totest)
-    return s
-
-
-totest = {}
-
-totest['basic'] = [
-["""\
-This is a paragraph.
-""",
-None]
-]
-
-if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

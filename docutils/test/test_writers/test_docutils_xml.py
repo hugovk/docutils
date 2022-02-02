@@ -14,14 +14,12 @@ Test for docutils XML writer.
    module mirrors the current behaviour of the docutils_xml writer.
 """
 
+from io import StringIO
+import unittest
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_writers import DocutilsTestSupport  # before importing docutils!
 import docutils
 import docutils.core
-
-from io import StringIO
+import docutils.utils
 
 # sample strings
 # --------------
@@ -122,69 +120,70 @@ invalid_raw_xml = """\
 
 
 def publish_xml(settings, source):
-    return docutils.core.publish_string(source=source.encode('utf8'),
-                                        reader_name='standalone',
-                                        writer_name='docutils_xml',
-                                        settings_overrides=settings)
+    return docutils.core.publish_string(
+        source=source, reader_name='standalone', writer_name='docutils_xml',
+        settings_overrides={
+            'input_encoding': 'utf8',
+            'output_encoding': 'iso-8859-1',
+            '_disable_config': True,
+            'xml_declaration': False,
+            'doctype_declaration': False,
+            **settings
+        }
+    )
 
 
 # XML Test Case
 # -------------
-
-
-class DocutilsXMLTestCase(DocutilsTestSupport.StandardTestCase):
-
-    settings = {'input_encoding': 'utf8',
-                'output_encoding': 'iso-8859-1',
-                '_disable_config': True,
-                'indents': False,
-                'newlines': True,
-                'xml_declaration': False,
-                'doctype_declaration': False,
-               }
-
+class TestDocutilsXML(unittest.TestCase):
     def test_publish(self):
-        settings = self.settings.copy()
-        settings['newlines'] = False
-        for settings['xml_declaration'] in True, False:
-            for settings['doctype_declaration'] in True, False:
-                expected = ''
-                if settings['xml_declaration']:
-                    expected += xmldecl
-                if settings['doctype_declaration']:
-                    expected += doctypedecl
-                expected += generatedby
-                expected += bodynormal
-                result = publish_xml(settings, source)
-                self.assertEqual(result, expected.encode('latin1'))
+        settings = {'indents': False,
+                    'newlines': False}
+        for xml_declaration in True, False:
+            for doctype_declaration in True, False:
+                with self.subTest(xml_declaration=xml_declaration,
+                                  doctype_declaration=doctype_declaration):
+                    expected = ''
+                    if xml_declaration:
+                        expected += xmldecl
+                    if doctype_declaration:
+                        expected += doctypedecl
+                    expected += generatedby
+                    expected += bodynormal
+                    settings['xml_declaration'] = xml_declaration
+                    settings['doctype_declaration'] = doctype_declaration
+                    result = publish_xml(settings, source)
+                    self.assertEqual(result, expected.encode('latin1'))
 
     def test_publish_indents(self):
-        settings = self.settings.copy()
-        settings['indents'] = True
+        settings = {'indents': True,
+                    'newlines': True}
         result = publish_xml(settings, source)
-        expected = (generatedby + bodyindents).encode('latin1')
-        self.assertEqual(result, expected)
+        expected = generatedby + bodyindents
+        self.assertEqual(result, expected.encode('latin1'))
 
     def test_publish_newlines(self):
-        settings = self.settings.copy()
+        settings = {'indents': False,
+                    'newlines': True}
         result = publish_xml(settings, source)
-        expected = (generatedby + bodynewlines).encode('latin1')
-        self.assertEqual(result, expected)
+        expected = generatedby + bodynewlines
+        self.assertEqual(result, expected.encode('latin1'))
 
     def test_raw_xml(self):
-        result = publish_xml(self.settings, raw_xml_source)
-        expected = (generatedby
-                    + raw_xml).encode('latin1', 'xmlcharrefreplace')
-        self.assertEqual(result, expected)
+        settings = {'indents': False,
+                    'newlines': True}
+        result = publish_xml(settings, raw_xml_source)
+        expected = generatedby + raw_xml
+        self.assertEqual(result, expected.encode('latin1', 'xmlcharrefreplace'))
 
     def test_invalid_raw_xml(self):
         warnings = StringIO()
-        settings = self.settings.copy()
-        settings['warning_stream'] = warnings
+        settings = {'indents': False,
+                    'newlines': True,
+                    'warning_stream': warnings}
         result = publish_xml(settings, invalid_raw_xml_source)
-        expected = (generatedby
-                    + invalid_raw_xml).encode('latin1', 'xmlcharrefreplace')
-        self.assertEqual(result, expected)
+        expected = generatedby + invalid_raw_xml
+        self.assertEqual(result, expected.encode('latin1', 'xmlcharrefreplace'))
         warnings.seek(0)
         self.assertEqual(
             warnings.readlines(),
@@ -197,11 +196,10 @@ class DocutilsXMLTestCase(DocutilsTestSupport.StandardTestCase):
              '(WARNING/2) Invalid raw XML in column 30, line offset 1:\n',
              '<test>inline raw XML&lt;/test>\n'])
         settings['halt_level'] = 2  # convert info messages to exceptions
-        settings['warning_stream'] = ''
+        settings['warning_stream'] = False
         with self.assertRaises(docutils.utils.SystemMessage):
             publish_xml(settings, invalid_raw_xml_source)
 
 
 if __name__ == '__main__':
-    import unittest
     unittest.main()

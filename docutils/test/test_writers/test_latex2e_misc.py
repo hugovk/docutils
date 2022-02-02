@@ -15,11 +15,12 @@
 """
 Miscellaneous LaTeX writer tests.
 """
+import unittest
+import warnings
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_writers import DocutilsTestSupport
-from docutils import core
+from docutils.core import publish_doctree
+from docutils.core import publish_from_doctree
+from docutils.core import publish_string
 
 contents_test_input = """\
 .. contents:: TOC
@@ -33,46 +34,36 @@ bar
 """
 
 
-class TocTestCase(DocutilsTestSupport.StandardTestCase):
-
+class TestLaTex2eToC(unittest.TestCase):
     def test_publish_from_doctree(self):
         """Ignore the Docutils-generated ToC, when ``use_latex_toc``
         is True. (This did happen when publishing from a doctree.)
         """
-        mysettings = {'output_encoding': 'unicode',
-                      '_disable_config': True,
-                      # avoid latex writer future warnings:
-                      'use_latex_citations': False,
-                      'legacy_column_widths': True,
-                     }
-        doctree = core.publish_doctree(contents_test_input,
-                                       settings_overrides=mysettings)
-        result = core.publish_from_doctree(doctree,
-                                           writer_name='latex',
-                                           settings_overrides=mysettings)
+        overrides = {'output_encoding': 'unicode',
+                     '_disable_config': True,
+                     # avoid latex writer future warnings:
+                     'use_latex_citations': False,
+                     'legacy_column_widths': True}
+        doctree = publish_doctree(contents_test_input,
+                                  settings_overrides=overrides)
+        result = publish_from_doctree(doctree, writer_name='latex2e',
+                                      settings_overrides=overrides)
         self.assertNotIn(r'\item \hyperref[foo]{foo}', result)
         # self.assertIn(r'\tableofcontents', result)
 
 
-class WarningsTestCase(DocutilsTestSupport.StandardTestCase):
-
+class TestWarnings(unittest.TestCase):
     def test_future_warnings(self):
         """Warn about changing defaults."""
-        # Warn only if not set (uncommenting should make test fail):
-        mysettings = {'_disable_config': True,
-                      # 'use_latex_citations': False,
-                      # 'legacy_column_widths': True,
-                      }
         with self.assertWarnsRegex(FutureWarning,
                                    '"legacy_column_widths" will change'):
-            core.publish_string('warnings test', writer_name='latex',
-                                settings_overrides=mysettings)
+            publish_string('warnings test', writer_name='latex2e',
+                                settings_overrides={'_disable_config': True})
         with self.assertWarnsRegex(FutureWarning,
                                    '"use_latex_citations" will change'):
-            core.publish_string('warnings test', writer_name='latex',
-                                settings_overrides=mysettings)
+            publish_string('warnings test', writer_name='latex2e',
+                                settings_overrides={'_disable_config': True})
 
 
 if __name__ == '__main__':
-    import unittest
     unittest.main()

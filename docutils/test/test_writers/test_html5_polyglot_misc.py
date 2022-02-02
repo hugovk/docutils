@@ -9,23 +9,25 @@ Miscellaneous HTML writer tests.
 """
 
 import os
+import os.path
+import unittest
+import warnings
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_writers import DocutilsTestSupport
-from docutils import core
+from docutils.core import publish_parts
+from docutils.core import publish_string
+
+os.chdir(os.path.join(__file__, '..', '..'))
 
 
-class EncodingTestCase(DocutilsTestSupport.StandardTestCase):
-
+class TestEncoding(unittest.TestCase):
     def test_xmlcharrefreplace(self):
         # Test that xmlcharrefreplace is the default output encoding
         # error handler.
         settings_overrides = {
+            '_disable_config': True,
             'output_encoding': 'latin1',
-            'stylesheet': '',
-            '_disable_config': True}
-        result = core.publish_string(
+            'stylesheet': ''}
+        result = publish_string(
             'EUR = \u20ac', writer_name='html5_polyglot',
             settings_overrides=settings_overrides)
         # Encoding a euro sign with latin1 doesn't work, so the
@@ -33,12 +35,10 @@ class EncodingTestCase(DocutilsTestSupport.StandardTestCase):
         self.assertIn(b'EUR = &#8364;', result)
 
 
-class MovingArgsTestCase(DocutilsTestSupport.StandardTestCase):
-
-    mys = {'stylesheet_path': '',
+class TestMovingArgs(unittest.TestCase):
+    mys = {'_disable_config': True,
            # 'embed_stylesheet': False,
-           '_disable_config': True,
-           }
+           'stylesheet_path': ''}
 
     def test_definition_list_item_classes(self):
         # Do not drop class arguments for the definition list item.
@@ -52,9 +52,9 @@ first term:
 second term:
   second def
 """
-        result = core.publish_string(data, writer_name='html5_polyglot',
-                                     settings_overrides=self.mys)
-        self.assertIn(b'<dt class="for the second item">second term:</dt>',
+        result = publish_string(data, writer_name='html5_polyglot',
+                                settings_overrides=self.mys)
+        self.assertIn('<dt class="for the second item">second term:</dt>',
                       result)
 
     def test_definition_list_item_name(self):
@@ -69,20 +69,19 @@ first term:
 second term:
   second def
 """
-        result = core.publish_string(data, writer_name='html5_polyglot',
-                                     settings_overrides=self.mys)
-        self.assertIn(b'<dt id="second-item">second term:</dt>',
-                      result)
+        result = publish_string(data, writer_name='html5_polyglot',
+                                settings_overrides=self.mys)
+        self.assertIn('<dt id="second-item">second term:</dt>', result)
 
 
-class SettingsTestCase(DocutilsTestSupport.StandardTestCase):
+class TestSettings(unittest.TestCase):
     data = 'test'
 
     def test_default_stylesheet(self):
         # default style sheet, embedded
         mys = {'_disable_config': True}
-        styles = core.publish_parts(self.data, writer_name='html5_polyglot',
-                                    settings_overrides=mys)['stylesheet']
+        styles = publish_parts('test', writer_name='html5_polyglot',
+                               settings_overrides=mys)['stylesheet']
         self.assertIn('Minimal style sheet '
                       'for the HTML output of Docutils.', styles)
 
@@ -90,8 +89,8 @@ class SettingsTestCase(DocutilsTestSupport.StandardTestCase):
         # default style sheet, linked
         mys = {'_disable_config': True,
                'embed_stylesheet': False}
-        styles = core.publish_parts(self.data, writer_name='html5_polyglot',
-                                    settings_overrides=mys)['stylesheet']
+        styles = publish_parts('test', writer_name='html5_polyglot',
+                               settings_overrides=mys)['stylesheet']
         self.assertIn('docutils/writers/html5_polyglot/minimal.css', styles)
 
     def test_math_stylesheet_linked(self):
@@ -99,8 +98,8 @@ class SettingsTestCase(DocutilsTestSupport.StandardTestCase):
         mys = {'_disable_config': True,
                'embed_stylesheet': False,
                'stylesheet_path': 'minimal.css, math.css'}
-        styles = core.publish_parts(self.data, writer_name='html5_polyglot',
-                                    settings_overrides=mys)['stylesheet']
+        styles = publish_parts('test', writer_name='html5_polyglot',
+                               settings_overrides=mys)['stylesheet']
         self.assertIn('docutils/writers/html5_polyglot/minimal.css', styles)
         self.assertIn('docutils/writers/html5_polyglot/math.css', styles)
 
@@ -110,8 +109,8 @@ class SettingsTestCase(DocutilsTestSupport.StandardTestCase):
                'embed_stylesheet': False,
                'stylesheet_path': 'minimal.css, '
                'data/ham.css'}
-        styles = core.publish_parts(self.data, writer_name='html5_polyglot',
-                                    settings_overrides=mys)['stylesheet']
+        styles = publish_parts('test', writer_name='html5_polyglot',
+                               settings_overrides=mys)['stylesheet']
         self.assertIn('docutils/writers/html5_polyglot/minimal.css', styles)
         self.assertIn('href="data/ham.css"', styles)
 
@@ -121,8 +120,8 @@ class SettingsTestCase(DocutilsTestSupport.StandardTestCase):
                'stylesheet_dirs': ('../docutils/writers/html5_polyglot/',
                                    'data'),
                'stylesheet_path': 'minimal.css, ham.css'}
-        styles = core.publish_parts(self.data, writer_name='html5_polyglot',
-                                    settings_overrides=mys)['stylesheet']
+        styles = publish_parts('test', writer_name='html5_polyglot',
+                               settings_overrides=mys)['stylesheet']
         if os.path.isdir('../docutils/writers/html5_polyglot/'):
             self.assertIn('docutils/writers/html5_polyglot/minimal.css', styles)
         self.assertIn('href="data/ham.css"', styles)
@@ -133,23 +132,21 @@ class SettingsTestCase(DocutilsTestSupport.StandardTestCase):
                'stylesheet_dirs': ('../docutils/writers/html5_polyglot/',
                                    'data'),
                'stylesheet_path': 'ham.css'}
-        styles = core.publish_parts(self.data, writer_name='html5_polyglot',
-                                    settings_overrides=mys)['stylesheet']
+        styles = publish_parts('test', writer_name='html5_polyglot',
+                               settings_overrides=mys)['stylesheet']
         self.assertIn('dl.docutils dd {\n  margin-bottom: 0.5em }', styles)
 
     def test_future_warnings(self):
         """Warn about deprecated setting name."""
         my_settings = {'_disable_config': True,
-                       'embed_images': False,
-                       }
+               'embed_images': False}
         with self.assertWarnsRegex(FutureWarning,
                                    '"embed_images" will be removed'):
-            core.publish_string('warnings test', writer_name='html5',
-                                settings_overrides=my_settings)
+            publish_string('warnings test', writer_name='html5',
+                           settings_overrides=my_settings)
 
 
-class MathTestCase(DocutilsTestSupport.StandardTestCase):
-
+class TestMaths(unittest.TestCase):
     """Attention: This class tests the current implementation of maths support
     which is open to change in future Docutils releases. """
 
@@ -157,13 +154,12 @@ class MathTestCase(DocutilsTestSupport.StandardTestCase):
     default_mathjax_url = ('file:/usr/share/javascript/mathjax/MathJax.js'
                            '?config=TeX-AMS_CHTML')
     custom_mathjax_url = '/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML'
-    data = ':math:`42`'
 
     def test_math_output_default(self):
         # HTML with math.css stylesheet (since 0.11)
         mys = {'_disable_config': True}
-        styles = core.publish_parts(self.data, writer_name='html5_polyglot',
-                                    settings_overrides=mys)['stylesheet']
+        styles = publish_parts(':math:`42`', writer_name='html5_polyglot',
+                               settings_overrides=mys)['stylesheet']
         self.assertIn('convert LaTeX equations to HTML output.', styles)
 
     def test_math_output_mathjax(self):
@@ -172,8 +168,8 @@ class MathTestCase(DocutilsTestSupport.StandardTestCase):
         mys = {'_disable_config': True,
                'report_level': 3,
                'math_output': 'MathJax'}
-        head = core.publish_parts(self.data, writer_name='html5_polyglot',
-                                  settings_overrides=mys)['head']
+        head = publish_parts(':math:`42`', writer_name='html5_polyglot',
+                             settings_overrides=mys)['head']
         self.assertIn(self.mathjax_script % self.default_mathjax_url, head)
 
     def test_math_output_mathjax_custom(self):
@@ -181,15 +177,15 @@ class MathTestCase(DocutilsTestSupport.StandardTestCase):
         mys = {'_disable_config': True,
                'math_output':
                'mathjax %s' % self.custom_mathjax_url}
-        head = core.publish_parts(self.data, writer_name='html5_polyglot',
-                                  settings_overrides=mys)['head']
+        head = publish_parts(':math:`42`', writer_name='html5_polyglot',
+                             settings_overrides=mys)['head']
         self.assertIn(self.mathjax_script % self.custom_mathjax_url, head)
 
     def test_math_output_html(self):
         mys = {'_disable_config': True,
                'math_output': 'HTML'}
-        head = core.publish_parts(self.data, writer_name='html5_polyglot',
-                                  settings_overrides=mys)['head']
+        head = publish_parts(':math:`42`', writer_name='html5_polyglot',
+                             settings_overrides=mys)['head']
         # There should be no MathJax script when math_output is not MathJax
         self.assertNotIn('MathJax.js', head)
 
@@ -198,8 +194,8 @@ class MathTestCase(DocutilsTestSupport.StandardTestCase):
                'math_output': 'HTML math.css,custom/style.css',
                'stylesheet_dirs': ('.', 'functional/input/data'),
                'embed_stylesheet': False}
-        styles = core.publish_parts(self.data, writer_name='html5_polyglot',
-                                    settings_overrides=mys)['stylesheet']
+        styles = publish_parts(':math:`42`', writer_name='html5_polyglot',
+                               settings_overrides=mys)['stylesheet']
         self.assertEqual("""\
 <link rel="stylesheet" href="functional/input/data/minimal.css" type="text/css" />
 <link rel="stylesheet" href="functional/input/data/plain.css" type="text/css" />
@@ -209,10 +205,9 @@ class MathTestCase(DocutilsTestSupport.StandardTestCase):
 
     def test_math_output_mathjax_no_math(self):
         # There should be no math script when text does not contain math
-        head = core.publish_parts('No math.', writer_name='html5_polyglot')['head']
+        head = publish_parts('No math.', writer_name='html5_polyglot')['head']
         self.assertNotIn('MathJax', head)
 
 
 if __name__ == '__main__':
-    import unittest
     unittest.main()
