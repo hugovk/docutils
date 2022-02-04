@@ -7,20 +7,30 @@
 Tests for states.py.
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_parsers import DocutilsTestSupport
+from pprint import pformat
+import unittest
+
+from docutils.parsers.rst import tableparser
+from docutils.statemachine import StringList
+
+# Hack to make repr(StringList) look like repr(list):
+StringList.__repr__ = StringList.__str__
 
 
-def suite():
-    s = DocutilsTestSupport.SimpleTableParserTestSuite()
-    s.generateTests(totest)
-    return s
+class TestSimpleTableParser(unittest.TestCase):
+    def test_simple_tables(self):
+        parser = tableparser.SimpleTableParser()
+        for casenum, (case_input, case_expected) in enumerate(simple_tables):
+            lines = case_input.splitlines()
+            with self.subTest(id=f'simple_tables[{casenum}]'):
+                try:
+                    output = parser.parse(StringList(lines, 'test data'))
+                except Exception as details:
+                    output = f'{details.__class__.__name__}: {details}'
+            self.assertEqual(pformat(output), pformat(case_expected))
 
 
-totest = {}
-
-totest['simple_tables'] = [
+simple_tables = [
 ["""\
 ============  ============
 A table with  two columns.
@@ -146,5 +156,4 @@ That's bad.
 
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

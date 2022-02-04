@@ -14,43 +14,60 @@ Tests for inline markup in docutils/parsers/rst/states.py.
 Interpreted text tests are in a separate module, test_interpreted.py.
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_parsers import DocutilsTestSupport
+import unittest
+
+from docutils import frontend
+from docutils import utils
+from docutils.parsers import rst
 
 
-def suite():
-    s = DocutilsTestSupport.ParserTestSuite()
-    s.generateTests(totest)
-    return s
+class TestDefaultLineLengthLimit(unittest.TestCase):
+    def test_within_default_line_length(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+
+        document = utils.new_document('test data', settings)
+        rst.Parser().parse(within_default_input, document)
+        output = document.pformat()
+        self.assertEqual(output, within_default_output)
+
+    def test_outwith_default_line_length(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+
+        document = utils.new_document('test data', settings)
+        rst.Parser().parse(outwith_default_input, document)
+        output = document.pformat()
+        self.assertEqual(output, outwith_default_output)
 
 
-totest = {}
-
-totest['default'] = [
-["""\
+within_default_input = f"""\
 within the limit
-%s
-""" % ("x"*10000),
-"""\
+{"x" * 10_000}
+"""
+
+within_default_output= f"""\
 <document source="test data">
     <paragraph>
         within the limit
-        %s
-""" % ("x"*10000)],
-["""\
+        {"x" * 10_000}
+"""
+
+outwith_default_input = f"""\
 above the limit
-%s
-""" % ("x"*10001),
-"""\
+{"x" * 10_001}
+"""
+
+outwith_default_output = """\
 <document source="test data">
     <system_message level="3" source="test data" type="ERROR">
         <paragraph>
             Line 2 exceeds the line-length-limit.
-"""],
-]
-
+"""
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

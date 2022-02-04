@@ -9,24 +9,49 @@ Tests for states.py.
 """
 
 import os
+import unittest
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_parsers import DocutilsTestSupport
+from docutils import frontend
+from docutils import utils
+from docutils.parsers import rst
+
+os.chdir(os.path.join(__file__, '..', '..', '..'))
 
 
-def suite():
-    s = DocutilsTestSupport.ParserTestSuite()
-    s.generateTests(totest)
-    return s
+class TestTables(unittest.TestCase):
+    def test_grid_tables(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        parser = rst.Parser()
+
+        for casenum, (case_input, case_expected) in enumerate(grid_tables):
+            with self.subTest(id=f'grid_tables[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
+
+    def test_simple_tables(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        parser = rst.Parser()
+
+        for casenum, (case_input, case_expected) in enumerate(simple_tables):
+            with self.subTest(id=f'simple_tables[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
 
 
 mydir = 'test_parsers/test_rst/'
 include2 = os.path.join(mydir, 'test_directives/include2.txt')
 
-totest = {}
-
-totest['grid_tables'] = [
+grid_tables = [
 ["""\
 +-------------------------------------+
 | A table with one cell and one line. |
@@ -634,7 +659,7 @@ And more.
 """],
 ]
 
-totest['simple_tables'] = [
+simple_tables = [
 ["""\
 ============  ============
 A table with  two columns.
@@ -1310,5 +1335,4 @@ Note       The first row of this table may expand
 
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

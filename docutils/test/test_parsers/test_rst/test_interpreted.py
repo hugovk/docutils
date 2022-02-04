@@ -8,23 +8,86 @@
 Tests for interpreted text in docutils/parsers/rst/states.py.
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_parsers import DocutilsTestSupport
+import unittest
+
+from docutils import frontend
+from docutils import utils
+from docutils.parsers import rst
 from docutils.utils.code_analyzer import with_pygments
 
 
-def suite():
-    s = DocutilsTestSupport.ParserTestSuite()
-    if not with_pygments:
-        del(totest['code-parsing'])
-    s.generateTests(totest)
-    return s
+class TestInterpreted(unittest.TestCase):
+    def test_basics(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        parser = rst.Parser()
+
+        for casenum, (case_input, case_expected) in enumerate(basics):
+            with self.subTest(id=f'basics[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
+
+    def test_code(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        parser = rst.Parser()
+
+        document = utils.new_document('test data', settings.copy())
+        parser.parse(code_input, document)
+        output = document.pformat()
+        self.assertEqual(output, code_output)
+
+    @unittest.skipUnless(with_pygments, 'Pygments is needed for this test')
+    def test_code_parsing(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        parser = rst.Parser()
+
+        for casenum, (case_input, case_expected) in enumerate(code_parsing):
+            with self.subTest(id=f'code_parsing[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
+
+    def test_references(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        parser = rst.Parser()
+
+        for casenum, (case_input, case_expected) in enumerate(references):
+            with self.subTest(id=f'references[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
+
+    def test_unknown_roles(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        parser = rst.Parser()
+
+        for casenum, (case_input, case_expected) in enumerate(unknown_roles):
+            with self.subTest(id=f'unknown_roles[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
 
 
-totest = {}
-
-totest['basics'] = [
+basics = [
 ["""\
 `interpreted`
 """,
@@ -221,22 +284,20 @@ Simple explicit roles:
 """],
 ]
 
-totest['code'] = [
-["""\
+code_input = """\
 Code role for inline code snippets:
 :code:`$\alpha = \\int_0^\\infty f(x) dx$`.
-""",
-"""\
+"""
+code_output = """\
 <document source="test data">
     <paragraph>
         Code role for inline code snippets:
         <literal classes="code">
             $\x07lpha = \\int_0^\\infty f(x) dx$
         .
-"""],
-]
+"""
 
-totest['code-parsing'] = [
+code_parsing = [
 ["""\
 .. role:: tex(code)
    :language: latex
@@ -295,7 +356,7 @@ Python code :python:`print("The end")`.
 """],
 ]
 
-totest['references'] = [
+references = [
 ["""\
 :PEP:`0`
 """,
@@ -349,7 +410,7 @@ totest['references'] = [
 """],
 ]
 
-totest['unknown_roles'] = [
+unknown_roles = [
 ["""\
 :role:`interpreted`
 """,
@@ -430,5 +491,4 @@ totest['unknown_roles'] = [
 
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

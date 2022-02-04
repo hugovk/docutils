@@ -8,20 +8,55 @@
 Tests for states.py.
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_parsers import DocutilsTestSupport
+import unittest
+
+from docutils import frontend
+from docutils import utils
+from docutils.parsers import rst
 
 
-def suite():
-    s = DocutilsTestSupport.ParserTestSuite()
-    s.generateTests(totest)
-    return s
+class TestFootnotes(unittest.TestCase):
+    def test_footnotes(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        parser = rst.Parser()
+
+        for casenum, (case_input, case_expected) in enumerate(footnotes):
+            with self.subTest(id=f'footnotes[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
+
+    def test_auto_numbered_footnotes(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        parser = rst.Parser()
+
+        for casenum, (case_input, case_expected) in enumerate(auto_numbered_footnotes):
+            with self.subTest(id=f'auto_numbered_footnotes[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
+
+    def test_auto_symbol_footnotes(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+
+        document = utils.new_document('test data', settings)
+        rst.Parser().parse(auto_symbol_footnotes_input, document)
+        output = document.pformat()
+        self.assertEqual(output, auto_symbol_footnotes_output)
 
 
-totest = {}
-
-totest['footnotes'] = [
+footnotes = [
 ["""\
 .. [1] This is a footnote.
 """,
@@ -112,7 +147,7 @@ No blank line.
 """],
 ]
 
-totest['auto_numbered_footnotes'] = [
+auto_numbered_footnotes = [
 ["""\
 [#]_ is the first auto-numbered footnote reference.
 [#]_ is the second auto-numbered footnote reference.
@@ -316,19 +351,17 @@ and labelled auto-numbered footnotes:
 """],
 ]
 
-totest['auto_symbol_footnotes'] = [
-["""\
+auto_symbol_footnotes_input = """\
 .. [*] This is an auto-symbol footnote.
-""",
-"""\
+"""
+
+auto_symbol_footnotes_output = """\
 <document source="test data">
     <footnote auto="*" ids="footnote-1">
         <paragraph>
             This is an auto-symbol footnote.
-"""],
-]
+"""
 
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

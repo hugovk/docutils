@@ -10,20 +10,181 @@ with the "character-level-inline-markup" setting.
 Experimental.
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_parsers import DocutilsTestSupport
+import unittest
+
+from docutils import frontend
+from docutils import utils
+from docutils.parsers import rst
 
 
-def suite():
-    s = DocutilsTestSupport.ParserTestSuite(suite_settings={'character_level_inline_markup': True})
-    s.generateTests(totest)
-    return s
+class TestCharacterLevelInlineMarkup(unittest.TestCase):
+    def test_emphasis(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        settings.character_level_inline_markup = True
+        parser = rst.Parser()
+
+        for casenum, (case_input, case_expected) in enumerate(emphasis):
+            with self.subTest(id=f'emphasis[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
+
+    def test_strong(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        settings.character_level_inline_markup = True
+        parser = rst.Parser()
+
+        for casenum, (case_input, case_expected) in enumerate(strong):
+            with self.subTest(id=f'strong[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
+
+    def test_literal(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        settings.character_level_inline_markup = True
+        parser = rst.Parser()
+
+        for casenum, (case_input, case_expected) in enumerate(literal):
+            with self.subTest(id=f'literal[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
+
+    def test_references(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        settings.character_level_inline_markup = True
+        parser = rst.Parser()
+
+        for casenum, (case_input, case_expected) in enumerate(references):
+            with self.subTest(id=f'references[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
+
+    def test_embedded_URIs(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        settings.character_level_inline_markup = True
+        parser = rst.Parser()
+
+        for casenum, (case_input, case_expected) in enumerate(embedded_URIs):
+            with self.subTest(id=f'embedded_URIs[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
+
+    def test_inline_targets(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        settings.character_level_inline_markup = True
+        parser = rst.Parser()
+
+        for casenum, (case_input, case_expected) in enumerate(inline_targets):
+            with self.subTest(id=f'inline_targets[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
+
+    def test_footnote_reference(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        settings.character_level_inline_markup = True
+        parser = rst.Parser()
+
+        for casenum, (case_input, case_expected) in enumerate(footnote_reference):
+            with self.subTest(id=f'footnote_reference[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
+
+    def test_citation_reference(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        settings.character_level_inline_markup = True
+        parser = rst.Parser()
+
+        for casenum, (case_input, case_expected) in enumerate(citation_reference):
+            with self.subTest(id=f'citation_reference[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
+
+    def test_substitution_references(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        settings.character_level_inline_markup = True
+        parser = rst.Parser()
+
+        for casenum, (case_input, case_expected) in enumerate(substitution_references):
+            with self.subTest(id=f'substitution_references[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
+
+    def test_standalone_hyperlink(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        settings.character_level_inline_markup = True
+        parser = rst.Parser()
+
+        for casenum, (case_input, case_expected) in enumerate(standalone_hyperlink):
+            with self.subTest(id=f'standalone_hyperlink[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
+
+    def test_markup_recognition_rules(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        settings.character_level_inline_markup = True
+        parser = rst.Parser()
+
+        for casenum, (case_input, case_expected) in enumerate(markup_recognition_rules):
+            with self.subTest(id=f'markup_recognition_rules[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
 
 
-totest = {}
-
-totest['emphasis'] = [
+emphasis = [
 [r"""some punctuation is allowed around inline markup, e.g.
 /*emphasis*/, -*emphasis*-, and :*emphasis*: (delimiters),
 (*emphasis*), [*emphasis*], <*emphasis*>, {*emphasis*} (open/close pairs)
@@ -149,7 +310,7 @@ Emphasized double asterisk: *\*\** (requires two escape chars).
 """],
 ]
 
-totest['strong'] = [
+strong = [
 [r"""
 (**strong**) but not (**) or '(** '
 
@@ -195,7 +356,7 @@ require escaping with simple-inline-markup.
 """],
 ]
 
-totest['literal'] = [
+literal = [
 ["""\
 With simple-inline-markup, this is ```interpreted text``` in backquotes!
 """,
@@ -233,7 +394,7 @@ Python ``list``s use square bracket syntax.
 """],
 ]
 
-totest['references'] = [
+references = [
 ["""\
 ref_, r_, r_e-f_, -ref_, and anonymousref__,
 beware of _ref_ or __attr__ or object.__attr__
@@ -268,7 +429,7 @@ beware of _ref_ or __attr__ or object.__attr__
 """],
 ]
 
-totest['embedded_URIs'] = [
+embedded_URIs = [
 [r"""
 Escape chars in URIs:
 
@@ -295,7 +456,7 @@ Escape chars in URIs:
 """],
 ]
 
-totest['inline_targets'] = [
+inline_targets = [
 ["""\
 This isn't a _target; targets require backquotes.
 
@@ -315,7 +476,7 @@ underscore.
 """],
 ]
 
-totest['footnote_reference'] = [
+footnote_reference = [
 ["""\
 Adjacent footnote refs are possible with simple-inline-markup:
 [*]_[#label]_ [#]_[2]_ [1]_[*]_
@@ -346,7 +507,7 @@ Adjacent footnote refs are possible with simple-inline-markup:
 """],
 ]
 
-totest['citation_reference'] = [
+citation_reference = [
 ["""\
 Adjacent citation refs are possible with simple-inline-markup:
 [citation]_[CIT1]_
@@ -362,7 +523,7 @@ Adjacent citation refs are possible with simple-inline-markup:
 """],
 ]
 
-totest['substitution_references'] = [
+substitution_references = [
 ["""\
 |sub|ref
 """,
@@ -375,7 +536,7 @@ totest['substitution_references'] = [
 """],
 ]
 
-totest['standalone_hyperlink'] = [
+standalone_hyperlink = [
 [r"""
 Valid URLs with escaped markup characters:
 
@@ -412,7 +573,7 @@ http://example.com/rST_for_all.html
 """],
 ]
 
-totest['markup recognition rules'] = [
+markup_recognition_rules = [
 ["""\
 __This__ is an anonymous reference with simple-inline-markup.
 """,
@@ -636,7 +797,8 @@ newline
         *\u3000IDEOGRAPHIC SPACE\u3000*
         *
         LINE SEPARATOR
-        *"""],
+        *
+"""],
 # « * » ‹ * › « * » ‹ * › « * » ‹ * › French,
 ["""\
 "Quoted" markup start-string (matched openers & closers) -> no markup:
@@ -683,5 +845,4 @@ But this is „*’ emphasized »*‹.
 
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

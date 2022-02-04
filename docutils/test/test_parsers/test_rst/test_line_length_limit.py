@@ -14,42 +14,79 @@ Tests for inline markup in docutils/parsers/rst/states.py.
 Interpreted text tests are in a separate module, test_interpreted.py.
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_parsers import DocutilsTestSupport
+import os
+import unittest
+
+from docutils import frontend
+from docutils import utils
+from docutils.parsers import rst
+
+os.chdir(os.path.join(__file__, '..', '..', '..'))
 
 
-def suite():
-    s = DocutilsTestSupport.ParserTestSuite(
-            suite_settings={'line_length_limit': 80})
-    s.generateTests(totest)
-    return s
+class TestLineLengthLimit(unittest.TestCase):
+    def test_within(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        settings.line_length_limit = 80
+
+        document = utils.new_document('test data', settings)
+        rst.Parser().parse(within_input, document)
+        output = document.pformat()
+        self.assertEqual(output, within_output)
+
+    def test_outwith(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        settings.line_length_limit = 80
+
+        document = utils.new_document('test data', settings)
+        rst.Parser().parse(outwith_input, document)
+        output = document.pformat()
+        self.assertEqual(output, outwith_output)
+
+    def test_include(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        settings.line_length_limit = 80
+
+        document = utils.new_document('test data', settings)
+        rst.Parser().parse(include_input, document)
+        output = document.pformat()
+        self.assertEqual(output, include_output)
 
 
-totest = {}
-
-totest['default'] = [
-["""\
+within_input = f"""\
 within the limit
-%s
-""" % ("x"*80),
-"""\
+{"x" * 80}
+"""
+
+within_output = f"""\
 <document source="test data">
     <paragraph>
         within the limit
-        %s
-""" % ("x"*80)],
-["""\
+        {"x" * 80}
+"""
+
+outwith_input = f"""\
 above the limit
-%s
-""" % ("x"*81),
-"""\
+{"x" * 81}
+"""
+
+outwith_output = """\
 <document source="test data">
     <system_message level="3" source="test data" type="ERROR">
         <paragraph>
             Line 2 exceeds the line-length-limit.
-"""],
-["""\
+"""
+
+include_input = """\
 Include Test
 ============
 
@@ -57,8 +94,9 @@ Include Test
    :literal:
 
 A paragraph.
-""",
-"""\
+"""
+
+include_output = """\
 <document source="test data">
     <section ids="include-test" names="include\\ test">
         <title>
@@ -71,10 +109,7 @@ A paragraph.
                    :literal:
         <paragraph>
             A paragraph.
-"""],
-]
-
+"""
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

@@ -8,20 +8,44 @@
 Tests for states.py.
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_parsers import DocutilsTestSupport
+import unittest
+
+from docutils import frontend
+from docutils import utils
+from docutils.parsers import rst
 
 
-def suite():
-    s = DocutilsTestSupport.ParserTestSuite()
-    s.generateTests(totest)
-    return s
+class TestLiteralBlocks(unittest.TestCase):
+    def test_indented_literal_blocks(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        parser = rst.Parser()
+
+        for casenum, (case_input, case_expected) in enumerate(indented_literal_blocks):
+            with self.subTest(id=f'indented_literal_blocks[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
+
+    def test_quoted_literal_blocks(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        parser = rst.Parser()
+
+        for casenum, (case_input, case_expected) in enumerate(quoted_literal_blocks):
+            with self.subTest(id=f'quoted_literal_blocks[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
 
 
-totest = {}
-
-totest['indented_literal_blocks'] = [
+indented_literal_blocks = [
 ["""\
 A paragraph::
 
@@ -270,7 +294,7 @@ EOF, even though a literal block is indicated::
 """],
 ]
 
-totest['quoted_literal_blocks'] = [
+quoted_literal_blocks = [
 ["""\
 A paragraph::
 
@@ -369,5 +393,4 @@ $ Inconsistent line.
 
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

@@ -7,20 +7,45 @@
 Tests for states.py.
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_parsers import DocutilsTestSupport
+from pprint import pformat
+import unittest
+
+from docutils.parsers.rst import tableparser
+from docutils.statemachine import StringList
+
+# Hack to make repr(StringList) look like repr(list):
+StringList.__repr__ = StringList.__str__
 
 
-def suite():
-    s = DocutilsTestSupport.GridTableParserTestSuite()
-    s.generateTests(totest)
-    return s
+class TestGridTableParser(unittest.TestCase):
+    def test_parse_table(self):
+        parser = tableparser.GridTableParser()
+        for casenum, (case_input, case_expected_table, case_expected) in enumerate(grid_tables):
+            lines = case_input.splitlines()
+            with self.subTest(id=f'grid_tables[{casenum}]'):
+                parser.setup(StringList(lines, 'test data'))
+                try:
+                    parser.find_head_body_sep()
+                    parser.parse_table()
+                except Exception as details:
+                    output = f'{details.__class__.__name__}: {details}'
+                else:
+                    output = parser.cells
+                self.assertEqual(pformat(output), pformat(case_expected_table))
+
+    def test_parse(self):
+        parser = tableparser.GridTableParser()
+        for casenum, (case_input, case_expected_table, case_expected) in enumerate(grid_tables):
+            lines = case_input.splitlines()
+            with self.subTest(id=f'grid_tables[{casenum}]'):
+                try:
+                    output = parser.parse(StringList(lines, 'test data'))
+                except Exception as details:
+                    output = f'{details.__class__.__name__}: {details}'
+                self.assertEqual(pformat(output), pformat(case_expected))
 
 
-totest = {}
-
-totest['grid_tables'] = [
+grid_tables = [
 ["""\
 +-------------------------------------+
 | A table with one cell and one line. |
@@ -216,5 +241,4 @@ totest['grid_tables'] = [
 
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

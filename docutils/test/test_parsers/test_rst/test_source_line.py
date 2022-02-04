@@ -24,28 +24,42 @@ adding them to more nodes is regarded a compatible feature extension.
 # to make internal attributes visible.
 
 import os
+import unittest
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_transforms import DocutilsTestSupport  # before importing docutils!
+from docutils import frontend
+from docutils import utils
+from docutils.parsers import rst
+from docutils.transforms import universal
 from docutils.transforms.universal import ExposeInternals
-from docutils.parsers.rst import Parser
+
+os.chdir(os.path.join(__file__, '..', '..', '..'))
 
 
-def suite():
-    parser = Parser()
-    s = DocutilsTestSupport.TransformTestSuite(
-    parser, suite_settings={'expose_internals': ['line', 'source']})
-    s.generateTests(totest)
-    return s
+class TestSourceLine(unittest.TestCase):
+    def test_source_line(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 1
+        settings.halt_level = 5
+        settings.debug = False
+        settings.warning_stream = False
+        settings.expose_internals = ['line', 'source']
+        parser = rst.Parser()
+
+        for casenum, (case_input, case_expected) in enumerate(transitions):
+            with self.subTest(id=f'transitions[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                # Don't do a ``populate_from_components()`` because that would
+                # enable the Transformer's default transforms.
+                document.transformer.add_transform(ExposeInternals)
+                document.transformer.add_transform(universal.TestMessages)
+                document.transformer.apply_transforms()
+
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
 
 
-mydir = 'test_parsers/test_rst/'
-include14 = os.path.join(mydir, 'includes/include14.txt')
-
-totest = {}
-
-totest['transitions'] = ((ExposeInternals,), [
+transitions = [
 ["""\
 Paragraph starting in line 1.
 With *inline* element in line 2.
@@ -147,8 +161,8 @@ Paragraph
 ["""\
 Paragraph
 
-.. include:: %s
-""" % include14,
+.. include:: test_parsers/test_rst/includes/include14.txt
+""",
 """\
 <document source="test data">
     <paragraph internal:line="1" internal:source="test data">
@@ -207,9 +221,8 @@ Final paragraph in line 11
     <paragraph internal:line="11" internal:source="test data">
         Final paragraph in line 11
 """],
-])
+]
 
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

@@ -9,29 +9,37 @@ Tests for interpreted text in docutils/parsers/rst/states.py.
 Test not default/fallback language french.
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_parsers import DocutilsTestSupport
+import unittest
+
+from docutils import frontend
+from docutils import utils
+from docutils.parsers import rst
 
 
-def suite():
-    s = DocutilsTestSupport.ParserTestSuite(
-            suite_settings={'language_code': 'fr'})
-    s.generateTests(totest)
-    return s
+class TestInterpretedFrench(unittest.TestCase):
+    def test_basics(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        settings.language_code = 'fr'
+        parser = rst.Parser()
+
+        document = utils.new_document('test data', settings.copy())
+        parser.parse(basics_input, document)
+        output = document.pformat()
+        self.assertEqual(output, basics_output)
 
 
-totest = {}
-
-totest['basics'] = [
-["""\
+basics_input = """\
 Simple explicit roles and english fallbacks:
 :acronym:`acronym`,
 :exp:`superscript`,
 :ind:`subscript`,
 :titre:`title reference`.
-""",
-"""\
+"""
+
+basics_output = """\
 <document source="test data">
     <paragraph>
         Simple explicit roles and english fallbacks:
@@ -51,9 +59,7 @@ Simple explicit roles and english fallbacks:
         <paragraph>
             No role entry for "acronym" in module "docutils.parsers.rst.languages.fr".
             Using English fallback for role "acronym".
-"""],
-]
+"""
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()
