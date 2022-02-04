@@ -7,31 +7,78 @@
 Tests for docutils.transforms.frontmatter.DocInfo.
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_transforms import DocutilsTestSupport
+import unittest
+
+from docutils import frontend
+from docutils import utils
+from docutils.parsers import rst
 from docutils.transforms.frontmatter import DocInfo
-from docutils.parsers.rst import Parser
 
 
-def suite():
-    parser = Parser()
-    settings = {'language_code': 'en'}
-    s = DocutilsTestSupport.TransformTestSuite(
-        parser, suite_settings=settings)
-    s.generateTests(totest)
-    settings['language_code'] = 'de'
-    s.generateTests(totest_de)
-    settings['language_code'] = 'ru'
-    s.generateTests(totest_ru)
-    return s
+class TestTransformDocInfo(unittest.TestCase):
+    def test_en(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 1
+        settings.halt_level = 5
+        settings.debug = False
+        settings.warning_stream = False
+        settings.language_code = 'en'
+        parser = rst.Parser()
+
+        for casenum, (case_input, case_expected) in enumerate(bibliographic_field_lists):
+            with self.subTest(id=f'bibliographic_field_lists[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                # Don't do a ``populate_from_components()`` because that would
+                # enable the Transformer's default transforms.
+                document.transformer.add_transform(DocInfo)
+                document.transformer.apply_transforms()
+
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
+
+    def test_de(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 1
+        settings.halt_level = 5
+        settings.debug = False
+        settings.warning_stream = False
+        parser = rst.Parser()
+
+        settings.language_code = 'de'
+
+        document = utils.new_document('test data', settings)
+        parser.parse(de_input, document)
+        # Don't do a ``populate_from_components()`` because that would
+        # enable the Transformer's default transforms.
+        document.transformer.add_transform(DocInfo)
+        document.transformer.apply_transforms()
+
+        output = document.pformat()
+        self.assertEqual(output, de_expected)
+
+    def test_ru(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 1
+        settings.halt_level = 5
+        settings.debug = False
+        settings.warning_stream = False
+        parser = rst.Parser()
+
+        settings.language_code = 'ru'
+
+        document = utils.new_document('test data', settings)
+        parser.parse(ru_input, document)
+        # Don't do a ``populate_from_components()`` because that would
+        # enable the Transformer's default transforms.
+        document.transformer.add_transform(DocInfo)
+        document.transformer.apply_transforms()
+
+        output = document.pformat()
+        self.assertEqual(output, ru_expected)
 
 
-totest = {}
-totest_de = {}
-totest_ru = {}
-
-totest['bibliographic_field_lists'] = ((DocInfo,), [
+bibliographic_field_lists = [
 ["""\
 .. Bibliographic element extraction.
 
@@ -377,10 +424,9 @@ totest['bibliographic_field_lists'] = ((DocInfo,), [
     <comment xml:space="preserve">
         RCS keyword extraction.
 """],
-])
+]
 
-totest_de['bibliographic_field_lists'] = ((DocInfo,), [
-["""\
+de_input = """\
 .. Bibliographic element extraction for a German document.
 
 :Zusammenfassung: Abstract 1.
@@ -391,8 +437,9 @@ totest_de['bibliographic_field_lists'] = ((DocInfo,), [
 :Version: 1
 :Datum: 2001-08-11
 :Parameter i: integer
-""",
-"""\
+"""
+
+de_expected = """\
 <document source="test data">
     <docinfo>
         <author>
@@ -420,11 +467,9 @@ totest_de['bibliographic_field_lists'] = ((DocInfo,), [
             Abstract 1.
     <comment xml:space="preserve">
         Bibliographic element extraction for a German document.
-"""]
-])
+"""
 
-totest_ru['bibliographic_field_lists'] = ((DocInfo,), [
-["""\
+ru_input = """\
 .. Bibliographic element extraction for a Russian document.
 
 :аннотация: Abstract 1.
@@ -435,8 +480,9 @@ totest_ru['bibliographic_field_lists'] = ((DocInfo,), [
 :версия: 1
 :дата: 2001-08-11
 :Parameter i: integer
-""",
-"""\
+"""
+
+ru_expected = """\
 <document source="test data">
     <docinfo>
         <author>
@@ -464,10 +510,8 @@ totest_ru['bibliographic_field_lists'] = ((DocInfo,), [
             Abstract 1.
     <comment xml:space="preserve">
         Bibliographic element extraction for a Russian document.
-"""]
-])
+"""
 
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

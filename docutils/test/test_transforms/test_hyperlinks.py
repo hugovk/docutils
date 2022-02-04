@@ -8,30 +8,71 @@
 Tests for docutils.transforms.references.Hyperlinks.
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_transforms import DocutilsTestSupport
-from docutils.transforms.references import PropagateTargets, \
-     AnonymousHyperlinks, IndirectHyperlinks, ExternalTargets, \
-     InternalTargets, DanglingReferences
-from docutils.parsers.rst import Parser
+import unittest
+
+from docutils import frontend
+from docutils import utils
+from docutils.parsers import rst
+from docutils.transforms import universal
+from docutils.transforms.references import AnonymousHyperlinks
+from docutils.transforms.references import DanglingReferences
+from docutils.transforms.references import ExternalTargets
+from docutils.transforms.references import IndirectHyperlinks
+from docutils.transforms.references import InternalTargets
+from docutils.transforms.references import PropagateTargets
 
 
-def suite():
-    parser = Parser()
-    s = DocutilsTestSupport.TransformTestSuite(parser)
-    s.generateTests(totest)
-    return s
+class TestTransformHyperlinks(unittest.TestCase):
+    def test_exhaustive_hyperlinks(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 1
+        settings.halt_level = 5
+        settings.debug = False
+        settings.warning_stream = False
+        parser = rst.Parser()
 
+        for casenum, (case_input, case_expected) in enumerate(exhaustive_hyperlinks):
+            with self.subTest(id=f'exhaustive_hyperlinks[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                # Don't do a ``populate_from_components()`` because that would
+                # enable the Transformer's default transforms.
+                document.transformer.add_transforms(
+                    (PropagateTargets, AnonymousHyperlinks, IndirectHyperlinks,
+                     ExternalTargets, InternalTargets, DanglingReferences))
+                document.transformer.add_transform(universal.TestMessages)
+                document.transformer.apply_transforms()
 
-totest = {}
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
+
+    def test_hyperlinks(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 1
+        settings.halt_level = 5
+        settings.debug = False
+        settings.warning_stream = False
+        parser = rst.Parser()
+
+        for casenum, (case_input, case_expected) in enumerate(hyperlinks):
+            with self.subTest(id=f'hyperlinks[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                # Don't do a ``populate_from_components()`` because that would
+                # enable the Transformer's default transforms.
+                document.transformer.add_transforms(
+                    (PropagateTargets, AnonymousHyperlinks, IndirectHyperlinks,
+                     ExternalTargets, InternalTargets, DanglingReferences))
+                document.transformer.add_transform(universal.TestMessages)
+                document.transformer.apply_transforms()
+
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
 
 # Exhaustive listing of hyperlink variations: every combination of
 # target/reference, direct/indirect, internal/external, and named/anonymous,
 # plus embedded URIs.
-totest['exhaustive_hyperlinks'] = ((PropagateTargets, AnonymousHyperlinks,
-                                    IndirectHyperlinks, ExternalTargets,
-                                    InternalTargets, DanglingReferences), [
+exhaustive_hyperlinks = [
 ["""\
 direct_ external
 
@@ -394,7 +435,7 @@ An `embedded alias <alias_>`_ with unknown reference.
             Unknown target name: "alias".
     <system_message level="1" line="1" source="test data" type="INFO">
         <paragraph>
-            Hyperlink target "embedded alias" is not referenced.\
+            Hyperlink target "embedded alias" is not referenced.
 """],
 ["""\
 An embedded URI with trailing underline:
@@ -468,11 +509,9 @@ See `Element \\<a>`_, `Element <b\\>`_, and `Element <c>\\ `_.
             <reference name="target" refid="target">
                 target
 """],
-])
+]
 
-totest['hyperlinks'] = ((PropagateTargets, AnonymousHyperlinks,
-                         IndirectHyperlinks, ExternalTargets,
-                         InternalTargets, DanglingReferences), [
+hyperlinks = [
 ["""\
 .. _internal hyperlink:
 
@@ -933,9 +972,8 @@ Duplicate manual footnote labels, with reference ([1]_):
         <paragraph>
             Duplicate target name, cannot be used as a unique reference: "1".
 """],
-])
+]
 
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

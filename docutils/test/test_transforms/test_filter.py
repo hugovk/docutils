@@ -8,35 +8,45 @@
 Tests for docutils.transforms.components.Filter.
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_transforms import DocutilsTestSupport
-from docutils.parsers.rst import Parser
+import unittest
+
+from docutils import frontend
+from docutils import utils
+from docutils.parsers import rst
+from docutils.transforms import universal
 
 
-def suite():
-    parser = Parser()
-    s = DocutilsTestSupport.TransformTestSuite(parser)
-    s.generateTests(totest)
-    return s
+class TestTransformFilter(unittest.TestCase):
+    def test_filter(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 1
+        settings.halt_level = 5
+        settings.debug = False
+        settings.warning_stream = False
+
+        document = utils.new_document('test data', settings)
+        rst.Parser().parse(meta_input, document)
+        # Don't do a ``populate_from_components()`` because that would
+        # enable the Transformer's default transforms.
+        document.transformer.add_transform(universal.TestMessages)
+        document.transformer.apply_transforms()
+
+        output = document.pformat()
+        self.assertEqual(output, meta_expected)
 
 
-totest = {}
-
-totest['meta'] = ((), [
-["""\
+meta_input = """\
 .. meta::
    :description: The reStructuredText plaintext markup language
    :keywords: plaintext,markup language
-""",
-"""\
+"""
+
+meta_expected = """\
 <document source="test data">
     <meta content="The reStructuredText plaintext markup language" name="description">
     <meta content="plaintext,markup language" name="keywords">
-"""],
-])
+"""
 
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

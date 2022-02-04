@@ -8,25 +8,37 @@
 Tests for docutils.transforms.universal.StripComments.
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_transforms import DocutilsTestSupport
+import unittest
+
+from docutils import frontend
+from docutils import utils
+from docutils.parsers import rst
+from docutils.transforms import universal
 from docutils.transforms.universal import StripComments
-from docutils.parsers.rst import Parser
 
 
-def suite():
-    parser = Parser()
-    s = DocutilsTestSupport.TransformTestSuite(
-        parser, suite_settings={'strip_comments': 1})
-    s.generateTests(totest)
-    return s
+class TestTransformStripComments(unittest.TestCase):
+    def test_strip_comments(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 1
+        settings.halt_level = 5
+        settings.debug = False
+        settings.warning_stream = False
+
+        settings.strip_comments = True
+        document = utils.new_document('test data', settings)
+        rst.Parser().parse(strip_comments_input, document)
+        # Don't do a ``populate_from_components()`` because that would
+        # enable the Transformer's default transforms.
+        document.transformer.add_transform(StripComments)
+        document.transformer.add_transform(universal.TestMessages)
+        document.transformer.apply_transforms()
+
+        output = document.pformat()
+        self.assertEqual(output, strip_comments_expected)
 
 
-totest = {}
-
-totest['strip_comments'] = ((StripComments,), [
-["""\
+strip_comments_input = """\
 .. this is a comment
 
 Title
@@ -35,18 +47,16 @@ Title
 Paragraph.
 
 .. second comment
-""",
-"""\
+"""
+
+strip_comments_expected = """\
 <document source="test data">
     <section ids="title" names="title">
         <title>
             Title
         <paragraph>
             Paragraph.
-"""],
-])
-
+"""
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

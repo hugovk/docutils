@@ -10,13 +10,12 @@ Test module for transforms/__init__.py.
 
 import unittest
 
-from docutils import transforms, utils
+from docutils import transforms
+from docutils import utils
 
 
 class TestTransform(transforms.Transform):
-
     default_priority = 100
-
     applied = 0
 
     def apply(self, **kwargs):
@@ -24,8 +23,7 @@ class TestTransform(transforms.Transform):
         assert kwargs == {'foo': 42}
 
 
-class KwargsTestCase(unittest.TestCase):
-
+class TestTransformKwargs(unittest.TestCase):
     def test_kwargs(self):
         transformer = transforms.Transformer(utils.new_document('test data'))
         transformer.add_transform(TestTransform, foo=42)

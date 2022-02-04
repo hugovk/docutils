@@ -8,22 +8,37 @@
 Tests for `docutils.transforms.misc.ClassAttribute`.
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_transforms import DocutilsTestSupport
-from docutils.parsers.rst import Parser
+import unittest
+
+from docutils import frontend
+from docutils import utils
+from docutils.parsers import rst
+from docutils.transforms import universal
 
 
-def suite():
-    parser = Parser()
-    s = DocutilsTestSupport.TransformTestSuite(parser)
-    s.generateTests(totest)
-    return s
+class TestTransformClassAttribute(unittest.TestCase):
+    def test_class(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 1
+        settings.halt_level = 5
+        settings.debug = False
+        settings.warning_stream = False
+        parser = rst.Parser()
+
+        for casenum, (case_input, case_expected) in enumerate(classes):
+            with self.subTest(id=f'class_cases[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                # Don't do a ``populate_from_components()`` because that would
+                # enable the Transformer's default transforms.
+                document.transformer.add_transform(universal.TestMessages)
+                document.transformer.apply_transforms()
+
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
 
 
-totest = {}
-
-totest['class'] = ((), [
+classes = [
 ["""\
 .. class:: one
 
@@ -184,9 +199,8 @@ A paragraph.
     <paragraph classes="fancy">
         A paragraph.
 """],
-])
+]
 
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

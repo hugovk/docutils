@@ -8,35 +8,41 @@
 Test module for universal.ExposeInternals transform.
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_transforms import DocutilsTestSupport  # before importing docutils!
+import unittest
+
+from docutils import frontend
+from docutils import utils
+from docutils.parsers import rst
+from docutils.transforms import universal
 from docutils.transforms.universal import ExposeInternals
-from docutils.parsers.rst import Parser
 
 
-def suite():
-    parser = Parser()
-    s = DocutilsTestSupport.TransformTestSuite(
-        parser, suite_settings={'expose_internals': ['rawsource', 'source']})
-    s.generateTests(totest)
-    return s
+class TestTransformExposeInternals(unittest.TestCase):
+    def test_expose_internals(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 1
+        settings.halt_level = 5
+        settings.debug = False
+        settings.warning_stream = False
+
+        settings.expose_internals = ['rawsource', 'source']
+        document = utils.new_document('test data', settings)
+        rst.Parser().parse("This is a test.", document)
+        # Don't do a ``populate_from_components()`` because that would
+        # enable the Transformer's default transforms.
+        document.transformer.add_transform(ExposeInternals)
+        document.transformer.add_transform(universal.TestMessages)
+        document.transformer.apply_transforms()
+        output = document.pformat()
+        self.assertEqual(output, transitions_expected)
 
 
-totest = {}
-
-totest['transitions'] = ((ExposeInternals,), [
-["""\
-This is a test.
-""",
-"""\
+transitions_expected = """\
 <document internal:rawsource="" source="test data">
     <paragraph internal:rawsource="This is a test." internal:source="test data">
         This is a test.
-"""],
-])
+"""
 
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

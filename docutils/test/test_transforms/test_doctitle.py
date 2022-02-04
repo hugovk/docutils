@@ -8,12 +8,16 @@
 Tests for docutils.transforms.frontmatter.DocTitle.
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_transforms import DocutilsTestSupport
-from docutils.transforms.frontmatter import DocTitle, SectionSubTitle
-from docutils.parsers.rst import Parser, Directive
+import unittest
+
+from docutils import frontend
+from docutils import utils
+from docutils.parsers import rst
+from docutils.parsers.rst import Directive
 from docutils.parsers.rst.directives import register_directive
+from docutils.transforms import universal
+from docutils.transforms.frontmatter import DocTitle
+from docutils.transforms.frontmatter import SectionSubTitle
 
 
 # dummy directive to test attribute merging:
@@ -25,24 +29,36 @@ class AddNameToDocumentTitle(Directive):
     has_content = False
 
     def run(self):
-        document = self.state_machine.document
-        document['names'].append('Name')
+        self.state_machine.document['names'].append('Name')
         return []
 
 
 register_directive('add-name-to-title', AddNameToDocumentTitle)
 
 
-def suite():
-    parser = Parser()
-    s = DocutilsTestSupport.TransformTestSuite(parser)
-    s.generateTests(totest)
-    return s
+class TestTransformdocTitle(unittest.TestCase):
+    def test_doc_title(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 1
+        settings.halt_level = 5
+        settings.debug = False
+        settings.warning_stream = False
+        parser = rst.Parser()
+
+        for casenum, (case_input, case_expected) in enumerate(section_headers):
+            with self.subTest(id=f'section_headers[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                # Don't do a ``populate_from_components()`` because that would
+                # enable the Transformer's default transforms.
+                document.transformer.add_transforms((DocTitle, SectionSubTitle))
+                document.transformer.add_transform(universal.TestMessages)
+                document.transformer.apply_transforms()
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
 
 
-totest = {}
-
-totest['section_headers'] = ((DocTitle, SectionSubTitle), [
+section_headers = [
 ["""\
 .. test title promotion
 
@@ -261,9 +277,8 @@ bottom.
         This is a document, it flows nicely, so the attributes of it are at the
         bottom.
 """]
-])
+]
 
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

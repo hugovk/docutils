@@ -8,61 +8,90 @@
 Tests for docutils.transforms.peps.
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_transforms import DocutilsTestSupport
+import unittest
+
+from docutils import frontend
+from docutils import utils
+from docutils.parsers import rst
+from docutils.transforms import universal
 from docutils.transforms.peps import TargetNotes
-from docutils.parsers.rst import Parser
 
 
-def suite():
-    parser = Parser()
-    s = DocutilsTestSupport.TransformTestSuite(parser)
-    s.generateTests(totest)
-    return s
+class TestTransformPEPs(unittest.TestCase):
+    def test_peps(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 1
+        settings.halt_level = 5
+        settings.debug = False
+        settings.warning_stream = False
+
+        document = utils.new_document('test data', settings)
+        rst.Parser().parse(target_notes_input, document)
+        # Don't do a ``populate_from_components()`` because that would
+        # enable the Transformer's default transforms.
+        document.transformer.add_transform(TargetNotes)
+        document.transformer.add_transform(universal.TestMessages)
+        document.transformer.apply_transforms()
+        output = document.pformat()
+        self.assertEqual(output, target_notes_output)
+
+    def test_peps_no_section(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 1
+        settings.halt_level = 5
+        settings.debug = False
+        settings.warning_stream = False
+
+        document = utils.new_document('test data', settings)
+        rst.Parser().parse(no_target_notes_input, document)
+        # Don't do a ``populate_from_components()`` because that would
+        # enable the Transformer's default transforms.
+        document.transformer.add_transform(TargetNotes)
+        document.transformer.add_transform(universal.TestMessages)
+        document.transformer.apply_transforms()
+        output = document.pformat()
+        self.assertEqual(output, no_target_notes_output)
 
 
-totest = {}
-
-totest['target_notes'] = ((TargetNotes,), [
-["""\
+no_target_notes_input = """\
 No references or targets exist, therefore
 no "References" section should be generated.
-""",
-"""\
+"""
+
+no_target_notes_output = """\
 <document source="test data">
     <paragraph>
         No references or targets exist, therefore
         no "References" section should be generated.
-"""],
-["""\
+"""
+
+
+target_notes_input = """\
 A target exists, here's the reference_.
 A "References" section should be generated.
 
-.. _reference: http://www.example.org
-""",
-"""\
+.. _reference: https://www.example.org
+"""
+
+target_notes_output = """\
 <document source="test data">
     <paragraph>
-        A target exists, here's the \n\
+        A target exists, here's the 
         <reference name="reference" refname="reference">
             reference
-         \n\
+         
         <footnote_reference auto="1" ids="footnote-reference-1" refname="TARGET_NOTE: footnote-1">
         .
         A "References" section should be generated.
-    <target ids="reference" names="reference" refuri="http://www.example.org">
+    <target ids="reference" names="reference" refuri="https://www.example.org">
     <section ids="section-1">
         <title>
             References
         <footnote auto="1" ids="footnote-1" names="TARGET_NOTE:\\ footnote-1">
             <paragraph>
-                <reference refuri="http://www.example.org">
-                    http://www.example.org
-"""],
-])
-
+                <reference refuri="https://www.example.org">
+                    https://www.example.org
+"""
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

@@ -16,49 +16,91 @@
 Tests for docutils.transforms.universal.FilterMessages.
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_transforms import DocutilsTestSupport
-from docutils.transforms.universal import Messages, FilterMessages
+import unittest
+
+from docutils import frontend
+from docutils import utils
+from docutils.parsers import rst
+from docutils.transforms import universal
 from docutils.transforms.references import Substitutions
-from docutils.parsers.rst import Parser
 
 
-def suite():
-    parser = Parser()
-    settings = {'report_level': 5}  # filter all system messages
-    s = DocutilsTestSupport.TransformTestSuite(
-        parser, suite_settings=settings)
-    s.generateTests(totest)
-    return s
+class TestTransformFilterMessages(unittest.TestCase):
+    def test_unknown_directive(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5  # filter all system messages
+        settings.halt_level = 5
+        settings.debug = False
+        settings.warning_stream = False
+
+        document = utils.new_document('test data', settings.copy())
+        rst.Parser().parse('.. unknown-directive:: block markup is filtered without trace.', document)
+        # Don't do a ``populate_from_components()`` because that would
+        # enable the Transformer's default transforms.
+        document.transformer.add_transform(universal.Messages)
+        document.transformer.add_transform(universal.FilterMessages)
+        document.transformer.add_transform(universal.TestMessages)
+        document.transformer.apply_transforms()
+
+        output = document.pformat()
+        self.assertEqual(output, '<document source="test data">\n')
+
+    def test_unknown_substitution(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5  # filter all system messages
+        settings.halt_level = 5
+        settings.debug = False
+        settings.warning_stream = False
+
+        document = utils.new_document('test data', settings.copy())
+        rst.Parser().parse(unknown_substitution_input, document)
+        # Don't do a ``populate_from_components()`` because that would
+        # enable the Transformer's default transforms.
+        document.transformer.add_transform(Substitutions)
+        document.transformer.add_transform(universal.Messages)
+        document.transformer.add_transform(universal.FilterMessages)
+        document.transformer.add_transform(universal.TestMessages)
+        document.transformer.apply_transforms()
+
+        output = document.pformat()
+        self.assertEqual(output, unknown_substitution_output)
+
+    def test_invalid_inline_markup(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5  # filter all system messages
+        settings.halt_level = 5
+        settings.debug = False
+        settings.warning_stream = False
+
+        document = utils.new_document('test data', settings.copy())
+        rst.Parser().parse('Invalid *inline markup is restored to text.', document)
+        # Don't do a ``populate_from_components()`` because that would
+        # enable the Transformer's default transforms.
+        document.transformer.add_transform(universal.Messages)
+        document.transformer.add_transform(universal.FilterMessages)
+        document.transformer.add_transform(universal.TestMessages)
+        document.transformer.apply_transforms()
+
+        output = document.pformat()
+        self.assertEqual(output, invalid_inline_output)
 
 
-totest = {}
-
-totest['system_message_sections'] = ((Substitutions, Messages, FilterMessages), [
-["""\
-.. unknown-directive:: block markup is filtered without trace.
-""",
-"""\
-<document source="test data">
-"""],
-["""\
-Invalid *inline markup is restored to text.
-""",
-"""\
+invalid_inline_output = """\
 <document source="test data">
     <paragraph>
         Invalid \n\
         *
         inline markup is restored to text.
-"""],
-["""\
+"""
+
+unknown_substitution_input = """\
 This |unknown substitution| will generate a system message, thanks to
 the "Substitutions" transform. The "Messages" transform will
 generate a "System Messages" section and the "FilterMessages" transform
 will remove it.
-""",
-"""\
+"""
+
+unknown_substitution_output = """\
 <document source="test data">
     <paragraph>
         This \n\
@@ -67,10 +109,8 @@ will remove it.
         the "Substitutions" transform. The "Messages" transform will
         generate a "System Messages" section and the "FilterMessages" transform
         will remove it.
-"""],
-])
+"""
 
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

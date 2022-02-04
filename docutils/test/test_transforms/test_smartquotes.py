@@ -15,37 +15,116 @@
 Test module for universal.SmartQuotes transform.
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_transforms import DocutilsTestSupport  # before importing docutils!
-from docutils.transforms.universal import SmartQuotes
-from docutils.parsers.rst import Parser
+from contextlib import contextmanager
+import unittest
+
+from docutils import frontend
+from docutils import utils
+from docutils.parsers import rst
+from docutils.transforms import universal
+from docutils.utils import smartquotes
 
 
-def suite():
-    parser = Parser()
-    settings = {'smart_quotes': True,
-                'trim_footnote_ref_space': True,
-                'report': 2}  # TODO why is this ignored when running as main?
-    s = DocutilsTestSupport.TransformTestSuite(
-        parser, suite_settings=settings)
-    s.generateTests(totest)
-    settings['language_code'] = 'de'
-    s.generateTests(totest_de)
-    settings['smart_quotes'] = 'alternative'
-    s.generateTests(totest_de_alt)
-    settings['smart_quotes'] = True
-    settings['smartquotes_locales'] = [('de', '«»()'), ('nl', '„”’’')]
-    s.generateTests(totest_locales)
-    return s
+@contextmanager
+def local_quotes():
+    orig = smartquotes.smartchars.quotes.copy()
+    yield
+    smartquotes.smartchars.quotes = orig
 
 
-totest = {}
-totest_de = {}
-totest_de_alt = {}
-totest_locales = {}
+class TestTransformSmartQuotes(unittest.TestCase):
+    def test_default(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 1
+        settings.halt_level = 5
+        settings.debug = False
+        settings.warning_stream = False
 
-totest['smartquotes'] = ((SmartQuotes,), [
+        settings.smart_quotes = True
+
+        for casenum, (case_input, case_expected) in enumerate(smartquotes_cases):
+            with local_quotes(), self.subTest(id=f'smartquotes_cases[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                rst.Parser().parse(case_input, document)
+                # Don't do a ``populate_from_components()`` because that would
+                # enable the Transformer's default transforms.
+                document.transformer.add_transform(universal.SmartQuotes)
+                document.transformer.add_transform(universal.TestMessages)
+                document.transformer.apply_transforms()
+                output = document.pformat()
+
+                # Normalise line endings:
+                if output:
+                    output = "\n".join(output.splitlines())
+                if case_expected:
+                    case_expected = "\n".join(case_expected.splitlines())
+                self.assertEqual(output, case_expected)
+
+    def test_de(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 1
+        settings.halt_level = 5
+        settings.debug = False
+        settings.warning_stream = False
+
+        settings.smart_quotes = True
+        settings.language_code = 'de'
+
+        with local_quotes():
+            document = utils.new_document('test data', settings.copy())
+            rst.Parser().parse(smartquotes_de_input, document)
+            # Don't do a ``populate_from_components()`` because that would
+            # enable the Transformer's default transforms.
+            document.transformer.add_transform(universal.SmartQuotes)
+            document.transformer.apply_transforms()
+            output = document.pformat()
+            self.assertEqual(output, smartquotes_de_expected)
+
+    def test_de_alternative(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 1
+        settings.halt_level = 5
+        settings.debug = False
+        settings.warning_stream = False
+
+        settings.smart_quotes = 'alternative'
+        settings.language_code = 'de'
+
+        with local_quotes():
+            document = utils.new_document('test data', settings.copy())
+            rst.Parser().parse(smartquotes_de_alt_input, document)
+            # Don't do a ``populate_from_components()`` because that would
+            # enable the Transformer's default transforms.
+            document.transformer.add_transform(universal.SmartQuotes)
+            document.transformer.add_transform(universal.TestMessages)
+            document.transformer.apply_transforms()
+            output = document.pformat()
+            self.assertEqual(output, smartquotes_de_alt_expected)
+
+    def test_de_locales(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 1
+        settings.halt_level = 5
+        settings.debug = False
+        settings.warning_stream = False
+
+        settings.smart_quotes = True
+        settings.language_code = 'de'
+        settings.smartquotes_locales = [('de', '«»()'), ('nl', '„”’’')]
+
+        with local_quotes():
+            document = utils.new_document('test data', settings)
+            rst.Parser().parse(smartquotes_locales_input, document)
+            # Don't do a ``populate_from_components()`` because that would
+            # enable the Transformer's default transforms.
+            document.transformer.add_transform(universal.SmartQuotes)
+            document.transformer.add_transform(universal.TestMessages)
+            document.transformer.apply_transforms()
+            output = document.pformat()
+            self.assertEqual(output, smartquotes_locales_expected)
+
+
+smartquotes_cases = [
 ["""\
 Test "smart quotes", 'secondary smart quotes',
 "'nested' smart" quotes
@@ -409,41 +488,40 @@ Alternative German "smart quotes" and 'secondary smart quotes'.
         <paragraph>
             No smart quotes defined for language "foo".
 """],
-])
+]
 
-totest_de['smartquotes'] = ((SmartQuotes,), [
-["""\
+smartquotes_de_input = """\
 German "smart quotes" and 'secondary smart quotes'.
 
-.. class:: language-en
+.. klasse:: language-en
 
 English "smart quotes" and 'secondary smart quotes'.
-""",
-"""\
+"""
+
+smartquotes_de_expected = """\
 <document source="test data">
     <paragraph>
         German „smart quotes“ and ‚secondary smart quotes‘.
     <paragraph classes="language-en">
         English “smart quotes” and ‘secondary smart quotes’.
-"""],
-])
+"""
 
-totest_de_alt['smartquotes'] = ((SmartQuotes,), [
-["""\
+smartquotes_de_alt_input = """\
 Alternative German "smart quotes" and 'secondary smart quotes'.
 
 In this case, the apostrophe isn't a closing secondary quote!
 
-.. class:: language-en-UK
+.. klasse:: language-en-UK
 
 British "quotes" use single and 'secondary quotes' double quote signs
 (there are no alternative quotes defined).
 
-.. class:: language-ro
+.. klasse:: language-ro
 
 Romanian "smart quotes" and 'secondary' smart quotes.
-""",
-"""\
+"""
+
+smartquotes_de_alt_expected = """\
 <document source="test data">
     <paragraph>
         Alternative German »smart quotes« and ›secondary smart quotes‹.
@@ -454,27 +532,24 @@ Romanian "smart quotes" and 'secondary' smart quotes.
         (there are no alternative quotes defined).
     <paragraph classes="language-ro">
         Romanian „smart quotes” and «secondary» smart quotes.
-"""],
-])
+"""
 
-totest_locales['smartquotes'] = ((SmartQuotes,), [
-["""\
+smartquotes_locales_input = """\
 German "smart quotes" and 'secondary smart quotes'.
 
-.. class:: language-nl
+.. klasse:: language-nl
 
 Dutch "smart quotes" and 's Gravenhage (leading apostrophe).
-""",
-"""\
+"""
+
+smartquotes_locales_expected = """\
 <document source="test data">
     <paragraph>
         German «smart quotes» and (secondary smart quotes).
     <paragraph classes="language-nl">
         Dutch „smart quotes” and ’s Gravenhage (leading apostrophe).
-"""],
-])
+"""
 
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

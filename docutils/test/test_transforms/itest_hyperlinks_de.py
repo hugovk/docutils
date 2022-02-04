@@ -6,52 +6,50 @@
 
 """
 Tests for docutils.transforms.references.Hyperlinks with non-English language.
-
-TODO: This test fails currently when run as part of "alltests" because
-
-      - the "info" system-messages for directive fallbacks are only generated
-        once (the name -> directive mapping is cached in
-        ``docutils.parsers.rst.directives._directives``).
-
-      - the cache is not reset between after processing a document
-        (i.e. it contains name -> directive mappings from other tests).
-
-      See also https://sourceforge.net/p/docutils/feature-requests/71/
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_transforms import DocutilsTestSupport
-from docutils.transforms.references import (
-         PropagateTargets, AnonymousHyperlinks, IndirectHyperlinks,
-         ExternalTargets, InternalTargets, DanglingReferences)
-from docutils.parsers.rst import Parser
+import unittest
+
+from docutils import frontend
+from docutils import utils
+from docutils.languages import de
+from docutils.parsers import rst
+from docutils.transforms import universal
+from docutils.transforms.references import AnonymousHyperlinks
+from docutils.transforms.references import DanglingReferences
+from docutils.transforms.references import ExternalTargets
+from docutils.transforms.references import IndirectHyperlinks
+from docutils.transforms.references import InternalTargets
+from docutils.transforms.references import PropagateTargets
 
 
-def suite():
-    parser = Parser()
-    settings = {}
-    settings['language_code'] = 'de'
-    s = DocutilsTestSupport.TransformTestSuite(
-        parser, suite_settings=settings)
-    s.generateTests(totest)
-    return s
+class TestTransformHyperlinksNonEnglish(unittest.TestCase):
+    def test_hyperlinks_transform_non_english(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 1
+        settings.halt_level = 5
+        settings.debug = False
+        settings.warning_stream = False
 
-
-totest = {}
-
-totest['hyperlinks'] = ((PropagateTargets, AnonymousHyperlinks,
-                         IndirectHyperlinks, ExternalTargets,
-                         InternalTargets, DanglingReferences), [
-
-["""\
+        settings.language_code = 'de'
+        document = utils.new_document('test data', settings)
+        rst.Parser().parse("""\
 Target_ should propagate past the system_message to set "id" on note.
 
 .. _target:
 .. note:: Kurznotiz
    :name: mynote
-""",
-"""\
+""", document)
+        # Don't do a ``populate_from_components()`` because that would
+        # enable the Transformer's default transforms.
+        document.transformer.add_transforms(
+            (PropagateTargets, AnonymousHyperlinks, IndirectHyperlinks,
+             ExternalTargets, InternalTargets, DanglingReferences))
+        document.transformer.add_transform(universal.TestMessages)
+        document.transformer.apply_transforms()
+
+        output = document.pformat()
+        self.assertEqual(output, f"""\
 <document source="test data">
     <paragraph>
         <reference name="Target" refid="target">
@@ -67,10 +65,9 @@ Target_ should propagate past the system_message to set "id" on note.
             Kurznotiz
     <system_message level="1" source="test data" type="INFO">
         <paragraph>
-            Using <module 'docutils.languages.de' from '/usr/local/src/docutils-git-svn/docutils/docutils/languages/de.py'> for language "de".
-"""],
-])
+            Using <module 'docutils.languages.de' from {de.__file__!r}> for language "de".
+""")
+
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

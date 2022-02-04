@@ -8,23 +8,60 @@
 Tests for docutils.transforms.references.Substitutions.
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_transforms import DocutilsTestSupport
+import unittest
+
+from docutils import frontend
+from docutils import utils
+from docutils.parsers import rst
+from docutils.transforms import universal
 from docutils.transforms.references import Substitutions
-from docutils.parsers.rst import Parser
 
 
-def suite():
-    parser = Parser()
-    s = DocutilsTestSupport.TransformTestSuite(parser)
-    s.generateTests(totest)
-    return s
+class TestTransformSubstitutions(unittest.TestCase):
+    def test_substitutions(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 1
+        settings.halt_level = 5
+        settings.debug = False
+        settings.warning_stream = False
+        parser = rst.Parser()
+
+        for casenum, (case_input, case_expected) in enumerate(substitutions):
+            with self.subTest(id=f'substitutions[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                # Don't do a ``populate_from_components()`` because that would
+                # enable the Transformer's default transforms.
+                document.transformer.add_transform(Substitutions)
+                document.transformer.add_transform(universal.TestMessages)
+                document.transformer.apply_transforms()
+
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
+
+    def test_unicode(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 1
+        settings.halt_level = 5
+        settings.debug = False
+        settings.warning_stream = False
+        parser = rst.Parser()
+
+        for casenum, (case_input, case_expected) in enumerate(unicode):
+            with self.subTest(id=f'unicode[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                # Don't do a ``populate_from_components()`` because that would
+                # enable the Transformer's default transforms.
+                document.transformer.add_transform(Substitutions)
+                document.transformer.add_transform(universal.TestMessages)
+                document.transformer.apply_transforms()
+
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
 
 
-totest = {}
-
-totest['substitutions'] = ((Substitutions,), [
+substitutions = [
 ["""\
 The |biohazard| symbol is deservedly scary-looking.
 
@@ -248,9 +285,9 @@ Substitution reference with |reference-in-content|.
         <reference name="hyperlink-reference" refname="hyperlink-reference">
             hyperlink-reference
 """],
-])
+]
 
-totest['unicode'] = ((Substitutions,), [
+unicode = [
 ["""\
 Insert an em-dash (|mdash|), a copyright symbol (|copy|), a non-breaking
 space (|nbsp|), a backwards-not-equals (|bne|), and a captial omega (|Omega|).
@@ -371,9 +408,8 @@ Make sure this substitution definition is not registered: |target|
         <paragraph>
             Undefined substitution referenced: "target".
 """],
-])
+]
 
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

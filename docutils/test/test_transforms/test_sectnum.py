@@ -5,27 +5,42 @@
 # Copyright: This module has been placed in the public domain.
 
 """
-Tests for `docutils.transforms.parts.SectNum` (via
-`docutils.transforms.universal.LastReaderPending`).
+Tests for `docutils.transforms.parts.SectNum`.
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_transforms import DocutilsTestSupport
+import unittest
+
+from docutils import frontend
+from docutils import utils
+from docutils.parsers import rst
+from docutils.transforms import universal
 from docutils.transforms.references import Substitutions
-from docutils.parsers.rst import Parser
 
 
-def suite():
-    parser = Parser()
-    s = DocutilsTestSupport.TransformTestSuite(parser)
-    s.generateTests(totest)
-    return s
+class TestTransformSectNum(unittest.TestCase):
+    def test_sectnum(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 1
+        settings.halt_level = 5
+        settings.debug = False
+        settings.warning_stream = False
+        parser = rst.Parser()
+
+        for casenum, (case_input, case_expected) in enumerate(section_numbers):
+            with self.subTest(id=f'section_numbers[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                # Don't do a ``populate_from_components()`` because that would
+                # enable the Transformer's default transforms.
+                document.transformer.add_transform(Substitutions)
+                document.transformer.add_transform(universal.TestMessages)
+                document.transformer.apply_transforms()
+
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
 
 
-totest = {}
-
-totest['section_numbers'] = ((Substitutions,), [
+section_numbers = [
 ["""\
 .. sectnum::
 
@@ -50,28 +65,28 @@ Paragraph 4.
     <section ids="title-1" names="title\\ 1">
         <title auto="1">
             <generated classes="sectnum">
-                1\u00a0\u00a0\u00a0
+                1\xa0\xa0\xa0
             Title 1
         <paragraph>
             Paragraph 1.
         <section ids="title-2" names="title\\ 2">
             <title auto="1">
                 <generated classes="sectnum">
-                    1.1\u00a0\u00a0\u00a0
+                    1.1\xa0\xa0\xa0
                 Title 2
             <paragraph>
                 Paragraph 2.
             <section ids="title-3" names="title\\ 3">
                 <title auto="1">
                     <generated classes="sectnum">
-                        1.1.1\u00a0\u00a0\u00a0
+                        1.1.1\xa0\xa0\xa0
                     Title 3
                 <paragraph>
                     Paragraph 3.
         <section ids="title-4" names="title\\ 4">
             <title auto="1">
                 <generated classes="sectnum">
-                    1.2\u00a0\u00a0\u00a0
+                    1.2\xa0\xa0\xa0
                 Title 4
             <paragraph>
                 Paragraph 4.
@@ -88,7 +103,7 @@ Paragraph 1.
     <section ids="bold-title" names="bold\\ title">
         <title auto="1">
             <generated classes="sectnum">
-                1\u00a0\u00a0\u00a0
+                1\xa0\xa0\xa0
             <strong>
                 Bold Title
         <paragraph>
@@ -118,14 +133,14 @@ Paragraph 4.
     <section ids="title-1" names="title\\ 1">
         <title auto="1">
             <generated classes="sectnum">
-                1\u00a0\u00a0\u00a0
+                1\xa0\xa0\xa0
             Title 1
         <paragraph>
             Paragraph 1.
         <section ids="title-2" names="title\\ 2">
             <title auto="1">
                 <generated classes="sectnum">
-                    1.1\u00a0\u00a0\u00a0
+                    1.1\xa0\xa0\xa0
                 Title 2
             <paragraph>
                 Paragraph 2.
@@ -137,7 +152,7 @@ Paragraph 4.
         <section ids="title-4" names="title\\ 4">
             <title auto="1">
                 <generated classes="sectnum">
-                    1.2\u00a0\u00a0\u00a0
+                    1.2\xa0\xa0\xa0
                 Title 4
             <paragraph>
                 Paragraph 4.
@@ -172,14 +187,14 @@ Paragraph 4.
                 <paragraph>
                     <reference ids="toc-entry-1" refid="title-1">
                         <generated classes="sectnum">
-                            1\u00a0\u00a0\u00a0
+                            1\xa0\xa0\xa0
                         Title 1
                 <bullet_list classes="auto-toc">
                     <list_item>
                         <paragraph>
                             <reference ids="toc-entry-2" refid="title-2">
                                 <generated classes="sectnum">
-                                    1.1\u00a0\u00a0\u00a0
+                                    1.1\xa0\xa0\xa0
                                 Title 2
                         <bullet_list>
                             <list_item>
@@ -190,19 +205,19 @@ Paragraph 4.
                         <paragraph>
                             <reference ids="toc-entry-4" refid="title-4">
                                 <generated classes="sectnum">
-                                    1.2\u00a0\u00a0\u00a0
+                                    1.2\xa0\xa0\xa0
                                 Title 4
     <section ids="title-1" names="title\\ 1">
         <title auto="1" refid="toc-entry-1">
             <generated classes="sectnum">
-                1\u00a0\u00a0\u00a0
+                1\xa0\xa0\xa0
             Title 1
         <paragraph>
             Paragraph 1.
         <section ids="title-2" names="title\\ 2">
             <title auto="1" refid="toc-entry-2">
                 <generated classes="sectnum">
-                    1.1\u00a0\u00a0\u00a0
+                    1.1\xa0\xa0\xa0
                 Title 2
             <paragraph>
                 Paragraph 2.
@@ -214,7 +229,7 @@ Paragraph 4.
         <section ids="title-4" names="title\\ 4">
             <title auto="1" refid="toc-entry-4">
                 <generated classes="sectnum">
-                    1.2\u00a0\u00a0\u00a0
+                    1.2\xa0\xa0\xa0
                 Title 4
             <paragraph>
                 Paragraph 4.
@@ -244,28 +259,28 @@ Paragraph 4.
     <section ids="title-1" names="title\\ 1">
         <title auto="1">
             <generated classes="sectnum">
-                Arbitrary-1\u00a0\u00a0\u00a0
+                Arbitrary-1\xa0\xa0\xa0
             Title 1
         <paragraph>
             Paragraph 1.
         <section ids="title-2" names="title\\ 2">
             <title auto="1">
                 <generated classes="sectnum">
-                    Arbitrary-1.1\u00a0\u00a0\u00a0
+                    Arbitrary-1.1\xa0\xa0\xa0
                 Title 2
             <paragraph>
                 Paragraph 2.
             <section ids="title-3" names="title\\ 3">
                 <title auto="1">
                     <generated classes="sectnum">
-                        Arbitrary-1.1.1\u00a0\u00a0\u00a0
+                        Arbitrary-1.1.1\xa0\xa0\xa0
                     Title 3
                 <paragraph>
                     Paragraph 3.
         <section ids="title-4" names="title\\ 4">
             <title auto="1">
                 <generated classes="sectnum">
-                    Arbitrary-1.2\u00a0\u00a0\u00a0
+                    Arbitrary-1.2\xa0\xa0\xa0
                 Title 4
             <paragraph>
                 Paragraph 4.
@@ -295,28 +310,28 @@ Paragraph 4.
     <section ids="title-1" names="title\\ 1">
         <title auto="1">
             <generated classes="sectnum">
-                3\u00a0\u00a0\u00a0
+                3\xa0\xa0\xa0
             Title 1
         <paragraph>
             Paragraph 1.
         <section ids="title-2" names="title\\ 2">
             <title auto="1">
                 <generated classes="sectnum">
-                    3.1\u00a0\u00a0\u00a0
+                    3.1\xa0\xa0\xa0
                 Title 2
             <paragraph>
                 Paragraph 2.
             <section ids="title-3" names="title\\ 3">
                 <title auto="1">
                     <generated classes="sectnum">
-                        3.1.1\u00a0\u00a0\u00a0
+                        3.1.1\xa0\xa0\xa0
                     Title 3
                 <paragraph>
                     Paragraph 3.
         <section ids="title-4" names="title\\ 4">
             <title auto="1">
                 <generated classes="sectnum">
-                    3.2\u00a0\u00a0\u00a0
+                    3.2\xa0\xa0\xa0
                 Title 4
             <paragraph>
                 Paragraph 4.
@@ -348,35 +363,34 @@ Paragraph 4.
     <section ids="title-1" names="title\\ 1">
         <title auto="1">
             <generated classes="sectnum">
-                (5.9.3)\u00a0\u00a0\u00a0
+                (5.9.3)\xa0\xa0\xa0
             Title 1
         <paragraph>
             Paragraph 1.
         <section ids="title-2" names="title\\ 2">
             <title auto="1">
                 <generated classes="sectnum">
-                    (5.9.3.1)\u00a0\u00a0\u00a0
+                    (5.9.3.1)\xa0\xa0\xa0
                 Title 2
             <paragraph>
                 Paragraph 2.
             <section ids="title-3" names="title\\ 3">
                 <title auto="1">
                     <generated classes="sectnum">
-                        (5.9.3.1.1)\u00a0\u00a0\u00a0
+                        (5.9.3.1.1)\xa0\xa0\xa0
                     Title 3
                 <paragraph>
                     Paragraph 3.
         <section ids="title-4" names="title\\ 4">
             <title auto="1">
                 <generated classes="sectnum">
-                    (5.9.3.2)\u00a0\u00a0\u00a0
+                    (5.9.3.2)\xa0\xa0\xa0
                 Title 4
             <paragraph>
                 Paragraph 4.
 """],
-])
+]
 
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()
