@@ -376,11 +376,11 @@ class OptionParser(optparse.OptionParser, docutils.SettingsSpec):
     """
 
     standard_config_files = [
-        '/etc/docutils.conf',           # system-wide
-        './docutils.conf',              # project-specific
-        '~/.docutils']                  # user-specific
-    """Docutils configuration files, using ConfigParser syntax.  Filenames
-    will be tilde-expanded later.  Later files override earlier ones."""
+        '/etc/docutils.conf',               # system-wide
+        './docutils.conf',                  # project-specific
+        os.path.expanduser('~/.docutils')]  # user-specific
+    """Docutils configuration files, using ConfigParser syntax.  Later files
+    override earlier ones."""
 
     threshold_choices = 'info 1 warning 2 error 3 severe 4 none 5'.split()
     """Possible inputs for for --report and --halt threshold values."""
@@ -649,11 +649,11 @@ class OptionParser(optparse.OptionParser, docutils.SettingsSpec):
     @classmethod
     def get_standard_config_files(cls):
         """Return list of config files, from environment or standard."""
-        try:
-            config_files = os.environ['DOCUTILSCONFIG'].split(os.pathsep)
-        except KeyError:
-            config_files = cls.standard_config_files
-        return [os.path.expanduser(f) for f in config_files if f.strip()]
+        if 'DOCUTILSCONFIG' not in os.environ:
+            return [*cls.standard_config_files]
+        return [os.path.expanduser(f)
+                for f in os.environ['DOCUTILSCONFIG'].split(os.pathsep)
+                if f.strip()]
 
     def get_standard_config_settings(self):
         settings = Values()
@@ -664,9 +664,8 @@ class OptionParser(optparse.OptionParser, docutils.SettingsSpec):
     def get_config_file_settings(self, config_file):
         """Returns a dictionary containing appropriate config file settings."""
         config_parser = ConfigParser()
-        # parse config file, add filename if found and successfull read.
+        # parse config file, add filename if found and successful read.
         self.config_files += config_parser.read(config_file, self)
-        base_path = os.path.dirname(config_file)
         applied = set()
         settings = Values()
         for component in self.components:
@@ -677,9 +676,11 @@ class OptionParser(optparse.OptionParser, docutils.SettingsSpec):
                 if section in applied:
                     continue
                 applied.add(section)
-                settings.update(config_parser.get_section(section), self)
+                if config_parser.has_section(section):
+                    settings.update(config_parser[section], self)
         make_paths_absolute(
-            settings.__dict__, self.relative_path_settings, base_path)
+            settings.__dict__, self.relative_path_settings,
+            os.path.dirname(config_file))
         return settings.__dict__
 
     def check_values(self, values, args):
@@ -827,11 +828,10 @@ Skipping "%s" configuration file.
                             config_parser=self, config_section=section)
                     except Exception as err:
                         raise ValueError(
-                            'Error in config file "%s", section "[%s]":\n'
-                            '    %s\n'
-                            '        %s = %s'
-                            % (filename, section, io.error_string(err),
-                               setting, value))
+                            f'Error in config file "{filename}", '
+                            f'section "[{section}]":\n'
+                            f'    {io.error_string(err)}\n'
+                            f'        {setting} = {value}')
                     self.set(section, setting, new_value)
                 if option.overrides:
                     self.set(section, option.overrides, None)
@@ -863,3 +863,13 @@ Skipping "%s" configuration file.
 
 class ConfigDeprecationWarning(FutureWarning):
     """Warning for deprecated configuration file features."""
+
+
+def get_default_settings(*components):
+    """Get default settings for the OptionParser.
+
+    If passed SettingsSpec subclasses, the default settings from these
+    components are included as well.
+
+    """
+    return OptionParser(components).get_default_values()
