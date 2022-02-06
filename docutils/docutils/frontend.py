@@ -6,8 +6,6 @@
 Command-line and common processing for Docutils front-end tools.
 
 This module is provisional.
-Major changes will happen with the switch from the deprecated
-"optparse" module to "arparse".
 
 Applications should use the high-level API provided by `docutils.core`.
 See https://docutils.sourceforge.io/docs/api/runtime-settings.html.
@@ -36,18 +34,37 @@ Also exports the following functions:
 
 __docformat__ = 'reStructuredText'
 
-
+import argparse
 import codecs
 import configparser
-import optparse
-from optparse import SUPPRESS_HELP
 import os
 import os.path
 import sys
 import warnings
 
 import docutils
-from docutils import io
+import docutils.io
+import docutils.nodes
+import docutils.utils
+
+SUPPRESS_HELP = None
+
+# Lookup table for boolean configuration file settings
+_BOOLEANS = {"1": True,  "on":  True,  "yes": True,  "true":  True,
+             "0": False, "off": False, "no":  False, "false": False, "": False}
+
+# Lookup table for --report and --halt threshold values
+_THRESHOLDS = {"info": 1, "warning": 2, "error": 3, "severe": 4, "none": 5}
+
+
+class _LegacyCallbackAction(argparse.Action):
+    _legacy_callable = lambda option, opt, value, parser, *args, **kwargs: ...
+    _callback_args = ()
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        self._legacy_callable(
+            self.dest, None, values, parser, *self._callback_args
+        )
 
 
 def store_multiple(option, opt, value, parser, *args, **kwargs):
@@ -62,61 +79,82 @@ def store_multiple(option, opt, value, parser, *args, **kwargs):
     for key, value in kwargs.items():
         setattr(parser.values, key, value)
 
-def read_config_file(option, opt, value, parser):
-    """
-    Read a configuration file during option processing.  (Option callback.)
-    """
-    try:
-        new_settings = parser.get_config_file_settings(value)
-    except ValueError as err:
-        parser.error(err)
-    parser.values.update(new_settings, parser)
 
-def validate_encoding(setting, value, option_parser,
-                      config_parser=None, config_section=None):
+class read_config_file(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):
+        """
+        Read a configuration file during option processing.
+        """
+        try:
+            config_parser = ConfigParser()
+            config_parser.read(values, OptionParser())
+            new_settings = {s: dict(config_parser.items(s)) for s in config_parser.sections()}
+        except ValueError as err:
+            parser.error(str(err))
+        else:
+            parser.set_defaults(**new_settings)
+
+
+def validate_encoding(value):
     try:
         codecs.lookup(value)
     except LookupError:
-        raise LookupError('setting "%s": unknown encoding: "%s"'
-                          % (setting, value))
+        raise LookupError(f'unknown encoding: "{value}"')
     return value
 
-def validate_encoding_error_handler(setting, value, option_parser,
-                                    config_parser=None, config_section=None):
-    try:
-        codecs.lookup_error(value)
-    except LookupError:
-        raise LookupError(
-            'unknown encoding error handler: "%s" (choices: '
-            '"strict", "ignore", "replace", "backslashreplace", '
-            '"xmlcharrefreplace", and possibly others; see documentation for '
-            'the Python ``codecs`` module)' % value)
-    return value
 
-def validate_encoding_and_error_handler(
-    setting, value, option_parser, config_parser=None, config_section=None):
+# Can't be a simple validator as it has side effects :(
+# This is special-cased in the settings-spec parsing code
+class validate_encoding_and_error_handler(argparse.Action):
+    def __call__(self, parser, namespace, value, option_string=None):
+        """
+        Side-effect: if an error handler is included in the value, it is inserted
+        into the appropriate place as if it was a separate setting/option.
+        """
+        if ':' in value:
+            encoding, handler = value.split(':', 1)
+            validate_encoding_error_handler(handler)
+            setattr(namespace, self.dest + '_error_handler', handler)
+        else:
+            encoding = value
+        validate_encoding(encoding)
+        setattr(namespace, self.dest, encoding)
+
+
+# terrible hack -- the above action class is replaced with this function when
+# parsing from a config file.
+def _validate_encoding_and_error_handler_config_parser(
+        value, argument, config_section, config_parser
+):
     """
     Side-effect: if an error handler is included in the value, it is inserted
     into the appropriate place as if it was a separate setting/option.
     """
     if ':' in value:
-        encoding, handler = value.split(':')
-        validate_encoding_error_handler(
-            setting + '_error_handler', handler, option_parser,
-            config_parser, config_section)
-        if config_parser:
-            config_parser.set(config_section, setting + '_error_handler',
-                              handler)
-        else:
-            setattr(option_parser.values, setting + '_error_handler', handler)
+        encoding, handler = value.split(':', 1)
+        validate_encoding_error_handler(handler)
+        config_parser.set(config_section, argument + '_error_handler', handler)
     else:
         encoding = value
-    validate_encoding(setting, encoding, option_parser,
-                      config_parser, config_section)
+    validate_encoding(encoding)
     return encoding
 
-def validate_boolean(setting, value, option_parser,
-                     config_parser=None, config_section=None):
+# Simple validators
+# ########################################
+
+def validate_encoding_error_handler(value):
+    try:
+        codecs.lookup_error(value)
+    except LookupError:
+        raise LookupError(
+            f'unknown encoding error handler: "{value}" (choices: '
+            '"strict", "ignore", "replace", "backslashreplace", '
+            '"xmlcharrefreplace", and possibly others; see documentation for '
+            'the Python ``codecs`` module)')
+    return value
+
+
+def validate_boolean(value):
     """Check/normalize boolean settings:
          True:  '1', 'on', 'yes', 'true'
          False: '0', 'off', 'no','false', ''
@@ -124,52 +162,51 @@ def validate_boolean(setting, value, option_parser,
     if isinstance(value, bool):
         return value
     try:
-        return option_parser.booleans[value.strip().lower()]
+        return _BOOLEANS[value.strip().lower()]
     except KeyError:
         raise LookupError('unknown boolean value: "%s"' % value)
 
-def validate_ternary(setting, value, option_parser,
-                     config_parser=None, config_section=None):
+
+def validate_ternary(value):
     """Check/normalize three-value settings:
          True:  '1', 'on', 'yes', 'true'
          False: '0', 'off', 'no','false', ''
          any other value: returned as-is.
     """
-    if isinstance(value, bool) or value is None:
+    if isinstance(value, (bool, type(None))):
         return value
     try:
-        return option_parser.booleans[value.strip().lower()]
+        return _BOOLEANS[value.strip().lower()]
     except KeyError:
         return value
 
-def validate_nonnegative_int(setting, value, option_parser,
-                             config_parser=None, config_section=None):
+
+def validate_nonnegative_int(value):
     value = int(value)
     if value < 0:
         raise ValueError('negative value; must be positive or zero')
     return value
 
-def validate_threshold(setting, value, option_parser,
-                       config_parser=None, config_section=None):
+
+def validate_threshold(value):
     try:
         return int(value)
     except ValueError:
         try:
-            return option_parser.thresholds[value.lower()]
+            return _THRESHOLDS[value.lower()]
         except (KeyError, AttributeError):
-            raise LookupError('unknown threshold: %r.' % value)
+            raise LookupError(f'unknown threshold: {value!r}.')
 
-def validate_colon_separated_string_list(
-    setting, value, option_parser, config_parser=None, config_section=None):
-    if not isinstance(value, list):
-        value = value.split(':')
-    else:
+
+def validate_colon_separated_string_list(value):
+    if isinstance(value, list):
         last = value.pop()
-        value.extend(last.split(':'))
-    return value
+        value.extend(last.split(":"))
+        return value
+    return value.split(":")
 
-def validate_comma_separated_list(setting, value, option_parser,
-                                  config_parser=None, config_section=None):
+
+def validate_comma_separated_list(value):
     """Check/normalize list arguments (split at "," and strip whitespace).
     """
     # `value` may be ``bytes``, ``str``, or a ``list`` (when  given as
@@ -179,49 +216,49 @@ def validate_comma_separated_list(setting, value, option_parser,
     # this function is called for every option added to `value`
     # -> split the last item and append the result:
     last = value.pop()
-    items = [i.strip(' \t\n') for i in last.split(',') if i.strip(' \t\n')]
-    value.extend(items)
+    for i in last.split(","):
+        strip = i.strip(" \t\n")
+        if strip:
+            value.append(strip)
     return value
 
-def validate_url_trailing_slash(
-    setting, value, option_parser, config_parser=None, config_section=None):
-    if not value:
-        return './'
-    elif value.endswith('/'):
-        return value
-    else:
-        return value + '/'
 
-def validate_dependency_file(setting, value, option_parser,
-                             config_parser=None, config_section=None):
+def validate_url_trailing_slash(value):
+    if not value:
+        return "./"
+    if value.endswith("/"):
+        return value
+    return value + "/"
+
+
+def validate_dependency_file(value):
     try:
         return docutils.utils.DependencyList(value)
     except OSError:
         # TODO: warn/info?
         return docutils.utils.DependencyList(None)
 
-def validate_strip_class(setting, value, option_parser,
-                         config_parser=None, config_section=None):
+
+def validate_strip_class(value):
     # value is a comma separated string list:
-    value = validate_comma_separated_list(setting, value, option_parser,
-                                          config_parser, config_section)
+    value = validate_comma_separated_list(value)
     # validate list elements:
     for cls in value:
-        normalized = docutils.nodes.make_id(cls)
-        if cls != normalized:
-            raise ValueError('Invalid class value %r (perhaps %r?)'
-                             % (cls, normalized))
+        normalised = docutils.nodes.make_id(cls)
+        if cls != normalised:
+            raise ValueError(
+                f"Invalid class value {cls!r} (perhaps {normalised!r}?)"
+            )
     return value
 
-def validate_smartquotes_locales(setting, value, option_parser,
-                                 config_parser=None, config_section=None):
+
+def validate_smartquotes_locales(value):
     """Check/normalize a comma separated list of smart quote definitions.
 
     Return a list of (language-tag, quotes) string tuples."""
 
     # value is a comma separated string list:
-    value = validate_comma_separated_list(setting, value, option_parser,
-                                          config_parser, config_section)
+    value = validate_comma_separated_list(value)
     # validate list elements
     lc_quotes = []
     for item in value:
@@ -233,20 +270,24 @@ def validate_smartquotes_locales(setting, value, option_parser,
             lc_quotes.append(item)
             continue
         except ValueError:
-            raise ValueError('Invalid value "%s".'
-                             ' Format is "<language>:<quotes>".'
-                             % item.encode('ascii', 'backslashreplace'))
+            raise ValueError(
+                f'Invalid value "{item.encode("ascii", "backslashreplace")}". '
+                'Format is "<language>:<quotes>".'
+            )
         # parse colon separated string list:
         quotes = quotes.strip()
         multichar_quotes = quotes.split(':')
         if len(multichar_quotes) == 4:
             quotes = multichar_quotes
         elif len(quotes) != 4:
-            raise ValueError('Invalid value "%s". Please specify 4 quotes\n'
+            raise ValueError(
+                f'Invalid value "{item.encode("ascii", "backslashreplace")}". '
+                'Please specify 4 quotes\n'
                              '    (primary open/close; secondary open/close).'
-                             % item.encode('ascii', 'backslashreplace'))
+            )
         lc_quotes.append((lang, quotes))
     return lc_quotes
+
 
 def make_paths_absolute(pathdict, keys, base_path=None):
     """
@@ -267,8 +308,10 @@ def make_paths_absolute(pathdict, keys, base_path=None):
                 value = make_one_path_absolute(base_path, value)
             pathdict[key] = value
 
+
 def make_one_path_absolute(base_path, path):
     return os.path.abspath(os.path.join(base_path, path))
+
 
 def filter_settings_spec(settings_spec, *exclude, **replace):
     """Return a copy of `settings_spec` excluding/replacing some settings.
@@ -280,15 +323,15 @@ def filter_settings_spec(settings_spec, *exclude, **replace):
     Keyword arguments are option specification replacements.
     (See the html4strict writer for an example.)
     """
-    settings = list(settings_spec)
+    settings = [*settings_spec]
     # every third item is a sequence of option tuples
     for i in range(2, len(settings), 3):
         newopts = []
         for opt_spec in settings[i]:
             # opt_spec is ("<help>", [<option strings>], {<keyword args>})
-            opt_name = [opt_string[2:].replace('-', '_')
-                        for opt_string in opt_spec[1]
-                        if opt_string.startswith('--')][0]
+            opt_name = next(opt_string[2:].replace('-', '_')
+                            for opt_string in opt_spec[1]
+                            if opt_string.startswith('--'))
             if opt_name in exclude:
                 continue
             if opt_name in replace.keys():
@@ -299,71 +342,54 @@ def filter_settings_spec(settings_spec, *exclude, **replace):
     return tuple(settings)
 
 
-class Values(optparse.Values):
-
+class Values:
     """
-    Updates list attributes by extension rather than by replacement.
-    Works in conjunction with the `OptionParser.lists` instance attribute.
+    Simple class to store values for attribute access.
     """
 
-    def __init__(self, *args, **kwargs):
-        optparse.Values.__init__(self, *args, **kwargs)
-        if getattr(self, 'record_dependencies', None) is None:
-            # Set up dummy dependency list.
+    def __init__(self, **kwargs):
+        for name, value in kwargs.items():
+            self.__dict__[name] = value
+
+        # Set up a dependency list in case it is needed.
+        if self.__dict__.get("record_dependencies") is None:
             self.record_dependencies = docutils.utils.DependencyList()
 
-    def update(self, other_dict, option_parser):
-        if isinstance(other_dict, Values):
-            other_dict = other_dict.__dict__
-        other_dict = dict(other_dict) # also works with ConfigParser sections
-        for setting in option_parser.lists.keys():
-            if hasattr(self, setting) and setting in other_dict:
-                value = getattr(self, setting)
-                if value:
-                    value += other_dict[setting]
-                    del other_dict[setting]
-        self._update_loose(other_dict)
+    def __eq__(self, other):
+        if not isinstance(other, Values):
+            return NotImplemented
+        return self.__dict__ == other.__dict__
+
+    def __contains__(self, key):
+        return key in self.__dict__
+
+    def __repr__(self):
+        args_pairs = []
+        non_str = {}
+        for name, value in self.__dict__.items():
+            if name.isidentifier():
+                args_pairs.append(f"{name}={repr(value)}")
+            else:
+                non_str[name] = value
+        if non_str:
+            args_pairs.append(f"**{repr(non_str)}")
+        return "{}({})".format(self.__class__.__name__, ", ".join(args_pairs))
 
     def copy(self):
-        """Return a shallow copy of `self`."""
-        return self.__class__(defaults=self.__dict__)
+        """Return a shallow copy of self."""
+        return self.__class__(**self.__dict__)
 
     def setdefault(self, name, default):
-        """V.setdefault(n[,d]) -> getattr(V,n,d), also set D.n=d if n not in D or None.
-        """
-        if getattr(self, name, None) is None:
-            setattr(self, name, default)
-        return getattr(self, name)
+        return self.__dict__.setdefault(name, default)
+
+    def update(self, other):
+        self.__dict__.update(other.__dict__)
 
 
-class Option(optparse.Option):
-
-    ATTRS = optparse.Option.ATTRS + ['validator', 'overrides']
-
-    def process(self, opt, value, values, parser):
-        """
-        Call the validator function on applicable settings and
-        evaluate the 'overrides' option.
-        Extends `optparse.Option.process`.
-        """
-        result = super().process(opt, value, values, parser)
-        setting = self.dest
-        if setting:
-            if self.validator:
-                value = getattr(values, setting)
-                try:
-                    new_value = self.validator(setting, value, parser)
-                except Exception as err:
-                    raise optparse.OptionValueError(
-                        'Error in option "%s":\n    %s'
-                        % (opt, io.error_string(err)))
-                setattr(values, setting, new_value)
-            if self.overrides:
-                setattr(values, self.overrides, None)
-        return result
+class Option: ...
 
 
-class OptionParser(optparse.OptionParser, docutils.SettingsSpec):
+class _SettingsSpec(docutils.SettingsSpec):
 
     """
     Parser for command-line and library use.  The `settings_spec`
@@ -385,15 +411,14 @@ class OptionParser(optparse.OptionParser, docutils.SettingsSpec):
     threshold_choices = 'info 1 warning 2 error 3 severe 4 none 5'.split()
     """Possible inputs for for --report and --halt threshold values."""
 
-    thresholds = {'info': 1, 'warning': 2, 'error': 3, 'severe': 4, 'none': 5}
+    thresholds = {**_THRESHOLDS}
     """Lookup table for --report and --halt threshold values."""
 
-    booleans={'1': True, 'on': True, 'yes': True, 'true': True,
-              '0': False, 'off': False, 'no': False, 'false': False, '': False}
+    booleans = {**_BOOLEANS}
     """Lookup table for boolean configuration file settings."""
 
     default_error_encoding = (getattr(sys.stderr, 'encoding', None)
-                              or io.locale_encoding or 'ascii')
+                              or docutils.io.locale_encoding or 'ascii')
 
     default_error_encoding_error_handler = 'backslashreplace'
 
@@ -576,13 +601,37 @@ class OptionParser(optparse.OptionParser, docutils.SettingsSpec):
 
     config_section = 'general'
 
-    version_template = ('%%prog (Docutils %s%s, Python %s, on %s)'
-                        % (docutils.__version__,
-                           docutils.__version_details__ and
-                           ' [%s]'%docutils.__version_details__ or '',
-                           sys.version.split()[0], sys.platform))
+    version_template = f'%(prog) (Docutils {docutils.__version__} [{docutils.__version_details__}], Python {sys.version.split()[0]}, on {sys.platform})'
     """Default version message."""
 
+
+class _ArgumentParser(argparse.ArgumentParser):
+    relative_path_settings = ()  # set in _SettingsSpec
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.arg_defaults = {}
+        """Mapping of argument name to argument default value."""
+
+        self.config_files = []
+        """List of paths of applied configuration files."""
+
+    def set_defaults(self, **kwargs):
+        argparse.ArgumentParser.set_defaults(self, **kwargs)
+        self.arg_defaults.update(kwargs)
+
+    def parse_args(self, args=None, namespace=None):
+        args = super().parse_args(args, namespace)
+        if args._source and args._source == args._destination:
+            self.error('Do not specify the same file for both source and '
+                       'destination.  It will clobber the source file.')
+        make_paths_absolute(args.__dict__, self.relative_path_settings)
+        args._config_files = self.config_files
+        return Values(**args.__dict__)
+
+
+class OptionParser(_ArgumentParser, _SettingsSpec):
     def __init__(self, components=(), defaults=None, read_config_files=None,
                  *args, **kwargs):
         """
@@ -591,29 +640,56 @@ class OptionParser(optparse.OptionParser, docutils.SettingsSpec):
         default overrides.
         """
 
-        self.lists = {}
+        self._list_args = set()
         """Set of list-type settings."""
 
-        self.config_files = []
-        """List of paths of applied configuration files."""
+        super().__init__(
+            add_help=False,
+            formatter_class=argparse.HelpFormatter,
+            *args,
+            **kwargs
+        )
 
-        optparse.OptionParser.__init__(
-            self, option_class=Option, add_help_option=None,
-            formatter=optparse.TitledHelpFormatter(width=78),
-            *args, **kwargs)
-        if not self.version:
-            self.version = self.version_template
         # Make an instance copy (it will be modified):
-        self.relative_path_settings = list(self.relative_path_settings)
+        self.relative_path_settings = [*self.relative_path_settings]
+
         self.components = (self, *components)
         self.populate_from_components(self.components)
-        self.defaults.update(defaults or {})
-        if read_config_files and not self.defaults['_disable_config']:
+
+        if self.get_default("version") is None:
+            self.add_argument('--version', action='version',
+                              version=self.version_template)
+
+        if defaults:
+            self.set_defaults(**defaults)
+
+        if read_config_files and not self.get_default("_disable_config"):
             try:
-                config_settings = self.get_standard_config_settings()
+                settings = {}
+                for file in self.get_standard_config_files():
+                    if not os.path.isfile(file):
+                        continue
+                    new = get_config_file_settings(
+                        self,
+                        file,
+                        self.config_files,
+                        self.components,
+                        self._list_args,
+                        self.relative_path_settings
+                    )
+                    settings = _merge_with_list_args(
+                        settings, new, self._list_args)
+                self.set_defaults(**settings)
             except ValueError as err:
-                self.error(err)
-            self.defaults.update(config_settings.__dict__)
+                self.error(str(err))
+
+        def _stdio_validator(value):
+            return None if value == "-" else value  # "-" means stdin/stdout
+
+        self.add_argument("_source", nargs="?", metavar="SOURCE",
+                          type=_stdio_validator)
+        self.add_argument("_destination", nargs="?", metavar="DESTINATION",
+                          type=_stdio_validator)
 
     def populate_from_components(self, components):
         """
@@ -622,29 +698,38 @@ class OptionParser(optparse.OptionParser, docutils.SettingsSpec):
         After all components have been processed, check for and populate from
         each component's `SettingsSpec.settings_default_overrides` dictionary.
         """
+        overrides_list = []
         for component in components:
             if component is None:
                 continue
-            settings_spec = component.settings_spec
-            self.relative_path_settings.extend(
-                component.relative_path_settings)
-            for i in range(0, len(settings_spec), 3):
-                title, description, option_spec = settings_spec[i:i+3]
+            spec = component.settings_spec
+            chunked = zip(spec[::3], spec[1::3], spec[2::3])
+            for (title, description, option_spec) in chunked:
                 if title:
-                    group = optparse.OptionGroup(self, title, description)
-                    self.add_option_group(group)
+                    group = self.add_argument_group(title, description)
                 else:
-                    group = self        # single options
+                    group = self  # single options
                 for (help_text, option_strings, kwargs) in option_spec:
-                    option = group.add_option(help=help_text, *option_strings,
-                                              **kwargs)
-                    if kwargs.get('action') == 'append':
-                        self.lists[option.dest] = True
-                if component.settings_defaults:
-                    self.defaults.update(component.settings_defaults)
-        for component in components:
-            if component and component.settings_default_overrides:
-                self.defaults.update(component.settings_default_overrides)
+                    _create_option(
+                        group,
+                        help_text, option_strings, kwargs.copy(),
+                        self.arg_defaults,
+                        self._list_args
+                    )
+
+            # Update defaults from component
+            if component.settings_defaults:
+                self.set_defaults(**component.settings_defaults)
+
+            # Append paths
+            self.relative_path_settings += component.relative_path_settings
+
+            # Save settings_default_overrides
+            if component.settings_default_overrides:
+                overrides_list.append(component.settings_default_overrides)
+        # Apply settings_default_overrides in order
+        for default_overrides in overrides_list:
+            self.set_defaults(**default_overrides)
 
     @classmethod
     def get_standard_config_files(cls):
@@ -655,67 +740,10 @@ class OptionParser(optparse.OptionParser, docutils.SettingsSpec):
                 for f in os.environ['DOCUTILSCONFIG'].split(os.pathsep)
                 if f.strip()]
 
-    def get_standard_config_settings(self):
-        settings = Values()
-        for filename in self.get_standard_config_files():
-            settings.update(self.get_config_file_settings(filename), self)
-        return settings
-
-    def get_config_file_settings(self, config_file):
-        """Returns a dictionary containing appropriate config file settings."""
-        config_parser = ConfigParser()
-        # parse config file, add filename if found and successful read.
-        self.config_files += config_parser.read(config_file, self)
-        applied = set()
-        settings = Values()
-        for component in self.components:
-            if not component:
-                continue
-            for section in (tuple(component.config_section_dependencies or ())
-                            + (component.config_section,)):
-                if section in applied:
-                    continue
-                applied.add(section)
-                if config_parser.has_section(section):
-                    settings.update(config_parser[section], self)
-        make_paths_absolute(
-            settings.__dict__, self.relative_path_settings,
-            os.path.dirname(config_file))
-        return settings.__dict__
-
-    def check_values(self, values, args):
-        """Store positional arguments as runtime settings."""
-        values._source, values._destination = self.check_args(args)
-        make_paths_absolute(values.__dict__, self.relative_path_settings)
-        values._config_files = self.config_files
-        return values
-
-    def check_args(self, args):
-        source = destination = None
-        if args:
-            source = args.pop(0)
-            if source == '-':           # means stdin
-                source = None
-        if args:
-            destination = args.pop(0)
-            if destination == '-':      # means stdout
-                destination = None
-        if args:
-            self.error('Maximum 2 arguments allowed.')
-        if source and source == destination:
-            self.error('Do not specify the same file for both source and '
-                       'destination.  It will clobber the source file.')
-        return source, destination
-
-    def set_defaults_from_dict(self, defaults):
-        # not used, deprecated, will be removed
-        self.defaults.update(defaults)
-
     def get_default_values(self):
-        """Needed to get custom `Values` instances."""
-        defaults = Values(self.defaults)
-        defaults._config_files = self.config_files
-        return defaults
+        """Needed to get custom `_Namespace` instances."""
+        defaults = {**self.arg_defaults, "_config_files": self.config_files}
+        return Values(**defaults)
 
     def get_option_by_dest(self, dest):
         """
@@ -727,11 +755,101 @@ class OptionParser(optparse.OptionParser, docutils.SettingsSpec):
         A KeyError is raised if there is no option with the supplied
         dest.
         """
-        for group in self.option_groups + [self]:
-            for option in group.option_list:
+        for group in (*self._action_groups, self):
+            for option in group._actions:
                 if option.dest == dest:
                     return option
-        raise KeyError('No option with dest == %r.' % dest)
+        raise KeyError(f'No option with dest == {dest!r}.')
+
+
+def _create_option(
+        group, help_text, option_strings, kwargs, arg_defaults, list_args
+):
+    # Dynamically create callback action
+    if kwargs.get("action") == "callback":
+        kwargs.pop('action')
+        callback = kwargs.pop("callback")
+        callback_args = kwargs.pop('callback_args', "")
+
+        class _Action(_LegacyCallbackAction):
+            _legacy_callable = callback
+            _callback_args = callback_args
+        kwargs["action"] = _Action
+
+    # fix type argument
+    if kwargs.get("type") == "string":
+        kwargs["type"] = str
+    if kwargs.get("type") == "int":
+        kwargs["type"] = int
+
+    if kwargs.get("validator") == validate_encoding_and_error_handler:
+        kwargs["action"] = kwargs.pop("validator")
+
+    # fix validator, update to type.
+    if "validator" in kwargs:
+        validator = kwargs.pop("validator")
+        if kwargs.get("action") not in {"store_true", "store_false"}:
+            kwargs["type"] = validator
+        else:
+            assert validator == validate_boolean
+    else:
+        validator = lambda x: x  # NoQA
+    overrides = kwargs.pop("overrides", None)
+
+    option = group.add_argument(*option_strings, help=help_text, **kwargs)
+
+    # set validator and overrides for ConfigParser
+    if isinstance(option, validate_encoding_and_error_handler):
+        option.validator = _validate_encoding_and_error_handler_config_parser
+    else:
+        option.validator = validator
+    option.overrides = overrides
+
+    # set arg_defaults from defaults. Set arg default if it is unset
+    if option.dest not in {"help", "version"} | arg_defaults.keys():
+        arg_defaults[option.dest] = kwargs.get("default", None)
+    # update arg default if it is defined and equal to none, and
+    # it would be non-None if updated
+    elif (arg_defaults.get(option.dest, ...) is None
+          and kwargs.get("default") is not None):
+        arg_defaults[option.dest] = kwargs["default"]
+
+    # add the argument name to the list of list arguments
+    if kwargs.get("action") == "append":
+        list_args.add(option.dest)
+
+
+def _merge_with_list_args(first, second, list_args):
+    for arg in (list_args & first.keys() & second.keys()):
+        first[arg] += second.pop(arg)
+    return {**first, **second}
+
+
+def get_config_file_settings(argparser, config_file, config_files, components,
+                             list_args, relative_path_settings):
+    """Returns a dictionary containing appropriate config file settings."""
+    if not os.path.isfile(config_file):
+        return {}
+    config_parser = ConfigParser()
+    if argparser is None:
+        argparser = OptionParser()
+    config_files += config_parser.read([config_file], argparser)
+    cfg_settings = {s: dict(config_parser.items(s)) for s in config_parser.sections()}
+    applied = set()
+    settings = {}
+    for component in components:
+        if not component:
+            continue
+        section_dependencies = component.config_section_dependencies or ()
+        for section in (*section_dependencies, component.config_section):
+            if section in applied:
+                continue
+            applied.add(section)
+            sect = cfg_settings.get(section, {})
+            settings = _merge_with_list_args(settings, sect, list_args)
+    base_path = os.path.dirname(config_file)
+    make_paths_absolute(settings, relative_path_settings, base_path)
+    return settings
 
 
 class ConfigParser(configparser.RawConfigParser):
@@ -823,14 +941,14 @@ Skipping "%s" configuration file.
                 if option.validator:
                     value = self.get(section, setting)
                     try:
-                        new_value = option.validator(
-                            setting, value, option_parser,
-                            config_parser=self, config_section=section)
+                        new_value = option.validator(value)
+                    except TypeError:
+                        new_value = option.validator(value, setting, section, self)
                     except Exception as err:
                         raise ValueError(
                             f'Error in config file "{filename}", '
                             f'section "[{section}]":\n'
-                            f'    {io.error_string(err)}\n'
+                            f'    {docutils.io.error_string(err)}\n'
                             f'        {setting} = {value}')
                     self.set(section, setting, new_value)
                 if option.overrides:

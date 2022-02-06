@@ -35,7 +35,7 @@ from docutils.readers import standalone, pep
 from docutils.writers import html4css1, html5_polyglot, pep_html
 
 
-usage = '%prog [options] [<directory> ...]'
+usage = '%(prog) [options] [<directory> ...]'
 description = ('Generates .html from all the reStructuredText .txt files '
                '(including PEPs) in each <directory> '
                '(default is the current directory).')
@@ -104,18 +104,27 @@ class OptionParser(frontend.OptionParser):
     Command-line option processing for the ``buildhtml.py`` front end.
     """
 
-    def check_values(self, values, args):
-        frontend.OptionParser.check_values(self, values, args)
-        values._source = None
-        return values
+    def __init__(self, *args, **kwargs):
+        """Override positional args."""
+        super().__init__(*args, **kwargs)
 
-    def check_args(self, args):
-        source = destination = None
-        if args:
-            self.values._directories = args
-        else:
-            self.values._directories = [os.getcwd()]
-        return source, destination
+        to_remove = []
+        for action in reversed(self._actions):
+            if action.dest in {'_source', '_destination'}:
+                to_remove.append(action)
+            if len(to_remove) == 2:
+                break
+        for action in to_remove:
+            self._actions.remove(action)
+
+        self.add_argument('_directories', nargs='*', metavar='DIRECTORIES',
+                          default=[os.getcwd()])
+
+    def parse_args(self, args=None, namespace=None):
+        settings = super().parse_args(args, namespace)
+        settings._source = None
+        settings._destination = None
+        return settings
 
 
 class Struct:
@@ -164,7 +173,7 @@ class Builder:
         """
         for name, publisher in self.publishers.items():
             option_parser = OptionParser(
-                components=publisher.components, read_config_files=1,
+                components=publisher.components, read_config_files=True,
                 usage=usage, description=description)
             publisher.option_parser = option_parser
             publisher.setting_defaults = option_parser.get_default_values()
