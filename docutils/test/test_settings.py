@@ -223,7 +223,7 @@ class ConfigEnvVarFileTests(ConfigFileTests):
     def tearDown(self):
         os.environ = self.orig_environ
 
-    def test_old(self): pass # don't repreat this test
+    def test_old(self): pass  # don't repeat this test
 
     @unittest.skipUnless(
         os.name == 'posix',
