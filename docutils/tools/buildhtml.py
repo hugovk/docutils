@@ -51,47 +51,47 @@ class SettingsSpec(docutils.SettingsSpec):
 
     # Can't be included in OptionParser below because we don't want to
     # override the base class.
-    settings_spec = (
-        'Build-HTML Options',
-        None,
-        (('Recursively scan subdirectories for files to process.  This is '
-          'the default.',
-          ['--recurse'],
-          {'action': 'store_true', 'default': 1,
-           'validator': frontend.validate_boolean}),
-         ('Do not scan subdirectories for files to process.',
-          ['--local'], {'dest': 'recurse', 'action': 'store_false'}),
-         ('Do not process files in <directory> (shell globbing patterns, '
-          'separated by colons).  This option may be used '
-          'more than once to specify multiple directories.  Default: "%s".'
-          % ':'.join(prune_default),
-          ['--prune'],
-          {'metavar': '<directory>', 'action': 'append',
-           'validator': frontend.validate_colon_separated_string_list,
-           'default': prune_default,}),
-         ('Recursively ignore files matching any of the given '
-          'wildcard (shell globbing) patterns (separated by colons).',
-          ['--ignore'],
-          {'metavar': '<patterns>', 'action': 'append',
-           'default': [],
-           'validator': frontend.validate_colon_separated_string_list}),
-         ('Docutils writer, one of "html", "html4", "html5". '
-          'Default: "html" (use Docutils\' default HTML writer).',
-          ['--writer'],
-          {'metavar': '<writer>',
-           'choices': ['html', 'html4', 'html5'],
-           # 'default': 'html' (set below)
-           }),
-         (frontend.SUPPRESS_HELP, # Obsoleted by "--writer"
-          ['--html-writer'],
-          {'metavar': '<writer>',
-           'choices': ['html', 'html4', 'html5'],}),
-         ('Work silently (no progress messages).  Independent of "--quiet".',
-          ['--silent'],
-          {'action': 'store_true', 'validator': frontend.validate_boolean}),
-         ('Do not process files, show files that would be processed.',
-          ['--dry-run'],
-          {'action': 'store_true', 'validator': frontend.validate_boolean}),))
+    arguments_spec = (
+        {'title': 'Build-HTML Options',
+         'description': None,
+         'arguments': (
+             {'flags': ('--recurse',),
+              'help': 'Recursively scan subdirectories for files to process.  This is the default.',
+              'action': 'store_true',
+              'default': True},
+             {'flags': ('--local',),
+              'help': 'Do not scan subdirectories for files to process.',
+              'dest': 'recurse',
+              'action': 'store_false'},
+             {'flags': ('--prune',),
+              'help': f'Do not process files in <directory> (shell globbing patterns, separated by colons).  This option may be used more than once to specify multiple directories.  Default: "{":".join(prune_default)}".',
+              'metavar': '<directory>',
+              'action': 'append',
+              'validator': frontend.validate_colon_separated_string_list,
+              'default': prune_default},
+             {'flags': ('--ignore',),
+              'help': 'Recursively ignore files matching any of the given wildcard (shell globbing) patterns (separated by colons).',
+              'metavar': '<patterns>',
+              'action': 'append',
+              'default': (),
+              'validator': frontend.validate_colon_separated_string_list},
+             {'flags': ('--writer',),
+              'help': 'Docutils writer, one of "html", "html4", "html5". Default: "html" (use Docutils\' default HTML writer).',
+              'metavar': '<writer>',
+              'choices': ('html', 'html4', 'html5')},
+             # 'default': 'html' (set below)
+             {'flags': ('--html-writer',),
+              'help': None,  # Obsoleted by "--writer"
+              'metavar': '<writer>',
+              'choices': ('html', 'html4', 'html5')},
+             {'flags': ('--silent',),
+              'help': 'Work silently (no progress messages).  Independent of "--quiet".',
+              'action': 'store_true'},
+             {'flags': ('--dry-run',),
+              'help': 'Do not process files, show files that would be processed.',
+              'action': 'store_true'}
+         )},
+    )
 
     relative_path_settings = ('prune',)
     config_section = 'buildhtml application'

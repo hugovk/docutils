@@ -337,7 +337,7 @@ command line used.""" % (__version__,
                self.settings.output_encoding_error_handler,
                __version__, sys.version.split()[0]))
 
-default_usage = '%(prog)s [options] [<source> [<destination>]]'
+default_usage = '%prog [options] [<source> [<destination>]]'
 default_description = ('Reads from <source> (default is stdin) and writes to '
                        '<destination> (default is stdout).  See '
                        '<https://docutils.sourceforge.io/docs/user/config.html> for '
