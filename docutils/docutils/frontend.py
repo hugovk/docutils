@@ -676,7 +676,8 @@ class OptionParser(optparse.OptionParser, docutils.SettingsSpec):
                 if section in applied:
                     continue
                 applied.add(section)
-                settings.update(config_parser[section], self)
+                if config_parser.has_section(section):
+                    settings.update(config_parser[section], self)
         make_paths_absolute(
             settings.__dict__, self.relative_path_settings,
             os.path.dirname(config_file))

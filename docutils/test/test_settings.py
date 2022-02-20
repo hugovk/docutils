@@ -217,7 +217,10 @@ class ConfigEnvVarFileTests(ConfigFileTests):
     def tearDown(self):
         os.environ = self.orig_environ
 
-    @unittest.skipUnless(os.name, 'posix')
+    @unittest.skipIf(
+        os.name != 'posix',
+        'os.path.expanduser() no longer uses HOME on Windows'
+    )
     def test_get_standard_config_files(self):
         os.environ['HOME'] = '/home/parrot'
         # os.path.expanduser() no longer uses HOME on Windows (since 3.8)
