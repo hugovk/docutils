@@ -13,20 +13,10 @@ import difflib
 import pprint
 import warnings
 import unittest
-
-# change $HOME before importing Docutils, as OptionParser.standard_config_files
-# expands the user directory on class definition.
-original_home = os.environ.get('HOME', -1)
-os.environ['HOME'] = '/home/parrot'
-
 import DocutilsTestSupport              # must be imported before docutils
 from docutils import frontend, utils
 from docutils.writers import html4css1, pep_html, html5_polyglot
 from docutils.parsers import rst
-
-# reset $HOME
-if original_home != -1:
-    os.environ['HOME'] = original_home
 
 
 def fixpath(path):

@@ -54,6 +54,10 @@ sys.path.insert(0, os.path.normpath(os.path.join(testroot, '..')))
 sys.path.append(os.path.normpath(os.path.join(testroot, '..', 'extras')))
 sys.path.insert(0, testroot)
 
+# change $HOME before importing Docutils, as OptionParser.standard_config_files
+# expands the user directory on class definition.
+os.environ['HOME'] = '/home/parrot'
+
 try:
     import difflib
     import package_unittest
