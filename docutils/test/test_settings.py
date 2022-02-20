@@ -13,10 +13,21 @@ import difflib
 import pprint
 import warnings
 import unittest
+
+# change $HOME before importing Docutils, as OptionParser.standard_config_files
+# expands the user directory on class definition.
+original_home = os.environ.get('HOME', -1)
+os.environ['HOME'] = '/home/parrot'
+
 import DocutilsTestSupport              # must be imported before docutils
 from docutils import frontend, utils
 from docutils.writers import html4css1, pep_html, html5_polyglot
 from docutils.parsers import rst
+
+# reset $HOME
+if original_home != -1:
+    os.environ['HOME'] = original_home
+
 
 def fixpath(path):
     return os.path.abspath(os.path.join(*(path.split('/'))))
@@ -219,11 +230,9 @@ class ConfigEnvVarFileTests(ConfigFileTests):
 
     @unittest.skipIf(
         os.name != 'posix',
-        'os.path.expanduser() no longer uses HOME on Windows'
+        'os.path.expanduser() no longer uses HOME on Windows (since 3.8)'
     )
     def test_get_standard_config_files(self):
-        os.environ['HOME'] = '/home/parrot'
-        # os.path.expanduser() no longer uses HOME on Windows (since 3.8)
         # TODO: set up mock home directory under Windows
         self.assertEqual(self.option_parser.get_standard_config_files(),
                          ['/etc/docutils.conf',
