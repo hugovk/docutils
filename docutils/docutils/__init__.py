@@ -50,7 +50,7 @@ Subpackages:
 - writers: Format-specific output translators.
 """
 
-from collections import namedtuple
+from operator import itemgetter
 
 __docformat__ = 'reStructuredText'
 
@@ -72,45 +72,39 @@ For development and release status, use `__version__ and `__version_info__`.
 """
 
 
-class VersionInfo(namedtuple('VersionInfo',
-                             'major minor micro releaselevel serial release')):
+class VersionInfo(tuple):
+    """VersionInfo(major, minor, micro, releaselevel, serial, release)"""
 
-    def __new__(cls, major=0, minor=0, micro=0,
-                releaselevel='final', serial=0, release=True):
-        releaselevels = ('alpha', 'beta', 'candidate', 'final')
-        if releaselevel not in releaselevels:
-            raise ValueError('releaselevel must be one of %r.'
-                             % (releaselevels, ))
+    __slots__ = ()
+    major = property(itemgetter(0))
+    minor = property(itemgetter(1))
+    micro = property(itemgetter(2))
+    releaselevel = property(itemgetter(3))
+    serial = property(itemgetter(4))
+    release = property(itemgetter(5))
+
+    def __repr__(self):
+        """Return a nicely formatted representation string"""
+        major, minor, micro, releaselevel, serial, release = self
+        return ('VersionInfo('
+                f'major={major!r}, minor={minor!r}, micro={micro!r}, '
+                f'releaselevel={releaselevel!r}, serial={serial!r}, '
+                f'release={release!r})')
+
+    def __new__(cls, major=0, minor=0, micro=0, releaselevel='final', serial=0, release=True):
+        """Create new instance of VersionInfo(major, minor, micro, releaselevel, serial, release)"""
+        release_levels = {'alpha', 'beta', 'candidate', 'final'}
+        if releaselevel not in release_levels:
+            raise TypeError(f'releaselevel must be one of {release_levels!r}.')
         if releaselevel == 'final':
             if not release:
-                raise ValueError('releaselevel "final" must not be used '
+                raise TypeError('releaselevel "final" must not be used '
                                  'with development versions (leads to wrong '
                                  'version ordering of the related __version__')
             if serial != 0:
-                raise ValueError('"serial" must be 0 for final releases')
+                raise TypeError('"serial" must be 0 for final releases')
 
-        return super().__new__(cls, major, minor, micro,
-                               releaselevel, serial, release)
-
-    def __lt__(self, other):
-        if isinstance(other, tuple):
-            other = VersionInfo(*other)
-        return tuple.__lt__(self, other)
-
-    def __gt__(self, other):
-        if isinstance(other, tuple):
-            other = VersionInfo(*other)
-        return tuple.__gt__(self, other)
-
-    def __le__(self, other):
-        if isinstance(other, tuple):
-            other = VersionInfo(*other)
-        return tuple.__le__(self, other)
-
-    def __ge__(self, other):
-        if isinstance(other, tuple):
-            other = VersionInfo(*other)
-        return tuple.__ge__(self, other)
+        return super().__new__(cls, (major, minor, micro, releaselevel, serial, release))
 
 
 __version_info__ = VersionInfo(
