@@ -4,9 +4,10 @@ on: [push, pull_request]
 
 jobs:
   tests:
-    name: test with Python ${{ matrix.python-version }}
-    runs-on: ubuntu-latest
+    name: test with Python ${{ matrix.python-version }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         python-version:
           - "3.7"
@@ -14,6 +15,13 @@ jobs:
           - "3.9"
           - "3.10"
           - "3.11-dev"
+          - "pypy-3.7"
+          - "pypy-3.8"
+          - "pypy-3.9"
+        os:
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest
 
     steps:
     - uses: actions/checkout@v2
@@ -36,5 +44,5 @@ jobs:
 
     - name: Run test suite
       run: |
-        cd docutils
-        python test/alltests.py
+        cd docutils/test
+        python alltests.py
