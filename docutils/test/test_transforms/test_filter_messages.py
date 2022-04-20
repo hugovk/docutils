@@ -33,7 +33,7 @@ class TestTransformFilterMessages(unittest.TestCase):
         settings.debug = False
         settings.warning_stream = False
 
-        document = utils.new_document('test data', settings.copy())
+        document = utils.new_document('test data', settings)
         rst.Parser().parse('.. unknown-directive:: block markup is filtered without trace.', document)
         # Don't do a ``populate_from_components()`` because that would
         # enable the Transformer's default transforms.
@@ -52,7 +52,7 @@ class TestTransformFilterMessages(unittest.TestCase):
         settings.debug = False
         settings.warning_stream = False
 
-        document = utils.new_document('test data', settings.copy())
+        document = utils.new_document('test data', settings)
         rst.Parser().parse(unknown_substitution_input, document)
         # Don't do a ``populate_from_components()`` because that would
         # enable the Transformer's default transforms.
@@ -72,7 +72,7 @@ class TestTransformFilterMessages(unittest.TestCase):
         settings.debug = False
         settings.warning_stream = False
 
-        document = utils.new_document('test data', settings.copy())
+        document = utils.new_document('test data', settings)
         rst.Parser().parse('Invalid *inline markup is restored to text.', document)
         # Don't do a ``populate_from_components()`` because that would
         # enable the Transformer's default transforms.

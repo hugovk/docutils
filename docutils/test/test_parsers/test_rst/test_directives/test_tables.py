@@ -8,139 +8,120 @@
 Tests for tables.py directives.
 """
 
-import os
-import csv
-import platform
+import sys
+import unittest
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_parsers import DocutilsTestSupport
-
-
-def suite():
-    s = DocutilsTestSupport.ParserTestSuite()
-    s.generateTests(totest)
-    return s
+from docutils import frontend
+from docutils import utils
+from docutils.parsers import rst
 
 
-mydir = 'test_parsers/test_rst/test_directives/'
-utf_16_csv = os.path.join(mydir, 'utf-16.csv')
-utf_16_csv_rel = DocutilsTestSupport.utils.relative_path(None, utf_16_csv)
-empty_txt = os.path.join(mydir, 'empty.txt')
+class TestParser(unittest.TestCase):
+    def test_table(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        parser = rst.Parser()
 
-unichr_exception = DocutilsTestSupport.exception_data(
-    chr, int("9999999999999", 16))[0]
-if isinstance(unichr_exception, OverflowError):
-    unichr_exception_string = 'code too large (%s)' % unichr_exception
-else:
-    unichr_exception_string = str(unichr_exception)
+        for casenum, (case_input, case_expected) in enumerate(table):
+            with self.subTest(id=f'table[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
 
-csv_eod_error_str = 'unexpected end of data'
-# pypy adds a line number
-if platform.python_implementation() == 'PyPy':
-    csv_eod_error_str = 'line 1: ' + csv_eod_error_str
-csv_unknown_url = "'bogus.csv'"
+    def test_csv_table(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        parser = rst.Parser()
 
+        for casenum, (case_input, case_expected) in enumerate(csv_table):
+            with self.subTest(id=f'csv_table[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
 
-def null_bytes():
-    with open(utf_16_csv, 'rb') as f:
-        csv_data = f.read()
-    csv_data = str(csv_data, 'latin1').splitlines()
-    reader = csv.reader([line + '\n' for line in csv_data])
-    next(reader)
+    @unittest.skipIf(sys.version_info[:2] >= (3, 11), 'Requires Python 3.10 or earlier')
+    def test_csv_table_nul_byte(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
 
+        document = utils.new_document('test data', settings)
+        rst.Parser().parse("""\
+.. csv-table:: nul byte
 
-null_bytes_exception = DocutilsTestSupport.exception_data(null_bytes)[0]
-# Null bytes are valid in Python 3.11+:
-if null_bytes_exception is None:
-    bad_encoding_result = """\
-<document source="test data">
-    <table>
-        <title>
-            bad encoding
-        <tgroup cols="4">
-            <colspec colwidth="25">
-            <colspec colwidth="25">
-            <colspec colwidth="25">
-            <colspec colwidth="25">
-            <tbody>
-                <row>
-                    <entry>
-                        <paragraph>
-                            \xfe\xff"Treat"
-                    <entry>
-                        <paragraph>
-                            "Quantity"
-                    <entry>
-                        <paragraph>
-                            "Description"
-                    <entry>
-                <row>
-                    <entry>
-                        <paragraph>
-                            "Albatr\u00b0\u00df"
-                    <entry>
-                        <paragraph>
-                            2.99
-                    <entry>
-                        <paragraph>
-                            "\u00a1Ona\x03\xc3\x03\xc4\x03\xb9\x03\xba!"
-                    <entry>
-                <row>
-                    <entry>
-                        <paragraph>
-                            "CrunchyFrog"
-                    <entry>
-                        <paragraph>
-                            1.49
-                    <entry>
-                        <paragraph>
-                            "Ifwetooktheb\u00f6nesout
-                    <entry>
-                        <paragraph>
-                            itwouldn\x20\x19tbe
-                <row>
-                    <entry>
-                        <paragraph>
-                            crunchy
-                    <entry>
-                        <paragraph>
-                            nowwouldit?"
-                    <entry>
-                    <entry>
-                <row>
-                    <entry>
-                        <paragraph>
-                            "GannetRipple"
-                    <entry>
-                        <paragraph>
-                            1.99
-                    <entry>
-                        <paragraph>
-                            "\xbfOna\x03\xc3\x03\xc4\x03\xb9\x03\xba?"
-                    <entry>
-    <paragraph>
-        (7- and 8-bit text encoded as UTF-16 has lots of null/zero bytes.)
-"""
-else:
-    bad_encoding_result = """\
+   Nul\x00
+""", document)
+        output = document.pformat()
+        # Null bytes are invalid before Python 3.11:
+        self.assertEqual(output, f"""\
 <document source="test data">
     <system_message level="3" line="1" source="test data" type="ERROR">
         <paragraph>
             Error with CSV data in "csv-table" directive:
-            %s
+            line contains NUL
         <literal_block xml:space="preserve">
-            .. csv-table:: bad encoding
-               :file: %s
-               :encoding: latin-1
-    <paragraph>
-        (7- and 8-bit text encoded as UTF-16 has lots of null/zero bytes.)
-""" % (null_bytes_exception, utf_16_csv)
+            .. csv-table:: nul byte
+            
+               Nul
+""")
+
+    @unittest.skipIf(sys.version_info[:2] < (3, 11), 'Requires Python 3.11+')
+    def test_csv_table_nul_byte_py_311(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+
+        document = utils.new_document('test data', settings)
+        rst.Parser().parse("""\
+.. csv-table:: nul byte
+
+   Nul\x00
+""", document)
+        output = document.pformat()
+        # Null bytes are valid in Python 3.11+:
+        self.assertEqual(output, """\
+<document source="test data">
+    <table>
+        <title>
+            nul byte
+        <tgroup cols="1">
+            <colspec colwidth="100">
+            <tbody>
+                <row>
+                    <entry>
+                        <paragraph>
+                            Nul
+""")
+
+    def test_list_table(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        parser = rst.Parser()
+
+        for casenum, (case_input, case_expected) in enumerate(list_table):
+            with self.subTest(id=f'list_table[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
 
 
-totest = {}
+csv_eod_error_str = 'unexpected end of data'
+# pypy adds a line number
+if 'PyPy' in sys.version:
+    csv_eod_error_str = f'line 1: {csv_eod_error_str}'
 
-totest['table'] = [
+table = [
 ["""\
 .. table:: Truth table for "not"
    :class: custom
@@ -457,7 +438,7 @@ totest['table'] = [
 """],
 ]
 
-totest['csv-table'] = [
+csv_table = [
 ["""\
 .. csv-table:: inline with integral header
    :width: 80%
@@ -923,7 +904,7 @@ totest['csv-table'] = [
         <paragraph>
             Error in "csv-table" directive:
             invalid option value: (option: "widths"; value: '10,y,z')
-            %s.
+            invalid literal for int() with base 10: 'y'.
         <literal_block xml:space="preserve">
             .. csv-table:: bad column widths
                :widths: 10,y,z
@@ -939,7 +920,7 @@ totest['csv-table'] = [
                :widths: 0 0 0
             \n\
                some, csv, data
-""" % DocutilsTestSupport.exception_data(int, "y")[1][0]],
+"""],
 ["""\
 .. csv-table:: good delimiter
    :delim: /
@@ -1043,7 +1024,7 @@ totest['csv-table'] = [
 .. csv-table:: bad delimiter
    :delim: U+9999999999999
 """,
-"""\
+f"""\
 <document source="test data">
     <system_message level="3" line="1" source="test data" type="ERROR">
         <paragraph>
@@ -1057,60 +1038,51 @@ totest['csv-table'] = [
         <paragraph>
             Error in "csv-table" directive:
             invalid option value: (option: "delim"; value: 'U+9999999999999')
-            %s.
+            code too large (Python int too large to convert to C int).
         <literal_block xml:space="preserve">
             .. csv-table:: bad delimiter
                :delim: U+9999999999999
-""" % unichr_exception_string],
+"""],
 ["""\
 .. csv-table:: bad CSV data
 
    "bad", \"csv, data
 """,
-"""\
+f"""\
 <document source="test data">
     <system_message level="3" line="1" source="test data" type="ERROR">
         <paragraph>
             Error with CSV data in "csv-table" directive:
-            %s
+            {csv_eod_error_str}
         <literal_block xml:space="preserve">
             .. csv-table:: bad CSV data
             \n\
                "bad", \"csv, data
-""" % csv_eod_error_str],
+"""],
 ["""\
 .. csv-table:: bad CSV header data
    :header: "bad", \"csv, data
 
    good, csv, data
 """,
-"""\
+f"""\
 <document source="test data">
     <system_message level="3" line="1" source="test data" type="ERROR">
         <paragraph>
             Error with CSV data in "csv-table" directive:
-            %s
+            {csv_eod_error_str}
         <literal_block xml:space="preserve">
             .. csv-table:: bad CSV header data
                :header: "bad", \"csv, data
             \n\
                good, csv, data
-""" % csv_eod_error_str],
-["""\
-.. csv-table:: bad encoding
-   :file: %s
-   :encoding: latin-1
-
-(7- and 8-bit text encoded as UTF-16 has lots of null/zero bytes.)
-""" % utf_16_csv,
-bad_encoding_result
-],
+"""],
 ["""\
 .. csv-table:: good encoding
-   :file: %s
+   :file: test_parsers/test_rst/test_directives/utf-16.csv
    :encoding: utf-16
    :header-rows: 1
-""" % utf_16_csv,
+""",
 """\
 <document source="test data">
     <table>
@@ -1166,8 +1138,8 @@ bad_encoding_result
 """],
 ["""\
 .. csv-table:: no CSV data
-   :file: %s
-""" % empty_txt,
+   :file: test_parsers/test_rst/test_directives/empty.txt
+""",
 """\
 <document source="test data">
     <system_message level="3" line="1" source="test data" type="ERROR">
@@ -1175,11 +1147,11 @@ bad_encoding_result
             No table data detected in CSV file.
         <literal_block xml:space="preserve">
             .. csv-table:: no CSV data
-               :file: %s
-""" % empty_txt],
+               :file: test_parsers/test_rst/test_directives/empty.txt
+"""],
 ]
 
-totest['list-table'] = [
+list_table = [
 ["""\
 .. list-table:: list table with integral header
    :widths: 10 20 30
@@ -1522,5 +1494,4 @@ totest['list-table'] = [
 
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

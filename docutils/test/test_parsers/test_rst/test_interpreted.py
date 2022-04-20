@@ -36,10 +36,9 @@ class TestInterpreted(unittest.TestCase):
         settings.report_level = 5
         settings.halt_level = 5
         settings.debug = False
-        parser = rst.Parser()
 
-        document = utils.new_document('test data', settings.copy())
-        parser.parse(code_input, document)
+        document = utils.new_document('test data', settings)
+        rst.Parser().parse(code_input, document)
         output = document.pformat()
         self.assertEqual(output, code_output)
 

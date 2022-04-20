@@ -7,12 +7,13 @@
 Tests for misc.py "include" directive.
 """
 
-import os.path
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_parsers import DocutilsTestSupport
+import unittest
+from pathlib import Path
+
+from docutils import frontend
 from docutils import parsers
-from docutils.utils.code_analyzer import with_pygments
+from docutils import utils
+from docutils.parsers import rst
 
 # optional 3rd-party markdown parser
 md_parser_name = 'recommonmark'
@@ -22,25 +23,55 @@ except ImportError:
     md_parser_class = None
 
 
-def suite():
-    s = DocutilsTestSupport.ParserTestSuite()
-    # eventually skip optional parts:
-    if not with_pygments:
-        del(totest['include-code'])
-    if not md_parser_class:
-        del(totest['include-markdown'])
-    s.generateTests(totest)
-    return s
+class TestInclude(unittest.TestCase):
+    maxDiff = None
+    def test_include(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        parser = rst.Parser()
+
+        for casenum, (case_input, case_expected) in enumerate(include):
+            with self.subTest(id=f'include[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
+
+    def test_include_code(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        parser = rst.Parser()
+
+        for casenum, (case_input, case_expected) in enumerate(include_code):
+            with self.subTest(id=f'include_code[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
+
+    @unittest.skipUnless(md_parser_class, 'Cannot test "recommonmark". Parser not found.')
+    def test_include_markdown(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        parser = rst.Parser()
+
+        for casenum, (case_input, case_expected) in enumerate(include_markdown):
+            with self.subTest(id=f'include_markdown[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
 
 
 # prepend this directory (relative to the test root):
 def mydir(path):
-    return os.path.join('test_parsers/test_rst/test_directives/', path)
-
-
-# make `path` relative with utils.relative_path():
-def reldir(path):
-    return DocutilsTestSupport.utils.relative_path(None, path)
+    return Path('test_parsers', 'test_rst', 'test_directives', path).as_posix()
 
 
 include1 = mydir('include1.txt')
@@ -60,10 +91,7 @@ include_md = mydir('include.md')
 utf_16_file = mydir('utf-16.csv')
 utf_16_error_str = ("UnicodeDecodeError: 'ascii' codec can't decode byte 0xfe "
                     "in position 0: ordinal not in range(128)")
-nonexistent = os.path.join(os.path.dirname(parsers.rst.states.__file__),
-                           'include', 'nonexistent')
-nonexistent_rel = DocutilsTestSupport.utils.relative_path(
-    os.path.join(DocutilsTestSupport.testroot, 'dummy'), nonexistent)
+nonexistent_rel = '../docutils/parsers/rst/include/nonexistent'
 
 # Different error for path with 8bit chars with locale == C or None:
 try:
@@ -77,9 +105,7 @@ except FileNotFoundError:
 InputError: [Errno 2] No such file or directory: '\u043c\u0438\u0440.txt'.\
 """
 
-totest = {}
-
-totest['include'] = [
+include = [
 ["""\
 Include Test
 ============
@@ -127,7 +153,7 @@ A paragraph.
             This file is used by ``test_include.py``.
         <paragraph>
             A paragraph.
-""" % reldir(include1)],
+""" % include1],
 ["""\
 Literal include, add line numbers
 
@@ -152,7 +178,7 @@ Literal include, add line numbers
         <inline classes="ln">
             4 \n\
         This file is used by ``test_include.py``.
-""" % reldir(include1)],
+""" % include1],
 ["""\
 Include code
 
@@ -170,7 +196,7 @@ Include code
         -----------
         \n\
         This file is used by ``test_include.py``.
-""" % reldir(include1)],
+""" % include1],
 ["""\
 Include code, add line numbers
 
@@ -195,7 +221,7 @@ Include code, add line numbers
         <inline classes="ln">
             4 \n\
         This file is used by ``test_include.py``.
-""" % reldir(include1)],
+""" % include1],
 ["""\
 Include with unknown parser.
 
@@ -304,7 +330,7 @@ A paragraph.
                 .
             <paragraph>
                 A paragraph.
-""" % reldir(include1)],
+""" % include1],
 ["""\
 Include Test
 ============
@@ -344,7 +370,7 @@ A paragraph.
                 .
             <paragraph>
                 A paragraph.
-""" % reldir(include1)],
+""" % include1],
 ["""\
 Recursive inclusions: adapt paths.
 
@@ -499,7 +525,7 @@ Encoding:
 
 .. include:: %s
    :encoding: utf-16
-""" % reldir(utf_16_file),
+""" % utf_16_file,
 b"""\
 <document source="test data">
     <paragraph>
@@ -516,7 +542,7 @@ Include file is UTF-16-encoded, and is not valid ASCII.
 
 .. include:: %s
    :encoding: ascii
-""" % reldir(utf_16_file),
+""" % utf_16_file,
 """\
 <document source="test data">
     <paragraph>
@@ -528,7 +554,7 @@ Include file is UTF-16-encoded, and is not valid ASCII.
         <literal_block xml:space="preserve">
             .. include:: %s
                :encoding: ascii
-""" % (utf_16_error_str, reldir(utf_16_file))],
+""" % (utf_16_error_str, utf_16_file)],
 ["""\
 cyrillic filename:
 
@@ -557,7 +583,7 @@ Testing errors in included file:
     <system_message level="3" line="1" source="%(source)s" type="ERROR">
         <paragraph>
             Invalid character code: 0x11111111
-            %(unichr_exception)s
+            ValueError: chr() arg not in range(0x110000)
         <literal_block xml:space="preserve">
             unicode:: 0x11111111
     <system_message level="2" line="1" source="%(source)s" type="WARNING">
@@ -585,7 +611,7 @@ Testing errors in included file:
         <system_message level="4" line="12" source="%(source)s" type="SEVERE">
             <paragraph>
                 Problems with "include" directive path:
-                InputError: [Errno 2] No such file or directory: '%(nonexistent)s'.
+                InputError: [Errno 2] No such file or directory: '%(nonexistent_rel)s'.
             <literal_block xml:space="preserve">
                 .. include:: <nonexistent>
         <system_message level="3" line="14" source="%(source)s" type="ERROR">
@@ -794,15 +820,12 @@ Testing errors in included file:
                 no bottom       border
                 \n\
                 .. end of inclusion from "test_parsers/test_rst/test_directives/include10.txt"
-""" % {'source': reldir(include10), 'nonexistent': reldir(nonexistent),
-       'unichr_exception':
-       DocutilsTestSupport.exception_data(chr, int("11111111", 16))[2]
-      }],
+""" % {'source': include10, 'nonexistent_rel': nonexistent_rel}],
 ["""\
 Include file with whitespace in the path:
 
 .. include:: %s
-""" % reldir(include11),
+""" % include11,
 """\
 <document source="test data">
     <paragraph>
@@ -1035,7 +1058,7 @@ No TAB expansion with literal include:
 """ % include_literal],
 ]
 
-totest['include-code'] = [
+include_code = [
 ["""\
 Included code
 
@@ -1058,7 +1081,7 @@ Included code
         <inline classes="literal string">
             ``test_include.py``
         .
-""" % reldir(include1)],
+""" % include1],
 ["""\
 Included code
 
@@ -1090,7 +1113,7 @@ Included code
         <inline classes="literal string">
             ``test_include.py``
         .
-""" % reldir(include1)],
+""" % include1],
 ["""\
 TAB expansion with included code:
 
@@ -1196,7 +1219,7 @@ Including includes/include14.txt
         <inline classes="punctuation">
             ::
          ../sibling/include7.txt
-""" % reldir(include6)],
+""" % include6],
 ["""\
 Circular inclusion
 
@@ -1223,8 +1246,8 @@ Circular inclusion
         No loop when clipping before the "include" directive:
     <paragraph>
         File "include15.txt": example of rekursive inclusion.
-""" % (reldir(include16), reldir(include15),
-       reldir(include16), reldir(include15))],
+""" % (include16, include15,
+       include16, include15)],
 ["""\
 Circular inclusion with clipping.
 
@@ -1257,8 +1280,8 @@ Circular inclusion with clipping.
         No loop when clipping before the "include" directive:
     <paragraph>
         File "include15.txt": example of rekursive inclusion.
-""" % (reldir(include16), reldir(include15), reldir(include16),
-       reldir(include15), reldir(include16))],
+""" % (include16, include15, include16,
+       include15, include16)],
 ["""\
 Circular inclusion with specified parser.
 
@@ -1286,8 +1309,8 @@ Circular inclusion with specified parser.
         No loop when clipping before the "include" directive:
     <paragraph>
         File "include15.txt": example of rekursive inclusion.
-""" % (reldir(include16), reldir(include15),
-       reldir(include16), reldir(include15))],
+""" % (include16, include15,
+       include16, include15)],
 ["""\
 No circular inclusion.
 
@@ -1310,11 +1333,12 @@ No circular inclusion.
                             Some include text.
                     <entry>
                         <paragraph>
-                            Some include text."""],
+                            Some include text.
+"""],
 ]
 
 # Parsing with Markdown is an optional feature depending on 3rd-party modules:
-totest['include-markdown'] = [
+include_markdown = [
 [f"""\
 Include Markdown source.
 
@@ -1346,7 +1370,5 @@ A paragraph.
 """],
 ]
 
-
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

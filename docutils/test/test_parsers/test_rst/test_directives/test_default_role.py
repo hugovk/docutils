@@ -8,20 +8,37 @@
 Tests for misc.py "default-role" directive.
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_parsers import DocutilsTestSupport
+import unittest
+
+from docutils import frontend
+from docutils import utils
+from docutils.parsers import rst
+from docutils.parsers.rst import roles
 
 
-def suite():
-    s = DocutilsTestSupport.ParserTestSuite()
-    s.generateTests(totest)
-    return s
+class TestDefaultRole(unittest.TestCase):
+    def test_default_role(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        parser = rst.Parser()
+
+        for casenum, (case_input, case_expected) in enumerate(default_role):
+            with self.subTest(id=f'default_role[{casenum}]'):
+                # Language-specific roles and roles added by the
+                # "default-role" and "role" directives are currently stored
+                # globally in the roles._roles dictionary.  This workaround
+                # empties that dictionary.
+                roles._roles.clear()
+
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
 
 
-totest = {}
-
-totest['default-role'] = [
+default_role = [
 ["""\
 .. default-role:: subscript
 
@@ -81,5 +98,4 @@ Returned the `default role` to its standard default.
 
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

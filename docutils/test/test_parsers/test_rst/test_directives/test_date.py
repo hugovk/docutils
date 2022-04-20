@@ -8,46 +8,54 @@
 Tests for the misc.py "date" directive.
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_parsers import DocutilsTestSupport
 import time
+import unittest
 
-from docutils.io import locale_encoding
-
-
-def suite():
-    s = DocutilsTestSupport.ParserTestSuite()
-    s.generateTests(totest)
-    return s
+from docutils import frontend
+from docutils import utils
+from docutils.parsers import rst
 
 
-totest = {}
+class TestDate(unittest.TestCase):
+    def test_date(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        parser = rst.Parser()
 
-totest['date'] = [
+        for casenum, (case_input, case_expected) in enumerate(date):
+            with self.subTest(id=f'date[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
+
+
+date = [
 ["""\
 .. |date| date::
 
 Today's date is |date|.
 """,
-"""\
+f"""\
 <document source="test data">
     <substitution_definition names="date">
-        %s
+        {time.strftime('%Y-%m-%d')}
     <paragraph>
         Today's date is \n\
         <substitution_reference refname="date">
             date
         .
-""" % time.strftime('%Y-%m-%d')],
+"""],
 ["""\
 .. |date| date:: %a, %d %b %Y
 """,
-"""\
+f"""\
 <document source="test data">
     <substitution_definition names="date">
-        %s
-""" % time.strftime('%a, %d %b %Y')],
+        {time.strftime('%a, %d %b %Y')}
+"""],
 ["""\
 .. date::
 """,
@@ -61,19 +69,5 @@ Today's date is |date|.
 """],
 ]
 
-# some locales return non-ASCII characters for names of days or months
-if locale_encoding in ['utf8', 'utf-8', 'latin-1']:
-    totest['decode date'] = [
-    ["""\
-.. |date| date:: t\xc3glich
-""",
-    """\
-<document source="test data">
-    <substitution_definition names="date">
-        t\xc3glich
-"""],
-    ]
-
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

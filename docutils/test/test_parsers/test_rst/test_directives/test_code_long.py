@@ -8,24 +8,40 @@
 Test the 'code' directive in body.py with syntax_highlight = 'long'.
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_parsers import DocutilsTestSupport
-from docutils.utils.code_analyzer import with_pygments
+import unittest
+
+from docutils import frontend
+from docutils import utils
+from docutils.parsers import rst
 
 
-def suite():
-    settings = {'syntax_highlight': 'long'}
-    s = DocutilsTestSupport.ParserTestSuite(suite_settings=settings)
-    if with_pygments:
-        s.generateTests(totest)
-    return s
+class TestCodeLong(unittest.TestCase):
+    def test_code_parsing_long_number_lines(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        settings.syntax_highlight = "long"
+
+        document = utils.new_document('test data', settings)
+        rst.Parser().parse(number_lines_input, document)
+        output = document.pformat()
+        self.assertEqual(output, number_lines_output)
+
+    def test_code_parsing_long(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        settings.syntax_highlight = "long"
+
+        document = utils.new_document('test data', settings)
+        rst.Parser().parse(latex_input, document)
+        output = document.pformat()
+        self.assertEqual(output, latex_output)
 
 
-totest = {}
-
-totest['code-parsing-long'] = [
-["""\
+number_lines_input = """\
 .. code:: python3
   :number-lines: 7
 
@@ -35,8 +51,9 @@ totest['code-parsing-long'] = [
 
       # and now for something completely different
       print(8/2)
-""",
-"""\
+"""
+
+number_lines_output = """\
 <document source="test data">
     <literal_block classes="code python3" xml:space="preserve">
         <inline classes="ln">
@@ -83,13 +100,16 @@ totest['code-parsing-long'] = [
             2
         <inline classes="punctuation">
             )
-"""],
-["""\
+"""
+
+
+latex_input = """\
 .. code:: latex
 
   hello \\emph{world} % emphasize
-""",
-"""\
+"""
+
+latex_output = """\
 <document source="test data">
     <literal_block classes="code latex" xml:space="preserve">
         hello \n\
@@ -102,10 +122,8 @@ totest['code-parsing-long'] = [
             }
          \n\
         <inline classes="comment">
-            % emphasize"""],
-]
-
+            % emphasize
+"""
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

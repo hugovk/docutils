@@ -25,7 +25,7 @@ class TestTransformWriterAux(unittest.TestCase):
         settings.debug = False
         settings.warning_stream = False
 
-        document = utils.new_document('test data', settings.copy())
+        document = utils.new_document('test data', settings)
         rst.Parser().parse(note_input, document)
         # Don't do a ``populate_from_components()`` because that would
         # enable the Transformer's default transforms.
@@ -42,7 +42,7 @@ class TestTransformWriterAux(unittest.TestCase):
         settings.debug = False
         settings.warning_stream = False
 
-        document = utils.new_document('test data', settings.copy())
+        document = utils.new_document('test data', settings)
         rst.Parser().parse(generic_admonition_input, document)
         # Don't do a ``populate_from_components()`` because that would
         # enable the Transformer's default transforms.

@@ -9,21 +9,38 @@ Tests for misc.py "replace" directive.
 Test in french (not default/fallback language).
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_parsers import DocutilsTestSupport
+import unittest
+
+from docutils import frontend
+from docutils import utils
+from docutils.parsers import rst
+from docutils.parsers.rst import roles
 
 
-def suite():
-    s = DocutilsTestSupport.ParserTestSuite(
-            suite_settings={'language_code': 'fr'})
-    s.generateTests(totest)
-    return s
+class TestReplaceFrench(unittest.TestCase):
+    def test_replace_french(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        settings.language_code = 'fr'
+        parser = rst.Parser()
+
+        for casenum, (case_input, case_expected) in enumerate(replace_fr):
+            with self.subTest(id=f'replace_fr[{casenum}]'):
+                # Language-specific roles and roles added by the
+                # "default-role" and "role" directives are currently stored
+                # globally in the roles._roles dictionary.  This workaround
+                # empties that dictionary.
+                roles._roles.clear()
+
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
 
 
-totest = {}
-
-totest['replace'] = [
+replace_fr = [
 ["""\
 Test directive containing french role exposant (superscript).
 
@@ -68,10 +85,10 @@ Le |Na+| est l'ion sodium.
         Le \n\
         <substitution_reference refname="Na+">
             Na+
-         est l\'ion sodium."""],
+         est l\'ion sodium.
+"""],
 ]
 
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

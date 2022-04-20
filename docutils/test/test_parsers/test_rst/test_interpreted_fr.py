@@ -23,10 +23,9 @@ class TestInterpretedFrench(unittest.TestCase):
         settings.halt_level = 5
         settings.debug = False
         settings.language_code = 'fr'
-        parser = rst.Parser()
 
-        document = utils.new_document('test data', settings.copy())
-        parser.parse(basics_input, document)
+        document = utils.new_document('test data', settings)
+        rst.Parser().parse(basics_input, document)
         output = document.pformat()
         self.assertEqual(output, basics_output)
 

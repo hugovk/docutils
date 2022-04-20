@@ -8,20 +8,59 @@
 Tests for misc.py "role" directive.
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_parsers import DocutilsTestSupport
+import unittest
+
+from docutils import frontend
+from docutils import utils
+from docutils.parsers import rst
+from docutils.parsers.rst import roles
 
 
-def suite():
-    s = DocutilsTestSupport.ParserTestSuite()
-    s.generateTests(totest)
-    return s
+class TestRole(unittest.TestCase):
+    def test_role(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+
+        parser = rst.Parser()
+
+        for casenum, (case_input, case_expected) in enumerate(cases_role):
+            with self.subTest(id=f'test_role[{casenum}]'):
+                # Language-specific roles and roles added by the
+                # "default-role" and "role" directives are currently stored
+                # globally in the roles._roles dictionary.  This workaround
+                # empties that dictionary.
+                roles._roles.clear()
+
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
+
+    def test_raw_role(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+
+        parser = rst.Parser()
+
+        for casenum, (case_input, case_expected) in enumerate(cases_raw_role):
+            with self.subTest(id=f'test_raw_role[{casenum}]'):
+                # Language-specific roles and roles added by the
+                # "default-role" and "role" directives are currently stored
+                # globally in the roles._roles dictionary.  This workaround
+                # empties that dictionary.
+                roles._roles.clear()
+
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
 
 
-totest = {}
-
-totest['role'] = [
+cases_role = [
 ["""\
 .. role:: custom
 .. role:: special
@@ -227,7 +266,7 @@ Role names are :cAsInG:`case-insensitive`.
 """],
 ]
 
-totest['raw_role'] = [
+cases_raw_role = [
 ["""\
 .. role:: html(raw)
    :format: html
@@ -276,5 +315,4 @@ Can't use the :raw:`role` directly.
 
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

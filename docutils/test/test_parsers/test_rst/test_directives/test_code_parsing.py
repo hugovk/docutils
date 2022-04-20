@@ -38,24 +38,23 @@ Workaround to silence warning: disable code parsing with
    autoload("abc_mode", "abc");
 """
 
-settings = {'warning_stream': ''}
+settings = {'warning_stream': False}
 
 
-@unittest.skipUnless(with_pygments, 'optional module "pygments" not found')
+@unittest.skipUnless(with_pygments, 'Pygments is needed for this test')
 class CodeParsingTests(unittest.TestCase):
-
     def test_lexer_error(self):
         output = publish_string(unknown_language, settings_overrides=settings)
-        self.assertIn(b'<system_message level="2"', output)
-        self.assertIn(b'Cannot analyze code. '
-                      b'No Pygments lexer found for "s-lang".', output)
-        self.assertIn(b'<literal_block xml:space="preserve">', output)
+        self.assertIn('<system_message level="2"', output)
+        self.assertIn('Cannot analyze code. '
+                      'No Pygments lexer found for "s-lang".', output)
+        self.assertIn('<literal_block xml:space="preserve">', output)
 
     def test_lexer_error_workaround(self):
         output = publish_string(workaround, settings_overrides=settings)
-        self.assertNotIn(b'<system_message', output)
-        self.assertIn(b'<literal_block classes="code s-lang"', output)
-        self.assertIn(b'autoload("abc_mode", "abc");', output)
+        self.assertNotIn('<system_message', output)
+        self.assertIn('<literal_block classes="code s-lang"', output)
+        self.assertIn('autoload("abc_mode", "abc");', output)
 
 
 if __name__ == '__main__':

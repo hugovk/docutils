@@ -9,20 +9,49 @@ Tests for the block quote directives "epigraph", "highlights", and
 "pull-quote".
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_parsers import DocutilsTestSupport
+import unittest
+
+from docutils import frontend
+from docutils import utils
+from docutils.parsers import rst
 
 
-def suite():
-    s = DocutilsTestSupport.ParserTestSuite()
-    s.generateTests(totest)
-    return s
+class TestBlockQuotes(unittest.TestCase):
+    def test_block_quote(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        parser = rst.Parser()
+
+        for block_quote_type in 'epigraph', 'highlights', 'pull-quote':
+            with self.subTest(type=block_quote_type):
+                case_input = block_quote_input.format(type=block_quote_type)
+                case_expected = block_quote_output.format(type=block_quote_type)
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
+
+    def test_block_quote_error(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        parser = rst.Parser()
+
+        for block_quote_type in 'epigraph', 'highlights', 'pull-quote':
+            with self.subTest(type=block_quote_type):
+                case_input = block_quote_error_input.format(type=block_quote_type)
+                case_expected = block_quote_error_output.format(type=block_quote_type)
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
 
 
-generic_tests = [
-["""\
-.. %(type)s::
+block_quote_input = """\
+.. {type}::
 
    This is a block quote.
 
@@ -32,42 +61,36 @@ generic_tests = [
 
    -- Another Attribution,
       Second Line
-""",
-"""\
+"""
+
+block_quote_output = """\
 <document source="test data">
-    <block_quote classes="%(type)s">
+    <block_quote classes="{type}">
         <paragraph>
             This is a block quote.
         <attribution>
             Attribution
-    <block_quote classes="%(type)s">
+    <block_quote classes="{type}">
         <paragraph>
             This is another block quote.
         <attribution>
             Another Attribution,
             Second Line
-"""],
+"""
+
 # TODO: Add class option.
-["""\
-.. %(type)s::
-""",
-"""\
+block_quote_error_input = """\
+.. {type}::
+"""
+
+block_quote_error_output = """\
 <document source="test data">
     <system_message level="3" line="1" source="test data" type="ERROR">
         <paragraph>
-            Content block expected for the "%(type)s" directive; none found.
+            Content block expected for the "{type}" directive; none found.
         <literal_block xml:space="preserve">
-            .. %(type)s::
-"""],
-]
-
-totest = {}
-for block_quote_type in ('epigraph', 'highlights', 'pull-quote'):
-    totest[block_quote_type] = [
-        [text % {'type': block_quote_type} for text in pair]
-        for pair in generic_tests]
-
+            .. {type}::
+"""
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

@@ -8,20 +8,30 @@
 Tests for images.py image directives.
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_parsers import DocutilsTestSupport
+import unittest
+
+from docutils import frontend
+from docutils import utils
+from docutils.parsers import rst
 
 
-def suite():
-    s = DocutilsTestSupport.ParserTestSuite()
-    s.generateTests(totest)
-    return s
+class TestImages(unittest.TestCase):
+    def test_images(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        parser = rst.Parser()
+
+        for casenum, (case_input, case_expected) in enumerate(images):
+            with self.subTest(id=f'images[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
 
 
-totest = {}
-
-totest['images'] = [
+images = [
 ["""\
 .. image:: picture.png
 """,
@@ -216,11 +226,11 @@ totest['images'] = [
         <paragraph>
             Error in "image" directive:
             invalid option value: (option: "scale"; value: None)
-            %s.
+            int() argument must be a string, a bytes-like object or a real number, not 'NoneType'.
         <literal_block xml:space="preserve">
             .. image:: picture.png
                :scale:
-""" % DocutilsTestSupport.exception_data(int, None)[1][0]],
+"""],
 ["""\
 .. image:: picture.png
    :height: 100
@@ -275,11 +285,11 @@ totest['images'] = [
         <paragraph>
             Error in "image" directive:
             invalid option value: (option: "scale"; value: 'fifty')
-            %s.
+            invalid literal for int() with base 10: 'fifty'.
         <literal_block xml:space="preserve">
             .. image:: picture.png
                :scale: fifty
-""" % DocutilsTestSupport.exception_data(int, "fifty")[1][0]],
+"""],
 ["""\
 .. image:: picture.png
    :scale: 50
@@ -448,5 +458,4 @@ totest['images'] = [
 
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

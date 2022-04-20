@@ -8,20 +8,30 @@
 Tests for parts.py contents directive.
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_parsers import DocutilsTestSupport
+import unittest
+
+from docutils import frontend
+from docutils import utils
+from docutils.parsers import rst
 
 
-def suite():
-    s = DocutilsTestSupport.ParserTestSuite()
-    s.generateTests(totest)
-    return s
+class TestContents(unittest.TestCase):
+    def test_contents(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        parser = rst.Parser()
+
+        for casenum, (case_input, case_expected) in enumerate(contents):
+            with self.subTest(id=f'contents[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
 
 
-totest = {}
-
-totest['contents'] = [
+contents = [
 ["""\
 .. contents::
 """,
@@ -155,11 +165,11 @@ totest['contents'] = [
         <paragraph>
             Error in "contents" directive:
             invalid option value: (option: "depth"; value: 'two')
-            %s.
+            invalid literal for int() with base 10: 'two'.
         <literal_block xml:space="preserve">
             .. contents::
                :depth: two
-""" % DocutilsTestSupport.exception_data(int, "two")[1][0]],
+"""],
 ["""\
 .. contents::
    :width: 2
@@ -239,5 +249,4 @@ totest['contents'] = [
 
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

@@ -8,21 +8,38 @@
 Tests for admonitions.py directives in German document.
 """
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_parsers import DocutilsTestSupport
+import unittest
+
+from docutils import frontend
+from docutils import utils
+from docutils.parsers import rst
+from docutils.parsers.rst import roles
 
 
-def suite():
-    settings = {'language_code': 'de'}
-    s = DocutilsTestSupport.ParserTestSuite(suite_settings=settings)
-    s.generateTests(totest)
-    return s
+class TestAdmonitionsGerman(unittest.TestCase):
+    def test_admonitions_de(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        settings.language_code = 'de'
+        parser = rst.Parser()
+
+        for casenum, (case_input, case_expected) in enumerate(admonitions_de):
+            with self.subTest(id=f'admonitions_de[{casenum}]'):
+                # Language-specific roles and roles added by the
+                # "default-role" and "role" directives are currently stored
+                # globally in the roles._roles dictionary.  This workaround
+                # empties that dictionary.
+                roles._roles.clear()
+
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
 
 
-totest = {}
-
-totest['admonitions'] = [
+admonitions_de = [
 ["""\
 .. Achtung:: Directives at large.
 
@@ -220,5 +237,4 @@ totest['admonitions'] = [
 
 
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()

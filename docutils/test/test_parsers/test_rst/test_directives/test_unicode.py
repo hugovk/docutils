@@ -9,27 +9,31 @@ Tests for misc.py "unicode" directive.
 """
 
 
-if __name__ == '__main__':
-    import __init__  # noqa: F401
-from test_parsers import DocutilsTestSupport
+import unittest
+
+from docutils import frontend
+from docutils import utils
+from docutils.parsers import rst
 
 
-def suite():
-    s = DocutilsTestSupport.ParserTestSuite()
-    s.generateTests(totest)
-    return s
+class TestUnicode(unittest.TestCase):
+    maxDiff = None
+    def test_unicode(self):
+        settings = frontend.get_default_settings(rst.Parser)
+        settings.report_level = 5
+        settings.halt_level = 5
+        settings.debug = False
+        parser = rst.Parser()
+
+        for casenum, (case_input, case_expected) in enumerate(unicode):
+            with self.subTest(id=f'unicode[{casenum}]'):
+                document = utils.new_document('test data', settings.copy())
+                parser.parse(case_input, document)
+                output = document.pformat()
+                self.assertEqual(output, case_expected)
 
 
-unichr_exception = DocutilsTestSupport.exception_data(
-    chr, int("111111111111111111", 16))[0]
-if isinstance(unichr_exception, OverflowError):
-    unichr_exception_string = 'code too large (%s)' % unichr_exception
-else:
-    unichr_exception_string = str(unichr_exception)
-
-totest = {}
-
-totest['unicode'] = [
+unicode = [
 ["""
 Insert an em-dash (|mdash|), a copyright symbol (|copy|), a non-breaking
 space (|nbsp|), a backwards-not-equals (|bne|), and a captial omega (|Omega|).
@@ -147,7 +151,7 @@ Copyright |copy| 2003, |BogusMegaCorp (TM)|.
     <system_message level="3" line="2" source="test data" type="ERROR">
         <paragraph>
             Invalid character code: 0x111111111111111111
-            ValueError: %s
+            ValueError: code too large (Python int too large to convert to C int)
         <literal_block xml:space="preserve">
             unicode:: 0x111111111111111111
     <system_message level="2" line="2" source="test data" type="WARNING">
@@ -158,7 +162,7 @@ Copyright |copy| 2003, |BogusMegaCorp (TM)|.
     <system_message level="3" line="3" source="test data" type="ERROR">
         <paragraph>
             Invalid character code: 0x11111111
-            %s
+            ValueError: chr() arg not in range(0x110000)
         <literal_block xml:space="preserve">
             unicode:: 0x11111111
     <system_message level="2" line="3" source="test data" type="WARNING">
@@ -166,11 +170,8 @@ Copyright |copy| 2003, |BogusMegaCorp (TM)|.
             Substitution definition "too big for unicode" empty or invalid.
         <literal_block xml:space="preserve">
             .. |too big for unicode| unicode:: 0x11111111
-""" % (unichr_exception_string,
-       DocutilsTestSupport.exception_data(chr, int("11111111", 16))[2])]
+"""]
 ]
 
-
 if __name__ == '__main__':
-    import unittest
-    unittest.main(defaultTest='suite')
+    unittest.main()
