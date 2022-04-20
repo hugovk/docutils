@@ -36,9 +36,8 @@ except ImportError:
     import types
 
     class pending_xref(nodes.Inline, nodes.Element): ... # NoQA
-
-    sys.modules['sphinx'] = sphinx = types.ModuleType('sphinx')
-    sphinx.addnodes = types.SimpleNamespace(pending_xref=pending_xref)
+    addnodes = types.SimpleNamespace(pending_xref=pending_xref)
+    sys.modules['sphinx'] = types.SimpleNamespace(addnodes=addnodes)  # type: ignore
 
 try:
     import recommonmark
@@ -127,7 +126,7 @@ class Parser(CommonMarkParser):
                 node.parent.replace(node, warning)
 
         # drop pending_xref (Sphinx cross reference extension)
-        for node in document.findall(addnodes.pending_xref):
+        for node in document.findall(pending_xref):
             reference = node.children[0]
             if 'name' not in reference:
                 reference['name'] = nodes.fully_normalize_name(
