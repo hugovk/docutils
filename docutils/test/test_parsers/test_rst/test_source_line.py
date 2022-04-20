@@ -32,7 +32,7 @@ from docutils.parsers import rst
 from docutils.transforms import universal
 from docutils.transforms.universal import ExposeInternals
 
-os.chdir(os.path.join(__file__, '..', '..', '..'))
+os.chdir(os.path.normpath(os.path.join(__file__, '..', '..', '..')))
 
 
 class TestSourceLine(unittest.TestCase):

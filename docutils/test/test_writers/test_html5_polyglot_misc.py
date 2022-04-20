@@ -16,7 +16,7 @@ import warnings
 from docutils.core import publish_parts
 from docutils.core import publish_string
 
-os.chdir(os.path.join(__file__, '..', '..'))
+os.chdir(os.path.normpath(os.path.join(__file__, '..', '..')))
 
 
 class TestEncoding(unittest.TestCase):

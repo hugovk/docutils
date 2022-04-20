@@ -15,7 +15,7 @@ from docutils import frontend
 from docutils import utils
 from docutils.parsers import rst
 
-os.chdir(os.path.join(__file__, '..', '..', '..'))
+os.chdir(os.path.normpath(os.path.join(__file__, '..', '..', '..')))
 
 
 class TestTables(unittest.TestCase):

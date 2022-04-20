@@ -14,7 +14,7 @@ import unittest
 import docutils
 from docutils.core import publish_string
 
-os.chdir(os.path.join(__file__, '..', '..'))
+os.chdir(os.path.normpath(os.path.join(__file__, '..', '..')))
 
 
 class TestLaTeX2e(unittest.TestCase, docutils.SettingsSpec):

@@ -41,7 +41,7 @@ import zipfile
 import docutils
 import docutils.core
 
-os.chdir(os.path.join(__file__, '..', '..'))
+os.chdir(os.path.normpath(os.path.join(__file__, '..', '..')))
 
 # Globals
 TEMP_FILE_PATH = Path('functional', 'output')
